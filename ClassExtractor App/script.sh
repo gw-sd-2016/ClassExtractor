@@ -1,1 +1,0 @@
-curl -u c1cb057a-7fa8-4b99-871b-dbf082618210:p5JshIG23ZRK -X POST --limit-rate 40000 --header "Content-Type: audio/flac" --header "Transfer-Encoding: chunked" --data-binary @/Users/elliot/Downloads/0001.flac "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"
