@@ -14,8 +14,8 @@
 		8B0375F41BCF0E8F005DFD86 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B0375F21BCF0E8F005DFD86 /* Main.storyboard */; };
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
+		8B32E0161BEBEC03000271FB /* script.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8B32E0151BEBEC03000271FB /* script.sh */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
-		8B8433DC1BE7D8D1000EEED6 /* script.sh in Resources */ = {isa = PBXBuildFile; fileRef = 8B8433DB1BE7D8D1000EEED6 /* script.sh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,9 +51,9 @@
 		8B0376051BCF0E8F005DFD86 /* ClassExtractorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassExtractorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassExtractorUITests.m; sourceTree = "<group>"; };
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8B32E0151BEBEC03000271FB /* script.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = script.sh; sourceTree = "<group>"; };
 		8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEAudioHandler.h; sourceTree = "<group>"; };
 		8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEAudioHandler.m; sourceTree = "<group>"; };
-		8B8433DB1BE7D8D1000EEED6 /* script.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = script.sh; sourceTree = "<group>"; };
 		8B8433DD1BE7DC48000EEED6 /* WatsonTest.flac */ = {isa = PBXFileReference; lastKnownFileType = file; path = WatsonTest.flac; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,8 +112,8 @@
 				8B0375F01BCF0E8F005DFD86 /* Assets.xcassets */,
 				8B0375F21BCF0E8F005DFD86 /* Main.storyboard */,
 				8B0375F51BCF0E8F005DFD86 /* Info.plist */,
-				8B8433DB1BE7D8D1000EEED6 /* script.sh */,
 				8B8433DD1BE7DC48000EEED6 /* WatsonTest.flac */,
+				8B32E0151BEBEC03000271FB /* script.sh */,
 				8B0375EA1BCF0E8F005DFD86 /* Supporting Files */,
 				8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */,
 				8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */,
@@ -252,7 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8B0375F11BCF0E8F005DFD86 /* Assets.xcassets in Resources */,
-				8B8433DC1BE7D8D1000EEED6 /* script.sh in Resources */,
+				8B32E0161BEBEC03000271FB /* script.sh in Resources */,
 				8B0375F41BCF0E8F005DFD86 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

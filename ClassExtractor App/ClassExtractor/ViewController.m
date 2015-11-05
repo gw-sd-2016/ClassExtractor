@@ -50,9 +50,14 @@
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
         NSTask* task = [[NSTask alloc] init];
-        [task setLaunchPath: @"/bin/sh"];
+        [task setLaunchPath: @"/usr/bin/curl"];
         
-        NSArray* arguments = @[scriptPath];
+        // hardcode the audioPath for now
+        // [TODO] this should pick up the wav dropped off in the resource directory by +convertToWav
+        NSString* credentials = @"";
+        NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
+        
+        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/flac", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
         [task setArguments: arguments];
         
         NSPipe* pipe = [NSPipe pipe];
