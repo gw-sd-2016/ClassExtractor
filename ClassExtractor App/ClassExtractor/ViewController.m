@@ -25,37 +25,28 @@
     // do anything useful at the moment, just keep it here for now
     audioPlayer = [CEAudioHandler chopUpLargeAudioFile: @"/Users/elliot/Desktop/test.mp3"];
     
-    // [TODO] This is insecure, as a malicious actor could feasibly swap out
-    // this file to make Class Extractor execute any terminal command
-    NSString* scriptName = @"script.sh";
-    NSString* resourcePath = [[NSBundle mainBundle] resourcePath];
-    NSString* scriptPath = [NSString stringWithFormat: @"%@/%@", resourcePath, scriptName];
-    [self getJSONFromWatsonAsync: scriptPath];
+    // hardcode the audioPath for now
+    // [TODO] this should pick up the wav dropped off in the resource directory by +convertToWav
+    NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
+    [self getJSONFromWatsonAsync: audioPath];
 }
 
 
 // ------------------------------------------------------------
 // getJSONFromWatson
 //
-// Use the parameter script to send the specified audio file
-// to Watson for transliteration.
+// Send the parameter's audio file to Watson for transliteration.
 //
-// [TODO] Change the parameter from a path to a script to
-// the actual audio file. According to Watson's docs, it can
-// process up to 5 minute audio clips at a time, with
-// concurrent requests accepted.
+// [TODO] Investigate into using libcurl here instead of NSTask
 // ------------------------------------------------------------
-- (void) getJSONFromWatsonAsync: (NSString*)scriptPath
+- (void) getJSONFromWatsonAsync: (NSString*)audioPath
 {
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
         NSTask* task = [[NSTask alloc] init];
         [task setLaunchPath: @"/usr/bin/curl"];
         
-        // hardcode the audioPath for now
-        // [TODO] this should pick up the wav dropped off in the resource directory by +convertToWav
         NSString* credentials = @"";
-        NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
         
         NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/flac", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
         [task setArguments: arguments];
