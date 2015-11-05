@@ -7,8 +7,14 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "CEAudioHandler.h"
 
 @interface ViewController : NSViewController
+{
+    // this is necessary because thanks to ARC, once we leave the function that created
+    // the audioPlayer, audioPlayer is released and the file never gets played
+    AVAudioPlayer* audioPlayer;
+}
 @end
 
 

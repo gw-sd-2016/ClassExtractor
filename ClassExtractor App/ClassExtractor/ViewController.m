@@ -21,6 +21,10 @@
 {
     [super viewDidLoad];
 
+    // this is a hardcoded test input for now, and since this function doesn't really
+    // do anything useful at the moment, just keep it here for now
+    audioPlayer = [CEAudioHandler chopUpLargeAudioFile: @"/Users/elliot/Desktop/test.mp3"];
+    
     // [TODO] This is insecure, as a malicious actor could feasibly swap out
     // this file to make Class Extractor execute any terminal command
     NSString* scriptName = @"script.sh";
