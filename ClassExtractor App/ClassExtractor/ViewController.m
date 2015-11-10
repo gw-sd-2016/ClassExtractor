@@ -23,7 +23,11 @@
 
     // this is a hardcoded test input for now, and since this function doesn't really
     // do anything useful at the moment, just keep it here for now
-    audioPlayer = [CEAudioHandler chopUpLargeAudioFile: @"/Users/elliot/Desktop/test.mp3"];
+    audioPlayer = [CEAudioHandler playAudioFile: @"/Users/elliot/Desktop/test.mp3"];
+    
+    NSURL* pathToAudio = [NSURL fileURLWithPath: @"/Users/elliot/Desktop/test2.wav"];
+    AVURLAsset* audioAsset = [[AVURLAsset alloc] initWithURL: pathToAudio options: nil];
+    [CEAudioHandler chopUpLargeAudioFile: audioAsset withStartTime: CMTimeMake(0, 1) toFilePath: @"/Users/elliot/Desktop/trimmed.m4a"];
     
     // hardcode the audioPath for now
     // [TODO] this should pick up the wav dropped off in the resource directory by +convertToWav

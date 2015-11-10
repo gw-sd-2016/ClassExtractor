@@ -16,15 +16,11 @@
 
 
 // ------------------------------------------------------------
-// chopUpLargeAudioFile
+// playAudioFile
 //
-// Slices a large audio file into smaller files, as Watson
-// can only accept audio files that are smaller than 5 minutes.
-//
-// [TODO] This functionality is not here yet. This simply plays
-// the audio file. Add slicing functionality.
+// Plays the audio file.
 // ------------------------------------------------------------
-+ (AVAudioPlayer*) chopUpLargeAudioFile: (NSString*)audioFilePath
++ (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath
 {
     NSURL* fileURL = [NSURL fileURLWithPath: audioFilePath];
     
@@ -56,12 +52,47 @@
     NSTask* task = [[NSTask alloc] init];
     [task setLaunchPath: @"/usr/bin/afconvert"];
 
-    [[NSBundle mainBundle] resourcePath];
     NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [[NSBundle mainBundle] resourcePath]];
     [task setArguments: arguments];
 
     [task launch];
 }
 
-@end
 
+// ------------------------------------------------------------
+// chopUpLargeAudioFile: withStartTime: toFilePath:
+//
+// avAsset must have been created using a wav file (mp3s won't
+// work). Splices a large audio file into a smaller one,
+// starting from the start time and going until either a) five
+// minutes has elapsed in the file or b) the end of the audio
+// has been reached. The truncated audio file is then dropped
+// at filePath location.
+// ------------------------------------------------------------
++ (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (CMTime)startTime toFilePath: (NSString*)filePath
+{
+    // we only care about the first audio track
+    AVAssetTrack* firstTrack = [[avAsset tracksWithMediaType: AVMediaTypeAudio] firstObject];
+    if (firstTrack == nil)
+        return false;
+    
+    AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset: avAsset
+                                                                            presetName: AVAssetExportPresetAppleM4A];
+    if (exportSession == nil)
+        return false;
+    
+    // stopTime ends in 300 seconds (five minutes)
+    // No need to check if we've reached the end of the audio clip, as
+    // the exportSession is smart enough to know to just stop.
+    CMTime stopTime = CMTimeMake(startTime.value + 300, 1);
+    CMTimeRange exportTimeRange = CMTimeRangeFromTimeToTime(startTime, stopTime);
+    
+    [exportSession setOutputURL: [NSURL fileURLWithPath: filePath]];
+    [exportSession setTimeRange: exportTimeRange];
+    
+    [exportSession exportAsynchronouslyWithCompletionHandler: ^{}];
+    
+    return true;
+}
+
+@end

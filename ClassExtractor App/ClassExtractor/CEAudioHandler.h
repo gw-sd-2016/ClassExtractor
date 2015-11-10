@@ -12,7 +12,8 @@
 
 @interface CEAudioHandler : NSObject
 
-+ (AVAudioPlayer*) chopUpLargeAudioFile: (NSString*)audioFilePath;
++ (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
 + (void) convertToWav: (NSString*)pathToAudio;
++ (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (CMTime)startTime toFilePath: (NSString*)filePath;
 
 @end
