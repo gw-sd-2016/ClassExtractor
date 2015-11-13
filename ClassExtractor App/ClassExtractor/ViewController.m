@@ -20,19 +20,12 @@
 - (void) viewDidLoad
 {
     [super viewDidLoad];
-
-    // this is a hardcoded test input for now, and since this function doesn't really
-    // do anything useful at the moment, just keep it here for now
-    audioPlayer = [CEAudioHandler playAudioFile: @"/Users/elliot/Desktop/test.mp3"];
     
-    NSURL* pathToAudio = [NSURL fileURLWithPath: @"/Users/elliot/Desktop/test2.wav"];
-    AVURLAsset* audioAsset = [[AVURLAsset alloc] initWithURL: pathToAudio options: nil];
-    [CEAudioHandler chopUpLargeAudioFile: audioAsset withStartTime: CMTimeMake(0, 1) toFilePath: @"/Users/elliot/Desktop/trimmed.m4a"];
-    
-    // hardcode the audioPath for now
-    // [TODO] this should pick up the wav dropped off in the resource directory by +convertToWav
-    NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
-    [self getJSONFromWatsonAsync: audioPath];
+    // this causes a crash, so for now, keep it commented out
+//    [[NSNotificationCenter defaultCenter] addObserver: self
+//                                             selector: @selector(getJSONFromWatsonAsync:)
+//                                                 name: @"doneChopping"
+//                                               object: nil];
 }
 
 
@@ -69,6 +62,35 @@
         
         NSLog(@"%@", strData);
     });
+}
+
+
+// ------------------------------------------------------------
+// importAudioFile
+//
+// [TODO] Change this to be a dropdown sheet.
+// ------------------------------------------------------------
+- (IBAction) importAudioFile: (id)sender
+{
+    NSOpenPanel* openFileDialogue = [NSOpenPanel openPanel];
+    
+    [openFileDialogue setCanChooseFiles: true];
+    [openFileDialogue setAllowsMultipleSelection: false];
+    [openFileDialogue setCanChooseDirectories: false];
+    
+    // display the dialogue
+    // only do something if the ok button was pressed
+    NSInteger button = [openFileDialogue runModal];
+    if (button == NSModalResponseOK)
+    {
+        // we only allow selection of one file, so it's ok to just get the first object
+        NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
+        NSString* conversionOutputPath = [NSString stringWithFormat: @"%@/converted.wav", [[NSBundle mainBundle] resourcePath]];
+        [[CEAudioHandler sharedInstance] convertToWav: selectedFilePath withOutputPath: conversionOutputPath];
+
+////        NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
+//        [self getJSONFromWatsonAsync: outputPath];
+    }
 }
 
 @end
