@@ -15,6 +15,10 @@
     // the audioPlayer, audioPlayer is released and the file never gets played
     AVAudioPlayer* audioPlayer;
 }
+
+- (void) getJSONFromWatsonAsync: (NSString*)audioPath;
+- (IBAction)importAudioFile:(id)sender;
+
 @end
 
 
