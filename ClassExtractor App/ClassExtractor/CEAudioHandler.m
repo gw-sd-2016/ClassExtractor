@@ -37,7 +37,7 @@
         [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
                                                  selector: @selector(deleteBigWav:)
                                                      name: @"deleteBigWav"
-                                                   object: nil];
+                                                   object: [CEAudioHandler sharedInstance]];
     }
     
     return instance;
@@ -145,7 +145,7 @@
 {
     ++_numTimesCalled;
     if (_numTimesCalled == _totalNumberOfSegments)
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"deleteBigWav" object: nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"deleteBigWav" object: self];
     
     NSString* filePath = [notification object];
     NSURL* fileURL = [NSURL URLWithString: filePath];
