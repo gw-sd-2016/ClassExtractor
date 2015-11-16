@@ -11,9 +11,14 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface CEAudioHandler : NSObject
+{
+    NSUInteger _totalNumberOfSegments;
+    NSUInteger _numTimesCalled;
+}
 
 + (id) sharedInstance;
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
+- (void) deleteBigWav: (NSNotification*)notification;
 - (void) singleConvertToWav: (NSString*)pathToAudio;
 - (void) multipleConvertToWav: (NSNotification*)notification;
 - (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (NSValue*)startTimeValue toFilePath: (NSString*)filePath;

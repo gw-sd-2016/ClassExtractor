@@ -33,6 +33,11 @@
                                                  selector: @selector(multipleConvertToWav:)
                                                      name: @"doneChopping"
                                                    object: nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
+                                                 selector: @selector(deleteBigWav:)
+                                                     name: @"deleteBigWav"
+                                                   object: nil];
     }
     
     return instance;
@@ -55,6 +60,30 @@
     [audioPlayer play];
     
     return audioPlayer;
+}
+
+
+// ------------------------------------------------------------
+// getBigWavFilePath
+//
+// For accessing the original converted wav file.
+// ------------------------------------------------------------
+- (NSString*) getBigWavFilePath
+{
+    return [NSString stringWithFormat: @"%@/bigFile.wav", [[NSBundle mainBundle] resourcePath]];
+}
+
+
+// ------------------------------------------------------------
+// deleteBigWav
+//
+// After we've chopped up the big wav file into five minute
+// segments, we don't need it anymore and it can be deleted.
+// ------------------------------------------------------------
+- (void) deleteBigWav: (NSNotification*)notification
+{
+    NSError* error;
+    [[NSFileManager defaultManager] removeItemAtPath: [self getBigWavFilePath] error: &error];
 }
 
 
@@ -88,7 +117,7 @@
     NSTask* task = [[NSTask alloc] init];
     [task setLaunchPath: @"/usr/bin/afconvert"];
     
-    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [NSString stringWithFormat: @"%@/bigFile.wav", [[NSBundle mainBundle] resourcePath]]];
+    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [self getBigWavFilePath]];
     [task setArguments: arguments];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
@@ -114,6 +143,10 @@
 // ------------------------------------------------------------
 - (void) multipleConvertToWav: (NSNotification*)notification
 {
+    ++_numTimesCalled;
+    if (_numTimesCalled == _totalNumberOfSegments)
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"deleteBigWav" object: nil];
+    
     NSString* filePath = [notification object];
     NSURL* fileURL = [NSURL URLWithString: filePath];
     NSString* lastComponent = [fileURL lastPathComponent];
@@ -134,9 +167,6 @@
 // taskFinished:
 //
 // Called when the task running afconvert is finished.
-//
-// [TODO] When we're done chopping up the large audio file,
-// delete it.
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
 {
@@ -149,6 +179,9 @@
     CMTime duration = [audioAsset duration];
     double seconds = (double)duration.value / (double)duration.timescale;
     
+    _totalNumberOfSegments = 0;
+    _numTimesCalled = 0;
+    
     // iterate through the audio file, five minutes at a time, and put each
     // five minute segment into the resource path
     const NSUInteger kSecondsInAMinute = 60;
@@ -159,6 +192,8 @@
         [self chopUpLargeAudioFile: audioAsset
                      withStartTime: startValue
                         toFilePath: [NSString stringWithFormat: @"%@/trimmed%lu.m4a", [[NSBundle mainBundle] resourcePath], (unsigned long)minutes]];
+        
+        ++_totalNumberOfSegments;
     }
 }
 
