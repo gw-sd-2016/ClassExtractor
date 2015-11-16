@@ -34,6 +34,17 @@
 
 
 // ------------------------------------------------------------
+// viewDidAppear
+// ------------------------------------------------------------
+- (void) viewDidAppear
+{
+    [super viewDidAppear];
+    
+    [[[self view] window] setTitle: @"Class Extractor"];
+}
+
+
+// ------------------------------------------------------------
 // getJSONFromWatson
 //
 // Send the parameter's audio file to Watson for transliteration.
@@ -74,7 +85,8 @@
 // ------------------------------------------------------------
 // importAudioFile
 //
-// [TODO] Change this to be a dropdown sheet.
+// Presents a modal sheet for the user to select a lecture file
+// for analysis.
 // ------------------------------------------------------------
 - (IBAction) importAudioFile: (id)sender
 {
@@ -84,15 +96,14 @@
     [openFileDialogue setAllowsMultipleSelection: false];
     [openFileDialogue setCanChooseDirectories: false];
     
-    // display the dialogue
-    // only do something if the ok button was pressed
-    NSInteger button = [openFileDialogue runModal];
-    if (button == NSModalResponseOK)
-    {
-        // we only allow selection of one file, so it's ok to just get the first object
-        NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
-        [[CEAudioHandler sharedInstance] singleConvertToWav: selectedFilePath];
-    }
+    [openFileDialogue beginSheetModalForWindow: [[self view] window] completionHandler: ^(NSInteger response) {
+        if (response == NSModalResponseOK)
+        {
+            // we only allow selection of one file, so it's ok to just get the first object
+            NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
+            [[CEAudioHandler sharedInstance] singleConvertToWav: selectedFilePath];
+        }
+    }];
 }
 
 @end

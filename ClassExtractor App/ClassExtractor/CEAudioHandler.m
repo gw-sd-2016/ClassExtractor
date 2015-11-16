@@ -108,6 +108,9 @@
 // function is convert all of the newly chopped up files into
 // wavs, since AVAssetExportSession can only export files as
 // m4as.
+//
+// [TODO] When we're done coverting the five minute m4a to wav,
+// delete the m4a.
 // ------------------------------------------------------------
 - (void) multipleConvertToWav: (NSNotification*)notification
 {
@@ -131,6 +134,9 @@
 // taskFinished:
 //
 // Called when the task running afconvert is finished.
+//
+// [TODO] When we're done chopping up the large audio file,
+// delete it.
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
 {
