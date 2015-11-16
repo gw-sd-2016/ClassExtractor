@@ -16,8 +16,8 @@
     AVAudioPlayer* audioPlayer;
 }
 
-- (void) getJSONFromWatsonAsync: (NSString*)audioPath;
-- (IBAction)importAudioFile:(id)sender;
+- (void) getJSONFromWatsonAsync: (NSNotification*)notification;
+- (IBAction) importAudioFile: (id)sender;
 
 @end
 

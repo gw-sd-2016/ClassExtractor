@@ -21,10 +21,14 @@
 {
     [super viewDidLoad];
     
-    // this causes a crash, so for now, keep it commented out
+    // [TODO] Make self an observer of when a file gets reconverted to a wav,
+    // so that that file can be sent to Watson.
+    
+    // Leave this here for now, but at some point self will be notified to start
+    // sending data to Watson
 //    [[NSNotificationCenter defaultCenter] addObserver: self
 //                                             selector: @selector(getJSONFromWatsonAsync:)
-//                                                 name: @"doneChopping"
+//                                                 name: @""
 //                                               object: nil];
 }
 
@@ -36,7 +40,7 @@
 //
 // [TODO] Investigate into using libcurl here instead of NSTask
 // ------------------------------------------------------------
-- (void) getJSONFromWatsonAsync: (NSString*)audioPath
+- (void) getJSONFromWatsonAsync: (NSNotification*)notification
 {
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
@@ -44,6 +48,8 @@
         [task setLaunchPath: @"/usr/bin/curl"];
         
         NSString* credentials = @"";
+        
+        NSString* audioPath = [notification object];
         
         NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/flac", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
         [task setArguments: arguments];
@@ -85,11 +91,7 @@
     {
         // we only allow selection of one file, so it's ok to just get the first object
         NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
-        NSString* conversionOutputPath = [NSString stringWithFormat: @"%@/converted.wav", [[NSBundle mainBundle] resourcePath]];
-        [[CEAudioHandler sharedInstance] convertToWav: selectedFilePath withOutputPath: conversionOutputPath];
-
-////        NSString* audioPath = @"@/Users/elliot/Library/Mobile Documents/com~apple~CloudDocs/GW/Senior Year/Fall/Senior Design/ClassExtractor/ClassExtractor App/ClassExtractor/WatsonTest.flac";
-//        [self getJSONFromWatsonAsync: outputPath];
+        [[CEAudioHandler sharedInstance] singleConvertToWav: selectedFilePath];
     }
 }
 

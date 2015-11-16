@@ -14,7 +14,8 @@
 
 + (id) sharedInstance;
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
-- (void) convertToWav: (NSString*)pathToAudio withOutputPath: (NSString*)outputPath;
+- (void) singleConvertToWav: (NSString*)pathToAudio;
+- (void) multipleConvertToWav: (NSNotification*)notification;
 - (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (NSValue*)startTimeValue toFilePath: (NSString*)filePath;
 
 @end

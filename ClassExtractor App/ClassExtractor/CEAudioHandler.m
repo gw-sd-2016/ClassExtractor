@@ -26,7 +26,14 @@
     static CEAudioHandler* instance = nil;
     
     if (instance == nil)
+    {
         instance = [[CEAudioHandler alloc] init];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
+                                                 selector: @selector(multipleConvertToWav:)
+                                                     name: @"doneChopping"
+                                                   object: nil];
+    }
     
     return instance;
 }
@@ -52,26 +59,38 @@
 
 
 // ------------------------------------------------------------
-// convertToWav:withOutputPath:
+// singleConvertToWav
 //
-// Takes an audio file and converts it to a wav file using
-// afconvert, dropping it into the bundle's resource path. wavs
-// are useful because Watson can use wav files for
-// transliteration. afconvert can work with a ton of different
-// audio file types, type "afconvert -hf" into Terminal to see
-// them all.
+// This converts one audio file to a wav file, and puts it in
+// this bundle's resource directory. AVAssets only like wavs,
+// so we have to convert the file the user gives us to a wav
+// before manipulating it. Send up a notification when we're
+// done converting.
 //
-// Note: We don't have to check if we're trying to convert a
-// wav to a wav because afconvert handles that situation for us.
+// The workflow is as follows: user selects file, singleConvertToWav
+// converts that file to a wav, chopUpLargeAudioFile splices
+// the audio file into five minute segments (and in the process
+// converting them to m4as (this is automatic, see the second
+// [TODO] in this comment)), multipleConvertToWav converts each
+// of those files back to wavs. In the future, each of these
+// files will then get sent to Watson for transliteration.
+//
+// [TODO] This function and multipleConvertToWav are somewhat
+// repetitive. Combine the two and/or distill out what they
+// have in common.
+//
+// [TODO] This convert, chop-up, reconvert methodology is obtuse
+// and inefficient (especially with so many calls to afconvert).
+// Make it so there is only one conversion necessary.
 // ------------------------------------------------------------
-- (void) convertToWav: (NSString*)pathToAudio withOutputPath: (NSString*)outputPath
+- (void) singleConvertToWav: (NSString*)pathToAudio
 {
     NSTask* task = [[NSTask alloc] init];
     [task setLaunchPath: @"/usr/bin/afconvert"];
-
-    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, outputPath];
+    
+    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [NSString stringWithFormat: @"%@/bigFile.wav", [[NSBundle mainBundle] resourcePath]]];
     [task setArguments: arguments];
-
+    
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(taskFinished:)
                                                  name: NSTaskDidTerminateNotification
@@ -82,17 +101,36 @@
 
 
 // ------------------------------------------------------------
+// multipleConvertToWav
+//
+// This converts an audio file to a wav file, and puts it in
+// this bundle's resource directory. The purpose of this
+// function is convert all of the newly chopped up files into
+// wavs, since AVAssetExportSession can only export files as
+// m4as.
+// ------------------------------------------------------------
+- (void) multipleConvertToWav: (NSNotification*)notification
+{
+    NSString* filePath = [notification object];
+    NSURL* fileURL = [NSURL URLWithString: filePath];
+    NSString* lastComponent = [fileURL lastPathComponent];
+    NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - 4]; // we know the extension is m4a,
+                                                                                          // so it's 4 chars with the "."
+    
+    NSTask* task = [[NSTask alloc] init];
+    [task setLaunchPath: @"/usr/bin/afconvert"];
+    
+    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", filePath, [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
+    [task setArguments: arguments];
+    
+    [task launch];
+}
+
+
+// ------------------------------------------------------------
 // taskFinished:
 //
-// Called when the task running afconvert is finished. Gets the
-// parameters to chop up the file and drops it at the "toFilePath"
-// parameter location.
-//
-// [TODO] Don't hardcode the drop location. Put it in something
-// like [[NSBundle mainBundle] resourcePath]
-//
-// [TODO] Repeatedly call chopUpLargeAudioFile until the whole
-// audio file has been chopped up.
+// Called when the task running afconvert is finished.
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
 {
@@ -101,11 +139,21 @@
     NSString* convertedPath = [taskArguments lastObject];
     NSURL* convertedURL = [NSURL fileURLWithPath: convertedPath isDirectory: false];
     AVURLAsset* audioAsset = [[AVURLAsset alloc] initWithURL: convertedURL options: nil];
-    CMTime startTime = CMTimeMake(0, 1);
-    NSValue* startValue = [NSValue valueWithBytes: &startTime objCType: @encode(CMTime)];
-    [self chopUpLargeAudioFile: audioAsset
-                 withStartTime: startValue
-                    toFilePath: @"/Users/elliot/Desktop/trimmed.wav"];
+    
+    CMTime duration = [audioAsset duration];
+    double seconds = (double)duration.value / (double)duration.timescale;
+    
+    // iterate through the audio file, five minutes at a time, and put each
+    // five minute segment into the resource path
+    const NSUInteger kSecondsInAMinute = 60;
+    for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += 5)
+    {
+        CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, 1);
+        NSValue* startValue = [NSValue valueWithBytes: &startTime objCType: @encode(CMTime)];
+        [self chopUpLargeAudioFile: audioAsset
+                     withStartTime: startValue
+                        toFilePath: [NSString stringWithFormat: @"%@/trimmed%lu.m4a", [[NSBundle mainBundle] resourcePath], (unsigned long)minutes]];
+    }
 }
 
 
@@ -119,8 +167,6 @@
 // has been reached. The truncated audio file is then dropped
 // at filePath location.
 //
-// [TODO] Don't hardcode the notification object path. That
-// path should be wherever the chopped up files are dropped.
 //
 // [TODO] Make "doneChopping" a constant in a header file.
 // ------------------------------------------------------------
@@ -150,7 +196,7 @@
     [exportSession setTimeRange: exportTimeRange];
     
     [exportSession exportAsynchronouslyWithCompletionHandler: ^{
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"doneChopping" object: @"/Users/elliot/Desktop/trimmed.wav"];
+            [[NSNotificationCenter defaultCenter] postNotificationName: @"doneChopping" object: filePath];
     }];
     
     return true;
