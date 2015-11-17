@@ -29,6 +29,8 @@
     {
         instance = [[CEAudioHandler alloc] init];
         
+        // [TODO] Don't use a notification here; now that we're posting this notification on the main thread,
+        // just call the function
         [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
                                                  selector: @selector(multipleConvertToWav:)
                                                      name: @"doneChopping"
@@ -137,9 +139,6 @@
 // function is convert all of the newly chopped up files into
 // wavs, since AVAssetExportSession can only export files as
 // m4as.
-//
-// [TODO] When we're done coverting the five minute m4a to wav,
-// delete the m4a.
 // ------------------------------------------------------------
 - (void) multipleConvertToWav: (NSNotification*)notification
 {
@@ -182,12 +181,22 @@
 // ------------------------------------------------------------
 - (void) multipleConvertTaskFinished: (NSNotification*)notification
 {
-    NSTask* finishedTask = [notification object];
-    NSArray* taskArguments = [finishedTask arguments];
-    NSString* convertedPath = [taskArguments lastObject];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"getJSON"
-                                                        object: convertedPath];
+    // now that we're done with NSTask, we can switch back to a background thread for
+    // Watson transliteration (see the comment in the async export callback
+    // in chopUpLargeAudioFile:withStartTime:toFilePath:)
+    dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(globalConcurrentQueue, ^{
+        NSTask* finishedTask = [notification object];
+        NSArray* taskArguments = [finishedTask arguments];
+        NSString* convertedPath = [taskArguments lastObject];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"getJSON"
+                                                            object: convertedPath];
+        
+        NSString* m4aPath = [taskArguments objectAtIndex: [taskArguments count] - 2];
+        NSError* error;
+        [[NSFileManager defaultManager] removeItemAtPath: m4aPath error: &error];
+    });
 }
 
 
@@ -265,7 +274,12 @@
     [exportSession setTimeRange: exportTimeRange];
     
     [exportSession exportAsynchronouslyWithCompletionHandler: ^{
+        // post the notification on the main thread
+        // notifications are delivered on the thread they are posted, and the function that will be called from
+        // this notification uses NSTask, which is not thread safe
+        dispatch_async(dispatch_get_main_queue(), ^{
             [[NSNotificationCenter defaultCenter] postNotificationName: @"doneChopping" object: filePath];
+        });
     }];
     
     return true;
