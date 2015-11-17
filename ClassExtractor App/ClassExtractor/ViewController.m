@@ -56,9 +56,9 @@
         
         NSString* credentials = @"";
         
-        NSString* audioPath = [notification object];
+        NSString* audioPath = [NSString stringWithFormat: @"@%@", [notification object]];
         
-        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/flac", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
+        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/wav", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
         [task setArguments: arguments];
         
         NSPipe* pipe = [NSPipe pipe];

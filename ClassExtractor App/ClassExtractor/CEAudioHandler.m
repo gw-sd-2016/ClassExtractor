@@ -204,6 +204,11 @@
 // taskFinished:
 //
 // Called when the task running afconvert is finished.
+//
+// [TODO] Make the number of minutes per each clip a constant
+// in a header so that if we change the 5 below, we won't also
+// have to change the 300 in
+// chopUpLargeAudioFile:withStartTime:toFilePath:
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
 {    
