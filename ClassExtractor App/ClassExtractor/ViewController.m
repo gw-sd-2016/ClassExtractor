@@ -21,15 +21,11 @@
 {
     [super viewDidLoad];
     
-    // [TODO] Make self an observer of when a file gets reconverted to a wav,
-    // so that that file can be sent to Watson.
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(getJSONFromWatsonAsync:)
+                                                 name: @"getJSON"
+                                               object: nil];
     
-    // Leave this here for now, but at some point self will be notified to start
-    // sending data to Watson
-//    [[NSNotificationCenter defaultCenter] addObserver: self
-//                                             selector: @selector(getJSONFromWatsonAsync:)
-//                                                 name: @""
-//                                               object: nil];
 }
 
 
@@ -45,7 +41,7 @@
 
 
 // ------------------------------------------------------------
-// getJSONFromWatson
+// getJSONFromWatson:
 //
 // Send the parameter's audio file to Watson for transliteration.
 //
@@ -83,7 +79,7 @@
 
 
 // ------------------------------------------------------------
-// importAudioFile
+// importAudioFile:
 //
 // Presents a modal sheet for the user to select a lecture file
 // for analysis.
@@ -116,7 +112,7 @@
 
 
 // ------------------------------------------------------------
-// getJSONForData
+// getJSONForData:
 //
 // Given an NSData object, serialize the data into an
 // NSDictionary and return that object.

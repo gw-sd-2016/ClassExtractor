@@ -45,7 +45,7 @@
 
 
 // ------------------------------------------------------------
-// playAudioFile
+// playAudioFile:
 //
 // Plays the audio file.
 // ------------------------------------------------------------
@@ -75,7 +75,7 @@
 
 
 // ------------------------------------------------------------
-// deleteBigWav
+// deleteBigWav:
 //
 // After we've chopped up the big wav file into five minute
 // segments, we don't need it anymore and it can be deleted.
@@ -88,7 +88,7 @@
 
 
 // ------------------------------------------------------------
-// singleConvertToWav
+// singleConvertToWav:
 //
 // This converts one audio file to a wav file, and puts it in
 // this bundle's resource directory. AVAssets only like wavs,
@@ -130,7 +130,7 @@
 
 
 // ------------------------------------------------------------
-// multipleConvertToWav
+// multipleConvertToWav:
 //
 // This converts an audio file to a wav file, and puts it in
 // this bundle's resource directory. The purpose of this
@@ -159,7 +159,35 @@
     NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", filePath, [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
     [task setArguments: arguments];
     
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(multipleConvertTaskFinished:)
+                                                 name: NSTaskDidTerminateNotification
+                                               object: task];
+    
     [task launch];
+}
+
+
+// ------------------------------------------------------------
+// multipleConvertTaskFinished:
+//
+// Called when the task converting an m4a file to wav has
+// completed. Posts a notification that that specific file is
+// ready for transliteration (by getJSONFromWatson).
+//
+// [TODO] Put "getJSON" into a header file somewhere.
+//
+// [TODO] There is some duplication between this function and
+// taskFinished:, fix that.
+// ------------------------------------------------------------
+- (void) multipleConvertTaskFinished: (NSNotification*)notification
+{
+    NSTask* finishedTask = [notification object];
+    NSArray* taskArguments = [finishedTask arguments];
+    NSString* convertedPath = [taskArguments lastObject];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"getJSON"
+                                                        object: convertedPath];
 }
 
 
@@ -169,7 +197,7 @@
 // Called when the task running afconvert is finished.
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
-{
+{    
     NSTask* finishedTask = [taskNotification object];
     NSArray* taskArguments = [finishedTask arguments];
     NSString* convertedPath = [taskArguments lastObject];
@@ -199,7 +227,7 @@
 
 
 // ------------------------------------------------------------
-// chopUpLargeAudioFile: withStartTime: toFilePath:
+// chopUpLargeAudioFile:withStartTime:toFilePath:
 //
 // avAsset must have been created using a wav file (mp3s won't
 // work). Splices a large audio file into a smaller one,

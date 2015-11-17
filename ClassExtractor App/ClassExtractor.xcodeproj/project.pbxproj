@@ -15,6 +15,7 @@
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
+		8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,8 @@
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEAudioHandler.h; sourceTree = "<group>"; };
 		8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEAudioHandler.m; sourceTree = "<group>"; };
+		8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECalculator.h; sourceTree = "<group>"; };
+		8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CECalculator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +115,8 @@
 				8B0375EA1BCF0E8F005DFD86 /* Supporting Files */,
 				8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */,
 				8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */,
+				8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */,
+				8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */,
 			);
 			path = ClassExtractor;
 			sourceTree = "<group>";
@@ -293,6 +298,7 @@
 				8B0375EC1BCF0E8F005DFD86 /* main.m in Sources */,
 				8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */,
 				8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */,
+				8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
