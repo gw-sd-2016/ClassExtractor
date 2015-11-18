@@ -111,18 +111,28 @@
 // ------------------------------------------------------------
 - (void) singleConvertToWav: (NSString*)pathToAudio
 {
-    NSTask* task = [[NSTask alloc] init];
-    [task setLaunchPath: @"/usr/bin/afconvert"];
-    
-    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [self getBigWavFilePath]];
-    [task setArguments: arguments];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(taskFinished:)
-                                                 name: NSTaskDidTerminateNotification
-                                               object: task];
-    
-    [task launch];
+    // there's currently no reason this function will ever be called in
+    // the background, but if that ever changes, we'll be sure this
+    // function runs on the main thread (see the header comment of
+    // multipleConvertToWav:)
+    // (we don't have to check if we're on the main thread, as the
+    // block is scheduled regularly and executed when the run loop
+    // of the main thread is run, which is the same as if this function
+    // were called from the main thread and this GCD call weren't here)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSTask* task = [[NSTask alloc] init];
+        [task setLaunchPath: @"/usr/bin/afconvert"];
+        
+        NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [self getBigWavFilePath]];
+        [task setArguments: arguments];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(taskFinished:)
+                                                     name: NSTaskDidTerminateNotification
+                                                   object: task];
+        
+        [task launch];
+    });
 }
 
 
@@ -135,31 +145,44 @@
 // wavs, since AVAssetExportSession can only export files as
 // m4as.
 //
-// [TODO] Assert that this function is called in the main thread.
+// This function uses NSTask, which is not thread safe (while it
+// is true that we're not working with the same instance of NSTask
+// across multiple threads and therefore it should theoretically be
+// ok to have multipleConvertToWav: run in the background, at the
+// end of this function an NSNotification is posted. I'm not 100% sure
+// why, but if that notification is posted on a background thread, it
+// is never delivered; I believe it has to do with the fact that
+// NSNotifications are delivered on the thread they are posted on,
+// and since NSTasks create their own runloops, it's possible that
+// that notification gets posted from that runloop (which is then
+// promptly destroyed), meaning it never has a chance to be
+// delivered.
 // ------------------------------------------------------------
 - (void) multipleConvertToWav: (NSString*)filePath
 {
-    ++_numTimesCalled;
-    if (_numTimesCalled == _totalNumberOfSegments)
-        [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
-    
-    NSURL* fileURL = [NSURL URLWithString: filePath];
-    NSString* lastComponent = [fileURL lastPathComponent];
-    NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - 4]; // we know the extension is m4a,
-                                                                                          // so it's 4 chars with the "."
-    
-    NSTask* task = [[NSTask alloc] init];
-    [task setLaunchPath: @"/usr/bin/afconvert"];
-    
-    NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", filePath, [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
-    [task setArguments: arguments];
-    
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(multipleConvertTaskFinished:)
-                                                 name: NSTaskDidTerminateNotification
-                                               object: task];
-    
-    [task launch];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ++_numTimesCalled;
+        if (_numTimesCalled == _totalNumberOfSegments)
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
+        
+        NSURL* fileURL = [NSURL URLWithString: filePath];
+        NSString* lastComponent = [fileURL lastPathComponent];
+        NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - 4]; // we know the extension is m4a,
+                                                                                              // so it's 4 chars with the "."
+        
+        NSTask* task = [[NSTask alloc] init];
+        [task setLaunchPath: @"/usr/bin/afconvert"];
+        
+        NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", filePath, [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
+        [task setArguments: arguments];
+        
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(multipleConvertTaskFinished:)
+                                                     name: NSTaskDidTerminateNotification
+                                                   object: task];
+        
+        [task launch];
+    });
 }
 
 
@@ -176,8 +199,7 @@
 - (void) multipleConvertTaskFinished: (NSNotification*)notification
 {
     // now that we're done with NSTask, we can switch back to a background thread for
-    // Watson transliteration (see the comment in the async export callback
-    // in chopUpLargeAudioFile:withStartTime:toFilePath:)
+    // Watson transliteration (see the header comment for multipleConvertToWav:)
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
         NSTask* finishedTask = [notification object];
@@ -265,23 +287,7 @@
     [exportSession setTimeRange: exportTimeRange];
     
     [exportSession exportAsynchronouslyWithCompletionHandler: ^{
-        // multipleConvertToWav: must be called on the main thread
-        //
-        // it uses NSTask, which is not thread safe (while it is true
-        // that we're not working with the same instance of NSTask across
-        // multiple threads and therefore it should theoretically be ok to
-        // call multipleConvertToWav: in the background, at the end of that
-        // function an NSNotification is posted. I'm not 100% sure why, but
-        // if that notification is posted in a background thread, it is
-        // never delivered; I believe it has to do with the fact that
-        // NSNotifications are delivered on the thread they are posted in,
-        // and since NSTasks create their own runloops, it's possible that
-        // that notification gets posted from that runloop (which is then
-        // promptly destroyed), meaning it never has a chance to be
-        // delivered.
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[CEAudioHandler sharedInstance] multipleConvertToWav: filePath];
-        });
+        [[CEAudioHandler sharedInstance] multipleConvertToWav: filePath];
     }];
     
     return true;

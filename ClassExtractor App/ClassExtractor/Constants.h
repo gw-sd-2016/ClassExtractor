@@ -23,6 +23,15 @@ extern NSString* const kDeleteBigWav;
 
 // the number of minutes per small audio clip (the maximum
 // number of minutes Watson allows is 5)
+//
+// [TODO] Play around with shorter times. The amount of time
+// it takes to upload the clip to Watson is the length of the
+// audio clip. It might make more sense to have shorter clips,
+// such as a minute or even 30 seconds, as we can spawn a new
+// thread for each of those clips. However, accuracy may be
+// sacrificed, as instead of cutting off the clip length / 5
+// times, we're now cutting it off more (which may lead to
+// Watson trying to interpret half-words, etc).
 extern const NSUInteger kNumMinsPerClip;
 
 
