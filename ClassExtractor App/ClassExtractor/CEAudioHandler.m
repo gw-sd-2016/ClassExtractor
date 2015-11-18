@@ -29,13 +29,6 @@
     {
         instance = [[CEAudioHandler alloc] init];
         
-        // [TODO] Don't use a notification here; now that we're posting this notification on the main thread,
-        // just call the function
-        [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
-                                                 selector: @selector(multipleConvertToWav:)
-                                                     name: @"doneChopping"
-                                                   object: nil];
-        
         [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
                                                  selector: @selector(deleteBigWav:)
                                                      name: @"deleteBigWav"
@@ -139,14 +132,15 @@
 // function is convert all of the newly chopped up files into
 // wavs, since AVAssetExportSession can only export files as
 // m4as.
+//
+// [TODO] Assert that this function is called in the main thread.
 // ------------------------------------------------------------
-- (void) multipleConvertToWav: (NSNotification*)notification
+- (void) multipleConvertToWav: (NSString*)filePath
 {
     ++_numTimesCalled;
     if (_numTimesCalled == _totalNumberOfSegments)
         [[NSNotificationCenter defaultCenter] postNotificationName: @"deleteBigWav" object: self];
     
-    NSString* filePath = [notification object];
     NSURL* fileURL = [NSURL URLWithString: filePath];
     NSString* lastComponent = [fileURL lastPathComponent];
     NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - 4]; // we know the extension is m4a,
@@ -279,11 +273,22 @@
     [exportSession setTimeRange: exportTimeRange];
     
     [exportSession exportAsynchronouslyWithCompletionHandler: ^{
-        // post the notification on the main thread
-        // notifications are delivered on the thread they are posted, and the function that will be called from
-        // this notification uses NSTask, which is not thread safe
+        // multipleConvertToWav: must be called on the main thread
+        //
+        // it uses NSTask, which is not thread safe (while it is true
+        // that we're not working with the same instance of NSTask across
+        // multiple threads and therefore it should theoretically be ok to
+        // call multipleConvertToWav: in the background, at the end of that
+        // function an NSNotification is posted. I'm not 100% sure why, but
+        // if that notification is posted in a background thread, it is
+        // never delivered; I believe it has to do with the fact that
+        // NSNotifications are delivered on the thread they are posted in,
+        // and since NSTasks create their own runloops, it's possible that
+        // that notification gets posted from that runloop (which is then
+        // promptly destroyed), meaning it never has a chance to be
+        // delivered.
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName: @"doneChopping" object: filePath];
+            [[CEAudioHandler sharedInstance] multipleConvertToWav: filePath];
         });
     }];
     
