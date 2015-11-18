@@ -7,6 +7,7 @@
 //
 
 #import "CECalculator.h"
+#import "Constants.h"
 
 @implementation CECalculator
 

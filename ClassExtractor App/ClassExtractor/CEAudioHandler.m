@@ -7,6 +7,7 @@
 //
 
 #import "CEAudioHandler.h"
+#import "Constants.h"
 
 
 // ============================================================
@@ -31,7 +32,7 @@
         
         [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
                                                  selector: @selector(deleteBigWav:)
-                                                     name: @"deleteBigWav"
+                                                     name: kDeleteBigWav
                                                    object: [CEAudioHandler sharedInstance]];
     }
     
@@ -139,7 +140,7 @@
 {
     ++_numTimesCalled;
     if (_numTimesCalled == _totalNumberOfSegments)
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"deleteBigWav" object: self];
+        [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
     
     NSURL* fileURL = [NSURL URLWithString: filePath];
     NSString* lastComponent = [fileURL lastPathComponent];
@@ -168,8 +169,6 @@
 // completed. Posts a notification that that specific file is
 // ready for transliteration (by getJSONFromWatson).
 //
-// [TODO] Put "getJSON" into a header file somewhere.
-//
 // [TODO] There is some duplication between this function and
 // taskFinished:, fix that.
 // ------------------------------------------------------------
@@ -184,7 +183,7 @@
         NSArray* taskArguments = [finishedTask arguments];
         NSString* convertedPath = [taskArguments lastObject];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"getJSON"
+        [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON
                                                             object: convertedPath];
         
         NSString* m4aPath = [taskArguments objectAtIndex: [taskArguments count] - 2];
@@ -243,9 +242,6 @@
 // minutes has elapsed in the file or b) the end of the audio
 // has been reached. The truncated audio file is then dropped
 // at filePath location.
-//
-//
-// [TODO] Make "doneChopping" a constant in a header file.
 // ------------------------------------------------------------
 - (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (NSValue*)startTimeValue toFilePath: (NSString*)filePath
 {

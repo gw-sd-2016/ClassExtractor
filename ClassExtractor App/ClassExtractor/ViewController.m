@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "Constants.h"
 
 // ============================================================
 // ViewController
@@ -23,9 +24,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(getJSONFromWatsonAsync:)
-                                                 name: @"getJSON"
+                                                 name: kGetJSON
                                                object: nil];
-    
 }
 
 
