@@ -11,3 +11,5 @@
 
 NSString* const kGetJSON = @"getJSON";
 NSString* const kDeleteBigWav = @"deleteBigWav";
+const NSUInteger kNumMinsPerClip = 5lu;
+const int32_t kTimescale = 1;

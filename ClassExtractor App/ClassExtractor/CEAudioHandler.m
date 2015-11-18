@@ -51,7 +51,8 @@
     
     AVAudioPlayer* audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL: fileURL error: nil];
     
-    audioPlayer.numberOfLoops = -1; // infinite number of loops
+    // 0 means it will play exactly once
+    audioPlayer.numberOfLoops = 0;
     
     [audioPlayer play];
     
@@ -197,11 +198,6 @@
 // taskFinished:
 //
 // Called when the task running afconvert is finished.
-//
-// [TODO] Make the number of minutes per each clip a constant
-// in a header so that if we change the 5 below, we won't also
-// have to change the 300 in
-// chopUpLargeAudioFile:withStartTime:toFilePath:
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)taskNotification
 {    
@@ -217,12 +213,12 @@
     _totalNumberOfSegments = 0;
     _numTimesCalled = 0;
     
-    // iterate through the audio file, five minutes at a time, and put each
-    // five minute segment into the resource path
+    // iterate through the audio file, kNumMinsPerClip minutes at a time, and put each
+    // kNumMinsPerClip minute segment into the resource path
     const NSUInteger kSecondsInAMinute = 60;
-    for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += 5)
+    for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += kNumMinsPerClip)
     {
-        CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, 1);
+        CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, kTimescale);
         NSValue* startValue = [NSValue valueWithBytes: &startTime objCType: @encode(CMTime)];
         [self chopUpLargeAudioFile: audioAsset
                      withStartTime: startValue
@@ -258,10 +254,10 @@
     if (exportSession == nil)
         return false;
     
-    // stopTime ends in 300 seconds (five minutes)
-    // No need to check if we've reached the end of the audio clip, as
-    // the exportSession is smart enough to know to just stop.
-    CMTime stopTime = CMTimeMake(startTime.value + 300, 1);
+    // no need to check if we've reached the end of the audio clip, as
+    // the exportSession is smart enough to know to stop
+    const NSUInteger kSecondsInAMinute = 60;
+    CMTime stopTime = CMTimeMake(startTime.value + kSecondsInAMinute * kNumMinsPerClip, kTimescale);
     CMTimeRange exportTimeRange = CMTimeRangeFromTimeToTime(startTime, stopTime);
     
     [exportSession setOutputFileType: @"com.apple.m4a-audio"];
