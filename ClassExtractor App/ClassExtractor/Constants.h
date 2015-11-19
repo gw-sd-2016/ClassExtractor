@@ -21,6 +21,12 @@ extern NSString* const kGetJSON;
 extern NSString* const kDeleteBigWav;
 
 
+// the name of the large audio file that is generated
+// from the conversion of the user selected file to
+// a wav file
+extern NSString* const kBigFileName;
+
+
 // the number of minutes per small audio clip (the maximum
 // number of minutes Watson allows is 5)
 //

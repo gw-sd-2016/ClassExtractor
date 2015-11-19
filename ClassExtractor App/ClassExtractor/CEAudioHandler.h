@@ -20,6 +20,6 @@
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
 - (void) deleteBigWav: (NSNotification*)notification;
 - (void) convertToWav: (NSString*)pathToAudio isConvertingFiveMinuteFile: (bool)isConvertingFive;
-- (bool) chopUpLargeAudioFile: (AVAsset*)avAsset withStartTime: (NSValue*)startTimeValue toFilePath: (NSString*)filePath;
+- (bool) chopUpLargeAudioFile: (AVURLAsset*)avAsset;
 
 @end
