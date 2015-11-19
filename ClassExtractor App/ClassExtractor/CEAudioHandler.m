@@ -98,8 +98,8 @@
 // the audio file into five minute segments (and in the process
 // converting them to m4as (this is automatic, see the second
 // [TODO] in this comment)), multipleConvertToWav converts each
-// of those files back to wavs. In the future, each of these
-// files will then get sent to Watson for transliteration.
+// of those files back to wavs. Each of these files are then
+// sent to Watson for transliteration.
 //
 // [TODO] This function and multipleConvertToWav are somewhat
 // repetitive. Combine the two and/or distill out what they
