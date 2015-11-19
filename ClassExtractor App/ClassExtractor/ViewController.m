@@ -97,7 +97,7 @@
         {
             // we only allow selection of one file, so it's ok to just get the first object
             NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
-            [[CEAudioHandler sharedInstance] singleConvertToWav: selectedFilePath];
+            [[CEAudioHandler sharedInstance] convertToWav: selectedFilePath isConvertingFiveMinuteFile: false];
         }
     }];
 }

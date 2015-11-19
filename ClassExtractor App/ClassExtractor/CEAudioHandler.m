@@ -85,65 +85,24 @@
 
 
 // ------------------------------------------------------------
-// singleConvertToWav:
-//
-// This converts one audio file to a wav file, and puts it in
-// this bundle's resource directory. AVAssets only like wavs,
-// so we have to convert the file the user gives us to a wav
-// before manipulating it. Send up a notification when we're
-// done converting.
-//
-// The workflow is as follows: user selects file, singleConvertToWav
-// converts that file to a wav, chopUpLargeAudioFile splices
-// the audio file into five minute segments (and in the process
-// converting them to m4as (this is automatic, see the second
-// [TODO] in this comment)), multipleConvertToWav converts each
-// of those files back to wavs. Each of these files are then
-// sent to Watson for transliteration.
-//
-// [TODO] This function and multipleConvertToWav are somewhat
-// repetitive. Combine the two and/or distill out what they
-// have in common.
-//
-// [TODO] This convert, chop-up, reconvert methodology is obtuse
-// and inefficient (especially with so many calls to afconvert).
-// Make it so there is only one conversion necessary.
-// ------------------------------------------------------------
-- (void) singleConvertToWav: (NSString*)pathToAudio
-{
-    // there's currently no reason this function will ever be called in
-    // the background, but if that ever changes, we'll be sure this
-    // function runs on the main thread (see the header comment of
-    // multipleConvertToWav:)
-    // (we don't have to check if we're on the main thread, as the
-    // block is scheduled regularly and executed when the run loop
-    // of the main thread is run, which is the same as if this function
-    // were called from the main thread and this GCD call weren't here)
-    dispatch_async(dispatch_get_main_queue(), ^{
-        NSTask* task = [[NSTask alloc] init];
-        [task setLaunchPath: @"/usr/bin/afconvert"];
-        
-        NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, [self getBigWavFilePath]];
-        [task setArguments: arguments];
-        
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector(taskFinished:)
-                                                     name: NSTaskDidTerminateNotification
-                                                   object: task];
-        
-        [task launch];
-    });
-}
-
-
-// ------------------------------------------------------------
-// multipleConvertToWav:
+// convertToWav:isConvertingFiveMinuteFile:
 //
 // This converts an audio file to a wav file, and puts it in
-// this bundle's resource directory. The purpose of this
-// function is convert all of the newly chopped up files into
-// wavs, since AVAssetExportSession can only export files as
-// m4as.
+// this bundle's resource directory. This functions serves
+// two purposes: the first is to convert the file the user
+// gives us to a wav, since AVAssets only like wavs. The second
+// is to convert all of the newly chopped up five minute files
+// back into wavs, since AVAssetExportSession can only export files
+// as m4as.
+//
+// The workflow is as follows: user selects file,
+// convertToWav:isConvertingFiveMinuteFile: converts that file to
+// a wav, chopUpLargeAudioFile splices the audio file into five
+// minute segments (and in the process converting them to m4as (this
+// is automatic, see the [TODO] in this comment)),
+// convertToWav:isConvertingFiveMinuteFile: converts each
+// of those files back to wavs. Each of these files are then
+// sent to Watson for transliteration.
 //
 // This function uses NSTask, which is not thread safe (while it
 // is true that we're not working with the same instance of NSTask
@@ -157,30 +116,55 @@
 // that notification gets posted from that runloop (which is then
 // promptly destroyed), meaning it never has a chance to be
 // delivered.
+//
+// [TODO] This convert, chop-up, reconvert methodology is obtuse
+// and inefficient (especially with so many calls to afconvert).
+// Make it so there is only one conversion necessary.
 // ------------------------------------------------------------
-- (void) multipleConvertToWav: (NSString*)filePath
+- (void) convertToWav: (NSString*)pathToAudio isConvertingFiveMinuteFile: (bool)isConvertingFive
 {
+    // if isConvertingFives is true, this function will have been called
+    // from the main thread, and if it's false, this function will have
+    // been called from a background thread, but we don't have to check if
+    // we're on the main thread as the block is scheduled regularly and
+    // executed when the run loop of the main thread is run, which is the
+    // same as if this function were called from the main thread and this
+    // GCD call weren't here
     dispatch_async(dispatch_get_main_queue(), ^{
-        ++_numTimesCalled;
-        if (_numTimesCalled == _totalNumberOfSegments)
-            [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
-        
-        NSURL* fileURL = [NSURL URLWithString: filePath];
-        NSString* lastComponent = [fileURL lastPathComponent];
-        NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - 4]; // we know the extension is m4a,
-                                                                                              // so it's 4 chars with the "."
-        
         NSTask* task = [[NSTask alloc] init];
         [task setLaunchPath: @"/usr/bin/afconvert"];
+        NSMutableArray* arguments = [[NSMutableArray alloc] initWithObjects: @"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, nil];
         
-        NSArray* arguments = @[@"-d", @"LEI16", @"-f", @"WAVE", filePath, [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
+        if (isConvertingFive)
+        {
+            ++_numTimesCalled;
+            if (_numTimesCalled == _totalNumberOfSegments)
+                [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
+            
+            // we know the extension is going to be .m4a
+            const NSUInteger lengthOfExt = 4;
+            NSURL* fileURL = [NSURL URLWithString: pathToAudio];
+            NSString* lastComponent = [fileURL lastPathComponent];
+            NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - lengthOfExt];
+            
+            [arguments addObject: [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
+            
+            [[NSNotificationCenter defaultCenter] addObserver: self
+                                                     selector: @selector(multipleConvertTaskFinished:)
+                                                         name: NSTaskDidTerminateNotification
+                                                       object: task];
+        }
+        else
+        {
+            [arguments addObject: [self getBigWavFilePath]];
+            
+            [[NSNotificationCenter defaultCenter] addObserver: self
+                                                     selector: @selector(taskFinished:)
+                                                         name: NSTaskDidTerminateNotification
+                                                       object: task];
+        }
+        
         [task setArguments: arguments];
-        
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector(multipleConvertTaskFinished:)
-                                                     name: NSTaskDidTerminateNotification
-                                                   object: task];
-        
         [task launch];
     });
 }
@@ -287,7 +271,7 @@
     [exportSession setTimeRange: exportTimeRange];
     
     [exportSession exportAsynchronouslyWithCompletionHandler: ^{
-        [[CEAudioHandler sharedInstance] multipleConvertToWav: filePath];
+        [[CEAudioHandler sharedInstance] convertToWav: filePath isConvertingFiveMinuteFile: true];
     }];
     
     return true;
