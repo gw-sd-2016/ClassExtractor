@@ -222,9 +222,11 @@
     CMTime duration = [avAsset duration];
     double seconds = (double)duration.value / (double)duration.timescale;
     
+    const NSUInteger kSecondsInAMinute = 60;
+    _totalNumberOfSegments = ceil((double)seconds / (double)(kNumMinsPerClip * kSecondsInAMinute));
+    
     // iterate through the audio file, kNumMinsPerClip minutes at a time, and put each
     // kNumMinsPerClip minute segment into the resource path
-    const NSUInteger kSecondsInAMinute = 60;
     for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += kNumMinsPerClip)
     {
         CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, kTimescale);
@@ -245,7 +247,7 @@
         CMTime stopTime = CMTimeMake(startTime.value + kSecondsInAMinute * kNumMinsPerClip, kTimescale);
         CMTimeRange exportTimeRange = CMTimeRangeFromTimeToTime(startTime, stopTime);
         
-        NSString* filePath = [NSString stringWithFormat: @"%@/trimmed%lu.m4a", [[NSBundle mainBundle] resourcePath], (unsigned long)minutes];
+        __block NSString* filePath = [NSString stringWithFormat: @"%@/trimmed%lu.m4a", [[NSBundle mainBundle] resourcePath], (unsigned long)minutes];
         [exportSession setOutputFileType: @"com.apple.m4a-audio"];
         [exportSession setOutputURL: [NSURL fileURLWithPath: filePath]];
         [exportSession setTimeRange: exportTimeRange];
@@ -253,8 +255,6 @@
         [exportSession exportAsynchronouslyWithCompletionHandler: ^{
             [[CEAudioHandler sharedInstance] convertToWav: filePath isConvertingFiveMinuteFile: true];
         }];
-        
-        ++_totalNumberOfSegments;
     }
     
     return true;
