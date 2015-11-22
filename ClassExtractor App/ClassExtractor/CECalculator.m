@@ -55,14 +55,7 @@
         [frequencies addObject: curWordDict];
     }
     
-    // order the frequencies
-    NSArray* sortedFreqs = [frequencies sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
-        NSNumber* firstNum = [[firstDict allValues] firstObject];
-        NSNumber* secondNum = [[secondDict allValues] firstObject];
-        return [firstNum compare: secondNum];
-    }];
-    
-    return sortedFreqs;
+    return [CECalculator sortFrequencyArray: frequencies];
 }
 
 
@@ -75,12 +68,8 @@
 // we must combine those arrays, making sure to account for
 // duplicates (i.e. if the professor said "marginal utility" in
 // both the first segment and the third segment, we should tally
-// up and combine both of those frequencies).
-//
-// [TODO] Since getJSONFromWatson in ViewController.m is broken
-// right now, this function hasn't been fully tested. Make sure
-// that duplicate detection is correct and that the newly created
-// frequency dictionary has the right value.
+// up and combine both of those frequencies). The combined
+// array is ascending by number of occurrences.
 // ------------------------------------------------------------
 + (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs
 {
@@ -111,7 +100,31 @@
         }
     }
     
-    return allFreqs;
+    return [CECalculator sortFrequencyArray: allFreqs];
+}
+
+
+// ------------------------------------------------------------
+// sortFrequencyArray:
+//
+// Sorts the argument array in ascending order by order of
+// occurrences of each word.
+// ------------------------------------------------------------
++ (NSArray*) sortFrequencyArray: (NSArray<NSDictionary*>*)unsorted
+{
+    if (unsorted == nil || [unsorted firstObject] == nil)
+        return nil;
+    
+    if ([unsorted count] == 1)
+        return unsorted;
+    
+    NSArray* sorted = [unsorted sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
+        NSNumber* firstNum = [[firstDict allValues] firstObject];
+        NSNumber* secondNum = [[secondDict allValues] firstObject];
+        return [firstNum compare: secondNum];
+    }];
+    
+    return sorted;
 }
 
 @end
