@@ -16,7 +16,7 @@
     NSUInteger _numTimesCalled;
 }
 
-+ (id) sharedInstance;
++ (CEAudioHandler*) sharedInstance;
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
 - (void) deleteBigWav: (NSNotification*)notification;
 - (void) convertToWav: (NSString*)pathToAudio isConvertingFiveMinuteFile: (bool)isConvertingFive;

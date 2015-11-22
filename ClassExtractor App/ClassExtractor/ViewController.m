@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "CECalculator.h"
+#import "CEConnector.h"
 #import "Constants.h"
 
 // ============================================================
@@ -23,7 +24,7 @@
 {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter] addObserver: self
+    [[NSNotificationCenter defaultCenter] addObserver: [CEConnector sharedInstance]
                                              selector: @selector(getJSONFromWatsonAsync:)
                                                  name: kGetJSON
                                                object: nil];
@@ -38,44 +39,6 @@
     [super viewDidAppear];
     
     [[[self view] window] setTitle: @"Class Extractor"];
-}
-
-
-// ------------------------------------------------------------
-// getJSONFromWatson:
-//
-// Send the parameter's audio file to Watson for transliteration.
-//
-// [TODO] Investigate into using libcurl here instead of NSTask
-// ------------------------------------------------------------
-- (void) getJSONFromWatsonAsync: (NSNotification*)notification
-{
-    dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(globalConcurrentQueue, ^{
-        NSTask* task = [[NSTask alloc] init];
-        [task setLaunchPath: @"/usr/bin/curl"];
-        
-        NSString* credentials = @"";
-        
-        NSString* audioPath = [NSString stringWithFormat: @"@%@", [notification object]];
-        
-        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/wav", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
-        [task setArguments: arguments];
-        
-        NSPipe* pipe = [NSPipe pipe];
-        [task setStandardOutput: pipe];
-        
-        NSFileHandle* file = [pipe fileHandleForReading];
-        
-        [task launch];
-        
-        NSData* audioData = [file readDataToEndOfFile];
-        
-        NSString* strData = [[NSString alloc]initWithData: audioData
-                                                 encoding: NSUTF8StringEncoding];
-        
-        NSLog(@"%@", strData);
-    });
 }
 
 

@@ -15,6 +15,7 @@
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
 		8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A6E3C1BFC11C20090E8AA /* Constants.m */; };
+		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
 		8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */; };
 /* End PBXBuildFile section */
@@ -54,6 +55,8 @@
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B2A6E3C1BFC11C20090E8AA /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
+		8B7D28721C0272A50059FE84 /* CEConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConnector.h; sourceTree = "<group>"; };
+		8B7D28731C0272A50059FE84 /* CEConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEConnector.m; sourceTree = "<group>"; };
 		8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEAudioHandler.h; sourceTree = "<group>"; };
 		8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEAudioHandler.m; sourceTree = "<group>"; };
 		8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECalculator.h; sourceTree = "<group>"; };
@@ -122,6 +125,8 @@
 				8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */,
 				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
 				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
+				8B7D28721C0272A50059FE84 /* CEConnector.h */,
+				8B7D28731C0272A50059FE84 /* CEConnector.m */,
 			);
 			path = ClassExtractor;
 			sourceTree = "<group>";
@@ -304,6 +309,7 @@
 				8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */,
 				8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */,
 				8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */,
+				8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */,
 				8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
