@@ -17,12 +17,9 @@
 //
 // Returns an array of dictionaries whose only key/value pair
 // is each word with its number of occurrences. The array is
-// ordered from most frequent to least frequent.
+// ascending by number of occurrences.
 //
-// [TODO] Since getJSONFromWatson in ViewController.m is broken
-// right now, this function hasn't been fully tested. Make sure
-// that frequencies are correct and that the sorting method
-// sorts the frequencies from most to least frequent.
+// [TODO] Hook up this function to Watson's output.
 //
 // [TODO] Add temporal information into this array, so that it
 // not only keeps track of how many times something is said, but
@@ -30,36 +27,31 @@
 //
 // [TODO] After completing the above [TODO], add a sorting ability
 // by time.
-//
-// [TODO] When we separate the components of the string by spaces,
-// we get each word *with any surrounding punctuation*. This means
-// that if the professor says "demand" in the middle of a sentence
-// and at the end of a sentence (where there's a period), it will
-// be counted as two different words. Investigate if Aylien
-// is able to see those two words as the same thing, and if not,
-// account for the punctuation here. Check also for capitalization
-// differences (for if the word comes at the beginning of a
-// sentence).
 // ------------------------------------------------------------
-- (NSArray*) calculateFrequencyOfWords: (NSArray*)words inString: (NSString*)text
++ (NSArray*) calculateFrequencyOfWords: (NSArray*)words inString: (NSString*)text
 {
     NSMutableArray* frequencies = [[NSMutableArray alloc] init];
-    NSArray* textWords = [text componentsSeparatedByString: @" "];
+    NSString* compText = [[NSString stringWithString: text] lowercaseString];
     
-    // iterate through the concepts, as determined by Aylien
     for (NSUInteger i = 0; i < [words count]; ++i)
     {
         NSUInteger curWordCount = 0;
+        NSString* curWord = [[words objectAtIndex: i] lowercaseString];
+        NSRange compTextRange = [compText rangeOfString: curWord];
         
-        // iterate through the original lecture text
-        for (NSUInteger j = 0; j < [textWords count]; ++j)
+        // check if there are any more occurrences of the word in
+        // the original string
+        while (compTextRange.location != NSNotFound)
         {
-            if ([[words objectAtIndex: i] isEqualToString: [textWords objectAtIndex: j]])
-                ++curWordCount;
+            ++curWordCount;
+            
+            // create a new string that starts from where the word ends
+            compText = [compText substringFromIndex: compTextRange.location + compTextRange.length];
+            compTextRange = [compText rangeOfString: curWord];
         }
         
         // the key is the word and the value is its frequency
-        NSDictionary* curWordDict = @{[words objectAtIndex: i] : [NSNumber numberWithInteger: curWordCount]};
+        NSDictionary* curWordDict = @{curWord : [NSNumber numberWithInteger: curWordCount]};
         [frequencies addObject: curWordDict];
     }
     
@@ -90,7 +82,7 @@
 // that duplicate detection is correct and that the newly created
 // frequency dictionary has the right value.
 // ------------------------------------------------------------
-- (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs
++ (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs
 {
     NSMutableArray* allFreqs = [firstFreqs mutableCopy];
     [allFreqs addObjectsFromArray: secondFreqs];

@@ -10,7 +10,7 @@
 
 @interface CECalculator : NSObject
 
-- (NSArray*) calculateFrequencyOfWords: (NSArray*)words inString: (NSString*)text;
-- (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs;
++ (NSArray*) calculateFrequencyOfWords: (NSArray*)words inString: (NSString*)text;
++ (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs;
 
 @end

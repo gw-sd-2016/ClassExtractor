@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "CECalculator.h"
 #import "Constants.h"
 
 // ============================================================
