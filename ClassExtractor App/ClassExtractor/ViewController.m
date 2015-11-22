@@ -94,7 +94,7 @@
     [openFileDialogue setCanChooseDirectories: false];
     
     [openFileDialogue beginSheetModalForWindow: [[self view] window] completionHandler: ^(NSInteger response) {
-        if (response == NSModalResponseOK)
+        if (NSModalResponseOK == response)
         {
             // we only allow selection of one file, so it's ok to just get the first object
             NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];

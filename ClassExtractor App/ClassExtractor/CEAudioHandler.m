@@ -26,14 +26,14 @@
 {
     static CEAudioHandler* instance = nil;
     
-    if (instance == nil)
+    if (nil == instance)
     {
         instance = [[CEAudioHandler alloc] init];
         
-        [[NSNotificationCenter defaultCenter] addObserver: [CEAudioHandler sharedInstance]
+        [[NSNotificationCenter defaultCenter] addObserver: instance
                                                  selector: @selector(deleteBigWav:)
                                                      name: kDeleteBigWav
-                                                   object: [CEAudioHandler sharedInstance]];
+                                                   object: instance];
     }
     
     return instance;
@@ -201,7 +201,8 @@
             [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON
                                                                 object: convertedPath];
             
-            NSString* m4aPath = [taskArguments objectAtIndex: [taskArguments count] - 2];
+            const NSUInteger m4aPathIndex = [taskArguments count] - 2;
+            NSString* m4aPath = [taskArguments objectAtIndex: m4aPathIndex];
             NSError* error;
             [[NSFileManager defaultManager] removeItemAtPath: m4aPath error: &error];
         });
@@ -233,12 +234,12 @@
         
         // we only care about the first audio track
         AVAssetTrack* firstTrack = [[avAsset tracksWithMediaType: AVMediaTypeAudio] firstObject];
-        if (firstTrack == nil)
+        if (nil == firstTrack)
             return false;
         
         AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset: avAsset
                                                                                 presetName: AVAssetExportPresetAppleM4A];
-        if (exportSession == nil)
+        if (nil == exportSession)
             return false;
         
         // no need to check if we've reached the end of the audio clip, as

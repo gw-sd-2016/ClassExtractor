@@ -28,7 +28,7 @@
 // [TODO] After completing the above [TODO], add a sorting ability
 // by time.
 // ------------------------------------------------------------
-+ (NSArray*) calculateFrequencyOfWords: (NSArray*)words inString: (NSString*)text
++ (NSArray*) calculateFrequencyOfWords: (NSArray<NSString*>*)words inString: (NSString*)text
 {
     NSMutableArray* frequencies = [[NSMutableArray alloc] init];
     NSString* compText = [[NSString stringWithString: text] lowercaseString];
@@ -41,7 +41,7 @@
         
         // check if there are any more occurrences of the word in
         // the original string
-        while (compTextRange.location != NSNotFound)
+        while (NSNotFound != compTextRange.location)
         {
             ++curWordCount;
             
@@ -71,7 +71,7 @@
 // up and combine both of those frequencies). The combined
 // array is ascending by number of occurrences.
 // ------------------------------------------------------------
-+ (NSArray*) joinArrayOfFrequencies: (NSArray*)firstFreqs withOtherArrayOfFrequencies: (NSArray*)secondFreqs
++ (NSArray*) joinArrayOfFrequencies: (NSArray<NSDictionary*>*)firstFreqs withOtherArrayOfFrequencies: (NSArray<NSDictionary*>*)secondFreqs
 {
     NSMutableArray* allFreqs = [firstFreqs mutableCopy];
     [allFreqs addObjectsFromArray: secondFreqs];
@@ -112,10 +112,10 @@
 // ------------------------------------------------------------
 + (NSArray*) sortFrequencyArray: (NSArray<NSDictionary*>*)unsorted
 {
-    if (unsorted == nil || [unsorted firstObject] == nil)
+    if (nil == unsorted || nil == [unsorted firstObject])
         return nil;
     
-    if ([unsorted count] == 1)
+    if (1 == [unsorted count])
         return unsorted;
     
     NSArray* sorted = [unsorted sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
