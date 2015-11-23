@@ -24,6 +24,8 @@
 {
     [super viewDidLoad];
     
+    // [TODO] Remove this observer, and instead have CEAudioHandler call
+    // the method directly.
     [[NSNotificationCenter defaultCenter] addObserver: [CEConnector sharedInstance]
                                              selector: @selector(getJSONFromWatsonAsync:)
                                                  name: kGetJSON

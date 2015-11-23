@@ -27,7 +27,13 @@
                                                          options: kNilOptions
                                                            error: &error];
     
-    return feed;
+    if (nil == error)
+        return feed;
+    else
+    {
+        NSLog(@"%@", error);
+        return nil;
+    }
 }
 
 @end
