@@ -68,27 +68,3 @@
 
 @end
 
-
-// ============================================================
-// CEJSONManipulator
-// ============================================================
-@implementation CEJSONManipulator
-
-
-// ------------------------------------------------------------
-// getJSONForData:
-//
-// Given an NSData object, serialize the data into an
-// NSDictionary and return that object.
-// ------------------------------------------------------------
-+ (NSDictionary*) getJSONForData: (NSData*)data
-{
-    NSError* error;
-    NSDictionary* feed = [NSJSONSerialization JSONObjectWithData: data
-                                                         options: kNilOptions
-                                                           error: &error];
-
-    return feed;
-}
-
-@end

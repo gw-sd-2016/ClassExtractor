@@ -18,6 +18,7 @@
 		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
 		8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */; };
+		8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEAudioHandler.m; sourceTree = "<group>"; };
 		8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECalculator.h; sourceTree = "<group>"; };
 		8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CECalculator.m; sourceTree = "<group>"; };
+		8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEJSONManipulator.h; sourceTree = "<group>"; };
+		8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEJSONManipulator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +130,8 @@
 				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
 				8B7D28721C0272A50059FE84 /* CEConnector.h */,
 				8B7D28731C0272A50059FE84 /* CEConnector.m */,
+				8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */,
+				8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */,
 			);
 			path = ClassExtractor;
 			sourceTree = "<group>";
@@ -308,6 +313,7 @@
 				8B0375EC1BCF0E8F005DFD86 /* main.m in Sources */,
 				8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */,
 				8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */,
+				8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */,
 				8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */,
 				8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */,
 				8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */,

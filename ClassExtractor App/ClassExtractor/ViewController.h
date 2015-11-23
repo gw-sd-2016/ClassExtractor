@@ -19,10 +19,3 @@
 - (IBAction) importAudioFile: (id)sender;
 
 @end
-
-
-@interface CEJSONManipulator : NSObject
-
-+ (NSDictionary*) getJSONForData: (NSData*)data;
-
-@end
