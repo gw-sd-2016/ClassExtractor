@@ -61,9 +61,14 @@
     [openFileDialogue beginSheetModalForWindow: [[self view] window] completionHandler: ^(NSInteger response) {
         if (NSModalResponseOK == response)
         {
-            // we only allow selection of one file, so it's ok to just get the first object
-            NSString* selectedFilePath = [[[openFileDialogue URLs] firstObject] path];
-            [[CEAudioHandler sharedInstance] convertToWav: selectedFilePath isConvertingFiveMinuteFile: false];
+            // we only allow selection of one file, so it's ok to get just the first object
+            NSURL* selectedFilePath = [[openFileDialogue URLs] firstObject];
+            AVURLAsset* selectedAudioAsset = [[AVURLAsset alloc] initWithURL: selectedFilePath options: nil];
+            
+            // [TODO] Instead of just logging the error, report it to the user in some nice
+            // GUI fashion
+            if (![[CEAudioHandler sharedInstance] chopUpLargeAudioFile: selectedAudioAsset])
+                NSLog(@"Error chopping up large audio file.");
         }
     }];
 }

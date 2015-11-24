@@ -68,7 +68,7 @@
 
 
 // ------------------------------------------------------------
-// getConceptsJSON:
+// getConceptsJSONAsync:
 //
 // Use the Mashape API ( https://market.mashape.com/aylien/text-analysis )
 // to talk to the Aylien API for concept extraction. For now,

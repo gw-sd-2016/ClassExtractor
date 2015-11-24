@@ -27,14 +27,7 @@
     static CEAudioHandler* instance = nil;
     
     if (nil == instance)
-    {
         instance = [[CEAudioHandler alloc] init];
-        
-        [[NSNotificationCenter defaultCenter] addObserver: instance
-                                                 selector: @selector(deleteBigWav:)
-                                                     name: kDeleteBigWav
-                                                   object: instance];
-    }
     
     return instance;
 }
@@ -68,19 +61,6 @@
 - (NSString*) getBigWavFilePath
 {
     return [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], kBigFileName];
-}
-
-
-// ------------------------------------------------------------
-// deleteBigWav:
-//
-// After we've chopped up the big wav file into five minute
-// segments, we don't need it anymore and it can be deleted.
-// ------------------------------------------------------------
-- (void) deleteBigWav: (NSNotification*)notification
-{
-    NSError* error;
-    [[NSFileManager defaultManager] removeItemAtPath: [self getBigWavFilePath] error: &error];
 }
 
 
@@ -121,7 +101,7 @@
 // and inefficient (especially with so many calls to afconvert).
 // Make it so there is only one conversion necessary.
 // ------------------------------------------------------------
-- (void) convertToWav: (NSString*)pathToAudio isConvertingFiveMinuteFile: (bool)isConvertingFive
+- (void) convertToWav: (NSString*)pathToAudio
 {
     // if isConvertingFives is true, this function will have been called
     // from the main thread, and if it's false, this function will have
@@ -140,22 +120,13 @@
                                                      name: NSTaskDidTerminateNotification
                                                    object: task];
         
-        if (isConvertingFive)
-        {
-            ++_numTimesCalled;
-            if (_numTimesCalled == _totalNumberOfSegments)
-                [[NSNotificationCenter defaultCenter] postNotificationName: kDeleteBigWav object: self];
-            
-            // we know the extension is going to be .m4a
-            const NSUInteger lengthOfExt = 4;
-            NSURL* fileURL = [NSURL URLWithString: pathToAudio];
-            NSString* lastComponent = [fileURL lastPathComponent];
-            NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - lengthOfExt];
-            
-            [arguments addObject: [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
-        }
-        else
-            [arguments addObject: [self getBigWavFilePath]];
+        // we know the extension is going to be .m4a
+        const NSUInteger lengthOfExt = 4;
+        NSURL* fileURL = [NSURL URLWithString: pathToAudio];
+        NSString* lastComponent = [fileURL lastPathComponent];
+        NSString* noExtension = [lastComponent substringToIndex: [lastComponent length] - lengthOfExt];
+        
+        [arguments addObject: [NSString stringWithFormat: @"%@/%@.wav", [[NSBundle mainBundle] resourcePath], noExtension]];
         
         [task setArguments: arguments];
         [task launch];
@@ -166,8 +137,7 @@
 // ------------------------------------------------------------
 // taskFinished:
 //
-// Called in two cases: when the task running afconvert is
-// finished and when the task converting an m4a file to a wav
+// Called when the task converting an m4a file to a wav
 // file has completed.
 // ------------------------------------------------------------
 - (void) taskFinished: (NSNotification*)notification
@@ -180,33 +150,19 @@
     
     __block NSArray* taskArguments = [finishedTask arguments];
     __block NSString* convertedPath = [taskArguments lastObject];
-    NSString* lastComponent = [[NSURL URLWithString: convertedPath] lastPathComponent];
     
-    if ([lastComponent isEqualToString: [NSString stringWithFormat: @"%@.wav", kBigFileName]])
-    {
-        NSURL* convertedURL = [NSURL fileURLWithPath: convertedPath isDirectory: false];
-        AVURLAsset* audioAsset = [[AVURLAsset alloc] initWithURL: convertedURL options: nil];
-
-        _totalNumberOfSegments = 0;
-        _numTimesCalled = 0;
+    // now that we're done with NSTask, we can switch back to a background thread for
+    // Watson transliteration (see the header comment of convertToWav:)
+    dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(globalConcurrentQueue, ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON
+                                                            object: convertedPath];
         
-        [self chopUpLargeAudioFile: audioAsset];
-    }
-    else
-    {
-        // now that we're done with NSTask, we can switch back to a background thread for
-        // Watson transliteration (see the header comment of convertToWav:isConvertingFiveMinuteFile:)
-        dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-        dispatch_async(globalConcurrentQueue, ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON
-                                                                object: convertedPath];
-            
-            const NSUInteger m4aPathIndex = [taskArguments count] - 2;
-            NSString* m4aPath = [taskArguments objectAtIndex: m4aPathIndex];
-            NSError* error;
-            [[NSFileManager defaultManager] removeItemAtPath: m4aPath error: &error];
-        });
-    }
+        const NSUInteger m4aPathIndex = [taskArguments count] - 2;
+        NSString* m4aPath = [taskArguments objectAtIndex: m4aPathIndex];
+        NSError* error;
+        [[NSFileManager defaultManager] removeItemAtPath: m4aPath error: &error];
+    });
 }
 
 
@@ -217,14 +173,18 @@
 // work). Splices a large audio file into a smaller one,
 // creating an audio file of length kNumMinsPerClip. The truncated
 // audio file is then dropped at the resource path.
+//
+// [TODO] Do a comprehensive test of which file formats work
+// here. It is known that mp3 does.
 // ------------------------------------------------------------
-- (bool) chopUpLargeAudioFile: (AVURLAsset*)avAsset
+- (bool) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
 {
-    CMTime duration = [avAsset duration];
-    double seconds = (double)duration.value / (double)duration.timescale;
+    CMTime duration = [selectedAudioAsset duration];
+    if (0 == duration.value)
+        return false;
     
+    const double seconds = (double)duration.value / (double)duration.timescale;
     const NSUInteger kSecondsInAMinute = 60;
-    _totalNumberOfSegments = ceil((double)seconds / (double)(kNumMinsPerClip * kSecondsInAMinute));
     
     // iterate through the audio file, kNumMinsPerClip minutes at a time, and put each
     // kNumMinsPerClip minute segment into the resource path
@@ -232,12 +192,7 @@
     {
         CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, kTimescale);
         
-        // we only care about the first audio track
-        AVAssetTrack* firstTrack = [[avAsset tracksWithMediaType: AVMediaTypeAudio] firstObject];
-        if (nil == firstTrack)
-            return false;
-        
-        AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset: avAsset
+        AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset: selectedAudioAsset
                                                                                 presetName: AVAssetExportPresetAppleM4A];
         if (nil == exportSession)
             return false;
@@ -254,7 +209,7 @@
         [exportSession setTimeRange: exportTimeRange];
         
         [exportSession exportAsynchronouslyWithCompletionHandler: ^{
-            [[CEAudioHandler sharedInstance] convertToWav: filePath isConvertingFiveMinuteFile: true];
+            [[CEAudioHandler sharedInstance] convertToWav: filePath];
         }];
     }
     

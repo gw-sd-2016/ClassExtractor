@@ -11,15 +11,10 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface CEAudioHandler : NSObject
-{
-    NSUInteger _totalNumberOfSegments;
-    NSUInteger _numTimesCalled;
-}
 
 + (CEAudioHandler*) sharedInstance;
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
-- (void) deleteBigWav: (NSNotification*)notification;
-- (void) convertToWav: (NSString*)pathToAudio isConvertingFiveMinuteFile: (bool)isConvertingFive;
-- (bool) chopUpLargeAudioFile: (AVURLAsset*)avAsset;
+- (void) convertToWav: (NSString*)pathToAudio;
+- (bool) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset;
 
 @end

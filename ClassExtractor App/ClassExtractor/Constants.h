@@ -15,12 +15,6 @@
 extern NSString* const kGetJSON;
 
 
-// NSNotification name for when the big wav file has been
-// chopped up into smaller audio clips and is no longer
-// needed
-extern NSString* const kDeleteBigWav;
-
-
 // the name of the large audio file that is generated
 // from the conversion of the user selected file to
 // a wav file

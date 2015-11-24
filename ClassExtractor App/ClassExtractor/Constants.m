@@ -10,7 +10,6 @@
 #import "Constants.h"
 
 NSString* const kGetJSON = @"getJSON";
-NSString* const kDeleteBigWav = @"deleteBigWav";
 NSString* const kBigFileName = @"bigFile";
 const NSUInteger kNumMinsPerClip = 5lu;
 const int32_t kTimescale = 1;
