@@ -54,6 +54,9 @@
 {
     NSOpenPanel* openFileDialogue = [NSOpenPanel openPanel];
     
+    // only allow the user to select audio file types
+    [openFileDialogue setAllowedFileTypes: [AVURLAsset audiovisualTypes]];
+    
     [openFileDialogue beginSheetModalForWindow: [[self view] window] completionHandler: ^(NSInteger response) {
         if (NSModalResponseOK == response)
         {

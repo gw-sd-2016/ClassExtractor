@@ -11,7 +11,7 @@
 
 NSString* const kGetJSON = @"getJSON";
 NSString* const kBigFileName = @"bigFile";
-NSString* const kZeroDurationError = @"The file's duration is 0. Please make sure you selected an audio file.";
+NSString* const kZeroDurationError = @"The file's duration is 0.";
 NSString* const kExportSessionCreationError = @"The export session could not be created.";
 NSString* const kChoppingSuccess = @"choppingSuccess"; // doesn't need to be proper English as
                                                        // this is never displayed to the user

@@ -179,10 +179,6 @@
 // ------------------------------------------------------------
 - (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
 {
-    // [TODO] Perform a more comprehensive test for whether the selected
-    // file is an audio file, and if it is but not a type that AVURLAsset
-    // is able to support (according to [AVURLAsset audiovisualTypes]),
-    // convert it to a type that is.
     const CMTime kDuration = [selectedAudioAsset duration];
     if (0 == kDuration.value)
         return kZeroDurationError;
