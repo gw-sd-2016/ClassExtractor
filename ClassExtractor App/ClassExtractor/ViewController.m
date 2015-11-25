@@ -54,10 +54,6 @@
 {
     NSOpenPanel* openFileDialogue = [NSOpenPanel openPanel];
     
-    [openFileDialogue setCanChooseFiles: true];
-    [openFileDialogue setAllowsMultipleSelection: false];
-    [openFileDialogue setCanChooseDirectories: false];
-    
     [openFileDialogue beginSheetModalForWindow: [[self view] window] completionHandler: ^(NSInteger response) {
         if (NSModalResponseOK == response)
         {
@@ -67,8 +63,11 @@
             
             // [TODO] Instead of just logging the error, report it to the user in some nice
             // GUI fashion
-            if (![[CEAudioHandler sharedInstance] chopUpLargeAudioFile: selectedAudioAsset])
-                NSLog(@"Error chopping up large audio file.");
+            // [TODO] If this fails, kill all connections to Watson and don't process
+            // any more audio files
+            NSString* result = [[CEAudioHandler sharedInstance] chopUpLargeAudioFile: selectedAudioAsset];
+            if (![result isEqualToString: kChoppingSuccess])
+                NSLog(@"%@", result);
         }
     }];
 }

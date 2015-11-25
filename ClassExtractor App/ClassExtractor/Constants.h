@@ -21,6 +21,20 @@ extern NSString* const kGetJSON;
 extern NSString* const kBigFileName;
 
 
+// the input had a duration of zero (possibly because
+// the selected file wasn't an audio file)
+extern NSString* const kZeroDurationError;
+
+
+// there was an issue creating the AVAssetExportSession
+extern NSString* const kExportSessionCreationError;
+
+
+// the large audio file was successfully chopped up
+// into shorter files
+extern NSString* const kChoppingSuccess;
+
+
 // the number of minutes per small audio clip (the maximum
 // number of minutes Watson allows is 5)
 //

@@ -175,45 +175,50 @@
 // audio file is then dropped at the resource path.
 //
 // [TODO] Do a comprehensive test of which file formats work
-// here. It is known that mp3 does.
+// here. It is known that mp3 and wav do.
 // ------------------------------------------------------------
-- (bool) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
+- (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
 {
-    CMTime duration = [selectedAudioAsset duration];
-    if (0 == duration.value)
-        return false;
+    // [TODO] Perform a more comprehensive test for whether the selected
+    // file is an audio file, and if it is but not a type that AVURLAsset
+    // is able to support (according to [AVURLAsset audiovisualTypes]),
+    // convert it to a type that is.
+    const CMTime kDuration = [selectedAudioAsset duration];
+    if (0 == kDuration.value)
+        return kZeroDurationError;
     
-    const double seconds = (double)duration.value / (double)duration.timescale;
+    const double seconds = (double)kDuration.value / (double)kDuration.timescale;
     const NSUInteger kSecondsInAMinute = 60;
+    NSString* const kBundlePath = [[NSBundle mainBundle] resourcePath];
     
     // iterate through the audio file, kNumMinsPerClip minutes at a time, and put each
     // kNumMinsPerClip minute segment into the resource path
     for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += kNumMinsPerClip)
     {
-        CMTime startTime = CMTimeMake(minutes * kSecondsInAMinute, kTimescale);
-        
+        // -exportSessionWithAsset:presetName: checks if the asset is nil, so no need
+        // to check it again before attempting to create the asset
         AVAssetExportSession* exportSession = [AVAssetExportSession exportSessionWithAsset: selectedAudioAsset
                                                                                 presetName: AVAssetExportPresetAppleM4A];
         if (nil == exportSession)
-            return false;
+            return kExportSessionCreationError;
         
         // no need to check if we've reached the end of the audio clip, as
         // the exportSession is smart enough to know to stop
-        const NSUInteger kSecondsInAMinute = 60;
-        CMTime stopTime = CMTimeMake(startTime.value + kSecondsInAMinute * kNumMinsPerClip, kTimescale);
-        CMTimeRange exportTimeRange = CMTimeRangeFromTimeToTime(startTime, stopTime);
+        const CMTime kStartTime = CMTimeMake(minutes * kSecondsInAMinute, kTimescale);
+        const CMTime kStopTime = CMTimeMake(kStartTime.value + kSecondsInAMinute * kNumMinsPerClip, kTimescale);
+        const CMTimeRange kExportTimeRange = CMTimeRangeFromTimeToTime(kStartTime, kStopTime);
         
-        __block NSString* filePath = [NSString stringWithFormat: @"%@/trimmed%lu.m4a", [[NSBundle mainBundle] resourcePath], (unsigned long)minutes];
+        NSString* filePath = [NSString stringWithFormat: @"%@/trimmed%lu.m4a", kBundlePath, (unsigned long)minutes];
         [exportSession setOutputFileType: @"com.apple.m4a-audio"];
         [exportSession setOutputURL: [NSURL fileURLWithPath: filePath]];
-        [exportSession setTimeRange: exportTimeRange];
+        [exportSession setTimeRange: kExportTimeRange];
         
         [exportSession exportAsynchronouslyWithCompletionHandler: ^{
             [[CEAudioHandler sharedInstance] convertToWav: filePath];
         }];
     }
     
-    return true;
+    return kChoppingSuccess;
 }
 
 @end

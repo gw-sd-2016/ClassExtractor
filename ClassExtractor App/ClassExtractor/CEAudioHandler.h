@@ -15,6 +15,6 @@
 + (CEAudioHandler*) sharedInstance;
 - (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
 - (void) convertToWav: (NSString*)pathToAudio;
-- (bool) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset;
+- (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset;
 
 @end
