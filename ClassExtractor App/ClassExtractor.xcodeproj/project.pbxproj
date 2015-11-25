@@ -9,16 +9,19 @@
 /* Begin PBXBuildFile section */
 		8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375E81BCF0E8F005DFD86 /* AppDelegate.m */; };
 		8B0375EC1BCF0E8F005DFD86 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375EB1BCF0E8F005DFD86 /* main.m */; };
-		8B0375EF1BCF0E8F005DFD86 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375EE1BCF0E8F005DFD86 /* ViewController.m */; };
+		8B0375EF1BCF0E8F005DFD86 /* CEWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */; };
 		8B0375F11BCF0E8F005DFD86 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8B0375F01BCF0E8F005DFD86 /* Assets.xcassets */; };
 		8B0375F41BCF0E8F005DFD86 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B0375F21BCF0E8F005DFD86 /* Main.storyboard */; };
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
+		8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */; };
 		8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A6E3C1BFC11C20090E8AA /* Constants.m */; };
 		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
 		8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */; };
 		8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */; };
+		8BB325AF1C066BAB0070F2FA /* CECloudView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB325AE1C066BAB0070F2FA /* CECloudView.m */; };
+		8BB325B21C066C700070F2FA /* CETopic.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB325B11C066C700070F2FA /* CETopic.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,8 +46,8 @@
 		8B0375E71BCF0E8F005DFD86 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8B0375E81BCF0E8F005DFD86 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8B0375EB1BCF0E8F005DFD86 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		8B0375ED1BCF0E8F005DFD86 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		8B0375EE1BCF0E8F005DFD86 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		8B0375ED1BCF0E8F005DFD86 /* CEWelcomeViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CEWelcomeViewController.h; sourceTree = "<group>"; };
+		8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CEWelcomeViewController.m; sourceTree = "<group>"; };
 		8B0375F01BCF0E8F005DFD86 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8B0375F31BCF0E8F005DFD86 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8B0375F51BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,6 +57,8 @@
 		8B0376051BCF0E8F005DFD86 /* ClassExtractorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassExtractorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassExtractorUITests.m; sourceTree = "<group>"; };
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEWordCloudViewController.h; sourceTree = "<group>"; };
+		8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEWordCloudViewController.m; sourceTree = "<group>"; };
 		8B2A6E3C1BFC11C20090E8AA /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		8B7D28721C0272A50059FE84 /* CEConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConnector.h; sourceTree = "<group>"; };
@@ -64,6 +69,10 @@
 		8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CECalculator.m; sourceTree = "<group>"; };
 		8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEJSONManipulator.h; sourceTree = "<group>"; };
 		8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEJSONManipulator.m; sourceTree = "<group>"; };
+		8BB325AD1C066BAB0070F2FA /* CECloudView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECloudView.h; sourceTree = "<group>"; };
+		8BB325AE1C066BAB0070F2FA /* CECloudView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CECloudView.m; sourceTree = "<group>"; };
+		8BB325B01C066C700070F2FA /* CETopic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETopic.h; sourceTree = "<group>"; };
+		8BB325B11C066C700070F2FA /* CETopic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CETopic.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,24 +123,9 @@
 		8B0375E61BCF0E8F005DFD86 /* ClassExtractor */ = {
 			isa = PBXGroup;
 			children = (
-				8B0375E71BCF0E8F005DFD86 /* AppDelegate.h */,
-				8B0375E81BCF0E8F005DFD86 /* AppDelegate.m */,
-				8B0375ED1BCF0E8F005DFD86 /* ViewController.h */,
-				8B0375EE1BCF0E8F005DFD86 /* ViewController.m */,
-				8B0375F01BCF0E8F005DFD86 /* Assets.xcassets */,
-				8B0375F21BCF0E8F005DFD86 /* Main.storyboard */,
-				8B0375F51BCF0E8F005DFD86 /* Info.plist */,
-				8B0375EA1BCF0E8F005DFD86 /* Supporting Files */,
-				8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */,
-				8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */,
-				8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */,
-				8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */,
-				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
-				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
-				8B7D28721C0272A50059FE84 /* CEConnector.h */,
-				8B7D28731C0272A50059FE84 /* CEConnector.m */,
-				8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */,
-				8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */,
+				8B1360141C0545820003C38A /* Application */,
+				8B1360151C0545A60003C38A /* Backend */,
+				8B1360131C0545680003C38A /* GUI */,
 			);
 			path = ClassExtractor;
 			sourceTree = "<group>";
@@ -160,6 +154,51 @@
 				8B03760B1BCF0E8F005DFD86 /* Info.plist */,
 			);
 			path = ClassExtractorUITests;
+			sourceTree = "<group>";
+		};
+		8B1360131C0545680003C38A /* GUI */ = {
+			isa = PBXGroup;
+			children = (
+				8B0375F21BCF0E8F005DFD86 /* Main.storyboard */,
+				8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */,
+				8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */,
+				8B0375ED1BCF0E8F005DFD86 /* CEWelcomeViewController.h */,
+				8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */,
+				8BB325AD1C066BAB0070F2FA /* CECloudView.h */,
+				8BB325AE1C066BAB0070F2FA /* CECloudView.m */,
+			);
+			name = GUI;
+			sourceTree = "<group>";
+		};
+		8B1360141C0545820003C38A /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				8B0375E71BCF0E8F005DFD86 /* AppDelegate.h */,
+				8B0375E81BCF0E8F005DFD86 /* AppDelegate.m */,
+				8B0375F01BCF0E8F005DFD86 /* Assets.xcassets */,
+				8B0375F51BCF0E8F005DFD86 /* Info.plist */,
+				8B0375EA1BCF0E8F005DFD86 /* Supporting Files */,
+			);
+			name = Application;
+			sourceTree = "<group>";
+		};
+		8B1360151C0545A60003C38A /* Backend */ = {
+			isa = PBXGroup;
+			children = (
+				8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */,
+				8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */,
+				8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */,
+				8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */,
+				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
+				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
+				8B7D28721C0272A50059FE84 /* CEConnector.h */,
+				8B7D28731C0272A50059FE84 /* CEConnector.m */,
+				8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */,
+				8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */,
+				8BB325B01C066C700070F2FA /* CETopic.h */,
+				8BB325B11C066C700070F2FA /* CETopic.m */,
+			);
+			name = Backend;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -309,10 +348,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B0375EF1BCF0E8F005DFD86 /* ViewController.m in Sources */,
+				8BB325B21C066C700070F2FA /* CETopic.m in Sources */,
+				8B0375EF1BCF0E8F005DFD86 /* CEWelcomeViewController.m in Sources */,
 				8B0375EC1BCF0E8F005DFD86 /* main.m in Sources */,
 				8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */,
 				8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */,
+				8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */,
+				8BB325AF1C066BAB0070F2FA /* CECloudView.m in Sources */,
 				8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */,
 				8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */,
 				8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */,

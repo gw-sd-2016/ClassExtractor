@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  CEWelcomeViewController.h
 //  ClassExtractor
 //
 //  Created by Elliot on 10/14/15.
@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "CEAudioHandler.h"
 
-@interface ViewController : NSViewController
+@interface CEWelcomeViewController : NSViewController
 {
     // this is necessary because thanks to ARC, once we leave the function that created
     // the audioPlayer, audioPlayer is released and the file never gets played

@@ -1,12 +1,12 @@
 //
-//  ViewController.m
+//  CEWelcomeViewController.m
 //  ClassExtractor
 //
 //  Created by Elliot on 10/14/15.
 //  Copyright © 2015 ECL. All rights reserved.
 //
 
-#import "ViewController.h"
+#import "CEWelcomeViewController.h"
 #import "CECalculator.h"
 #import "CEConnector.h"
 #import "Constants.h"
@@ -14,7 +14,7 @@
 // ============================================================
 // ViewController
 // ============================================================
-@implementation ViewController
+@implementation CEWelcomeViewController
 
 
 // ------------------------------------------------------------
