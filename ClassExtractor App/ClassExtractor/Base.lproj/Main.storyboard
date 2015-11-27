@@ -687,7 +687,7 @@
         <scene sceneID="Yh9-ij-86k">
             <objects>
                 <viewController id="c9a-eV-lpH" customClass="CEWordCloudViewController" sceneMemberID="viewController">
-                    <view key="view" id="MU8-eI-72O">
+                    <view key="view" id="MU8-eI-72O" customClass="CEFlippedView">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <animations/>

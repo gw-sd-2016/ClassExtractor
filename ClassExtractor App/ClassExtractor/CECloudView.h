@@ -14,4 +14,6 @@
 
 @property CETopic* representedTopic;
 
+- (instancetype) initWithTopic: (CETopic*)topic;
+
 @end

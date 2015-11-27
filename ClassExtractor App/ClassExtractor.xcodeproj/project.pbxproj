@@ -160,12 +160,12 @@
 			isa = PBXGroup;
 			children = (
 				8B0375F21BCF0E8F005DFD86 /* Main.storyboard */,
-				8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */,
-				8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */,
-				8B0375ED1BCF0E8F005DFD86 /* CEWelcomeViewController.h */,
-				8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */,
 				8BB325AD1C066BAB0070F2FA /* CECloudView.h */,
 				8BB325AE1C066BAB0070F2FA /* CECloudView.m */,
+				8B0375ED1BCF0E8F005DFD86 /* CEWelcomeViewController.h */,
+				8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */,
+				8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */,
+				8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */,
 			);
 			name = GUI;
 			sourceTree = "<group>";
@@ -189,14 +189,14 @@
 				8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */,
 				8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */,
 				8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */,
-				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
-				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
 				8B7D28721C0272A50059FE84 /* CEConnector.h */,
 				8B7D28731C0272A50059FE84 /* CEConnector.m */,
 				8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */,
 				8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */,
 				8BB325B01C066C700070F2FA /* CETopic.h */,
 				8BB325B11C066C700070F2FA /* CETopic.m */,
+				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
+				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
 			);
 			name = Backend;
 			sourceTree = "<group>";
