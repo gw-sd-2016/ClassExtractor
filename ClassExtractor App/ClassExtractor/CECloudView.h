@@ -17,3 +17,10 @@
 - (instancetype) initWithTopic: (CETopic*)topic;
 
 @end
+
+
+@interface CETextField : NSTextField
+
+- (instancetype) initWithCloudView: (CECloudView*)cloudView;
+
+@end

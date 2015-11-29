@@ -34,24 +34,9 @@
         [layer setCornerRadius: imporSize.width / 2];
         NSColor* color = [self setColorFromRGBWithRed: 219 andGreen: 2 andBlue: 2];
         [layer setBackgroundColor: [color CGColor]];
-        
-        // create a textfield for the name of the topic
-        // [TODO] Decide on a good font size.
-        NSTextField* nameField = [[NSTextField alloc] init];
+
+        CETextField* nameField = [[CETextField alloc] initWithCloudView: self];
         [nameField setStringValue: [[self representedTopic] topicName]];
-        [nameField setEditable: false];
-        [nameField setBordered: false];
-        [nameField setTranslatesAutoresizingMaskIntoConstraints: false];
-        [nameField setBackgroundColor: color];
-        [self addSubview: nameField];
-        
-        NSLayoutConstraint* xConstraint = [NSLayoutConstraint constraintWithItem: nameField
-                                                                       attribute: NSLayoutAttributeCenterX
-                                                                       relatedBy: NSLayoutRelationEqual
-                                                                          toItem: self
-                                                                       attribute: NSLayoutAttributeCenterX
-                                                                      multiplier: 1.0f
-                                                                        constant: 0.0f];
         NSLayoutConstraint* yConstraint = [NSLayoutConstraint constraintWithItem: nameField
                                                                        attribute: NSLayoutAttributeCenterY
                                                                        relatedBy: NSLayoutRelationEqual
@@ -59,17 +44,50 @@
                                                                        attribute: NSLayoutAttributeCenterY
                                                                       multiplier: 1.0f
                                                                         constant: 0.0f];
-        
-        NSDictionary* constraints = @{@"nameField" : nameField};
-        // [TODO] When the font size is decided upon later, this height
-        // will have to change.
-        NSString* heightFormat = @"V:[nameField(20)]";
-        NSArray* heightConstraint = [NSLayoutConstraint constraintsWithVisualFormat: heightFormat options: NSLayoutFormatAlignAllTop metrics: nil views: constraints];
+        [NSLayoutConstraint activateConstraints: @[yConstraint]];
+
+        CETextField* timeField = [[CETextField alloc] initWithCloudView: self];
+        [timeField setStringValue: [self formatTime]];
+        NSDictionary* viewsForConstraints = @{@"timeField" : timeField,
+                                              @"nameField" : nameField};
+        NSString* heightFormat = @"V:[nameField][timeField]";
+        NSArray* heightConstraint = [NSLayoutConstraint constraintsWithVisualFormat: heightFormat
+                                                                            options: NSLayoutFormatAlignAllCenterX
+                                                                            metrics: nil
+                                                                              views: viewsForConstraints];
         [NSLayoutConstraint activateConstraints: heightConstraint];
-        [NSLayoutConstraint activateConstraints: @[xConstraint, yConstraint]];
     }
     
     return self;
+}
+
+
+// ------------------------------------------------------------
+// formatTime
+//
+// Takes the represented topic's time duration and formats it
+// nicely in a human readable form (i.e. "4:32 - 6:19").
+// ------------------------------------------------------------
+- (NSString*) formatTime
+{
+    const CMTimeRange timeRange = [[self representedTopic] topicRange];
+    
+    const NSUInteger kSecondsPerMinute = 60;
+    const NSUInteger kStartTime = timeRange.start.value;
+    const NSUInteger kDuration = timeRange.duration.value;
+    const NSUInteger kEndTime = kStartTime + kDuration;
+    const NSUInteger kStartMinutes = kStartTime / kSecondsPerMinute;
+    const NSUInteger kStartSeconds = kStartTime % kSecondsPerMinute;
+    const NSUInteger kEndMinutes = kEndTime / kSecondsPerMinute;
+    const NSUInteger kEndSeconds = kEndTime % kSecondsPerMinute;
+    
+    NSString* formatString = [NSString stringWithFormat: @"%lu:%lu - %lu:%lu",
+                              (unsigned long)kStartMinutes,
+                              (unsigned long)kStartSeconds,
+                              (unsigned long)kEndMinutes,
+                              (unsigned long)kEndSeconds];
+    
+    return formatString;
 }
 
 
@@ -115,6 +133,56 @@
     const double diameter = baseCalculation + offsetDiameter;
     
     return CGSizeMake(diameter, diameter);
+}
+
+@end
+
+
+// ============================================================
+// CETextField
+// ============================================================
+@implementation CETextField
+
+// ------------------------------------------------------------
+// initWithCloudView:
+// ------------------------------------------------------------
+- (instancetype) initWithCloudView: (CECloudView*)cloudView
+{
+    self = [super init];
+    
+    if (self)
+    {
+        // create a textfield for the name of the topic
+        // [TODO] Decide on a good font size (the font size
+        // should be a function of how big the cloud is).
+        [self setEditable: false];
+        [self setBordered: false];
+        [self setTranslatesAutoresizingMaskIntoConstraints: false];
+        [self setBackgroundColor: [NSColor colorWithCGColor: [[cloudView layer] backgroundColor]]];
+        [cloudView addSubview: self];
+
+        NSLayoutConstraint* xConstraint = [NSLayoutConstraint constraintWithItem: self
+                                                                       attribute: NSLayoutAttributeCenterX
+                                                                       relatedBy: NSLayoutRelationEqual
+                                                                          toItem: cloudView
+                                                                       attribute: NSLayoutAttributeCenterX
+                                                                      multiplier: 1.0f
+                                                                        constant: 0.0f];
+        [NSLayoutConstraint activateConstraints: @[xConstraint]];
+        
+        NSDictionary* viewsForConstraints = @{@"self" : self};
+        // [TODO] When the font size is decided upon later, this height
+        // will have to change.
+        const NSUInteger height = 20;
+        NSString* heightFormat = [NSString stringWithFormat: @"V:[self(%lu)]", (unsigned long)height];
+        NSArray* heightConstraint = [NSLayoutConstraint constraintsWithVisualFormat: heightFormat
+                                                                            options: NSLayoutFormatAlignAllTop
+                                                                            metrics: nil
+                                                                              views: viewsForConstraints];
+        [NSLayoutConstraint activateConstraints: heightConstraint];
+    }
+    
+    return self;
 }
 
 @end
