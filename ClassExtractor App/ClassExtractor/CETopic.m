@@ -13,4 +13,12 @@
 @synthesize importanceWeighting;
 @synthesize topicRange;
 
+// ------------------------------------------------------------
+// description
+// ------------------------------------------------------------
+- (NSString*) description
+{
+    return [NSString stringWithFormat: @"(CETopic: name = %@, weighting = %lu)", [self topicName], (unsigned long)[self importanceWeighting]];
+}
+
 @end

@@ -16,6 +16,9 @@
 
 // ------------------------------------------------------------
 // initWithTopic:
+//
+// When setting the position of this cloud view, make sure not
+// to change the size.
 // ------------------------------------------------------------
 - (instancetype) initWithTopic: (CETopic*)topic
 {
@@ -80,12 +83,17 @@
     const NSUInteger kStartSeconds = kStartTime % kSecondsPerMinute;
     const NSUInteger kEndMinutes = kEndTime / kSecondsPerMinute;
     const NSUInteger kEndSeconds = kEndTime % kSecondsPerMinute;
+    NSString* formattedEndSeconds;
+    if (kEndSeconds < 10)
+        formattedEndSeconds = [NSString stringWithFormat: @"0%lu", (unsigned long)kEndSeconds];
+    else
+        formattedEndSeconds = [NSString stringWithFormat: @"%lu", (unsigned long)kEndSeconds];
     
-    NSString* formatString = [NSString stringWithFormat: @"%lu:%lu - %lu:%lu",
+    NSString* formatString = [NSString stringWithFormat: @"%lu:%lu - %lu:%@",
                               (unsigned long)kStartMinutes,
                               (unsigned long)kStartSeconds,
                               (unsigned long)kEndMinutes,
-                              (unsigned long)kEndSeconds];
+                              formattedEndSeconds];
     
     return formatString;
 }
@@ -133,6 +141,15 @@
     const double diameter = baseCalculation + offsetDiameter;
     
     return CGSizeMake(diameter, diameter);
+}
+
+
+// ------------------------------------------------------------
+// description
+// ------------------------------------------------------------
+- (NSString*) description
+{
+    return [NSString stringWithFormat: @"CECloudView: %@", [self representedTopic]];
 }
 
 @end
