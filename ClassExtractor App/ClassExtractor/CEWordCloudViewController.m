@@ -93,9 +93,7 @@
     for (NSUInteger i = 1; i < [mutableUnsorted count]; ++i)
     {
         NSUInteger j = i;
-        CETopic* firstTopic = [[mutableUnsorted objectAtIndex: j-1] representedTopic];
-        CETopic* secondTopic = [[mutableUnsorted objectAtIndex: j] representedTopic];
-        while (j > 0 && [firstTopic importanceWeighting] > [secondTopic importanceWeighting])
+        while (j > 0 && [[[mutableUnsorted objectAtIndex: j-1] representedTopic] importanceWeighting] > [[[mutableUnsorted objectAtIndex: j] representedTopic] importanceWeighting])
         {
             [mutableUnsorted exchangeObjectAtIndex: j withObjectAtIndex: j-1];
             --j;
@@ -127,7 +125,14 @@
 // ------------------------------------------------------------
 - (void) layoutCloudsFromArray: (NSArray<CECloudView*>*)views
 {
-    
+    NSUInteger totalX = 0;
+    for (NSUInteger i = 0; i < [views count]; ++i)
+    {
+        CECloudView* curCloud = [views objectAtIndex: i];
+        [curCloud setFrame: CGRectMake(totalX, 0, [curCloud frame].size.width, [curCloud frame].size.height)];
+        
+        totalX += [curCloud frame].size.width;
+    }
 }
 
 @end

@@ -81,6 +81,11 @@
     const NSUInteger kEndTime = kStartTime + kDuration;
     const NSUInteger kStartMinutes = kStartTime / kSecondsPerMinute;
     const NSUInteger kStartSeconds = kStartTime % kSecondsPerMinute;
+    NSString* formattedStartSeconds;
+    if (kStartSeconds < 10)
+        formattedStartSeconds = [NSString stringWithFormat: @"0%lu", (unsigned long)kStartSeconds];
+    else
+        formattedStartSeconds = [NSString stringWithFormat: @"%lu", (unsigned long)kStartSeconds];
     const NSUInteger kEndMinutes = kEndTime / kSecondsPerMinute;
     const NSUInteger kEndSeconds = kEndTime % kSecondsPerMinute;
     NSString* formattedEndSeconds;
@@ -89,9 +94,9 @@
     else
         formattedEndSeconds = [NSString stringWithFormat: @"%lu", (unsigned long)kEndSeconds];
     
-    NSString* formatString = [NSString stringWithFormat: @"%lu:%lu - %lu:%@",
+    NSString* formatString = [NSString stringWithFormat: @"%lu:%@ - %lu:%@",
                               (unsigned long)kStartMinutes,
-                              (unsigned long)kStartSeconds,
+                              formattedStartSeconds,
                               (unsigned long)kEndMinutes,
                               formattedEndSeconds];
     
