@@ -10,6 +10,10 @@
 
 @interface CEConnector : NSObject
 
+@property NSMutableArray* curStrings;
+@property NSUInteger totalFiles;
+@property NSUInteger curNumFiles;
+
 + (CEConnector*) sharedInstance;
 - (void) getJSONFromWatsonAsync: (NSNotification*)notification;
 - (void) getConceptsJSONAsync: (NSString*)rawString;

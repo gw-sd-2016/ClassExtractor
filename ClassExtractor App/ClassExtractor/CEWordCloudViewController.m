@@ -126,12 +126,15 @@
 - (void) layoutCloudsFromArray: (NSArray<CECloudView*>*)views
 {
     NSUInteger totalX = 0;
-    for (NSUInteger i = 0; i < [views count]; ++i)
+    const NSUInteger viewCount = [views count];
+    
+    for (NSUInteger i = 0; i < viewCount; ++i)
     {
         CECloudView* curCloud = [views objectAtIndex: i];
-        [curCloud setFrame: CGRectMake(totalX, 0, [curCloud frame].size.width, [curCloud frame].size.height)];
+        const NSSize curCloudSize = [curCloud frame].size;
+        [curCloud setFrame: CGRectMake(totalX, 0, curCloudSize.width, curCloudSize.height)];
         
-        totalX += [curCloud frame].size.width;
+        totalX += curCloudSize.width;
     }
 }
 

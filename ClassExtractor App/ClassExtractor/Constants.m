@@ -15,5 +15,7 @@ NSString* const kZeroDurationError = @"The file's duration is 0.";
 NSString* const kExportSessionCreationError = @"The export session could not be created.";
 NSString* const kChoppingSuccess = @"choppingSuccess"; // doesn't need to be proper English as
                                                        // this is never displayed to the user
+NSString* const kAllFilesTransliterated = @"allFilesTransliterated";
+NSString* const kTranscriptKey = @"transcript";
 const NSUInteger kNumMinsPerClip = 5lu;
 const int32_t kTimescale = 1;

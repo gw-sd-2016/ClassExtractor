@@ -35,6 +35,16 @@ extern NSString* const kExportSessionCreationError;
 extern NSString* const kChoppingSuccess;
 
 
+// Watson has transliterated and returned data for
+// all of the chopped up files
+extern NSString* const kAllFilesTransliterated;
+
+
+// the key to access the transcript in the curStrings array's
+// dictionaries
+extern NSString* const kTranscriptKey;
+
+
 // the number of minutes per small audio clip (the maximum
 // number of minutes Watson allows is 5)
 //

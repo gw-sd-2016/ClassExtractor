@@ -7,6 +7,7 @@
 //
 
 #import "CEAudioHandler.h"
+#import "CEConnector.h"
 #import "Constants.h"
 
 
@@ -186,7 +187,10 @@
     const double seconds = (double)kDuration.value / (double)kDuration.timescale;
     const NSUInteger kSecondsInAMinute = 60;
     NSString* const kBundlePath = [[NSBundle mainBundle] resourcePath];
-    
+
+    const NSUInteger numSegments = ceil((double)seconds / (double)(kNumMinsPerClip * kSecondsInAMinute));
+    [[CEConnector sharedInstance] setTotalFiles: numSegments];
+
     // iterate through the audio file, kNumMinsPerClip minutes at a time, and put each
     // kNumMinsPerClip minute segment into the resource path
     for (NSUInteger minutes = 0; minutes * kSecondsInAMinute < seconds; minutes += kNumMinsPerClip)

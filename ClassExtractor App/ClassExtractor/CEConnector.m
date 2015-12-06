@@ -7,10 +7,13 @@
 //
 
 #import "CEConnector.h"
+#import "Constants.h"
 #import "CEJSONManipulator.h"
 
 @implementation CEConnector
-
+@synthesize curStrings;
+@synthesize totalFiles;
+@synthesize curNumFiles;
 
 // ------------------------------------------------------------
 // sharedInstance
@@ -23,7 +26,17 @@
     static CEConnector* instance = nil;
     
     if (nil == instance)
+    {
         instance = [[CEConnector alloc] init];
+        [instance setTotalFiles: 0];
+        [instance setCurNumFiles: 0];
+        if (nil == [instance curStrings])
+            [instance setCurStrings: [[NSMutableArray alloc] init]];
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector(orderStrings)
+                                                     name: kAllFilesTransliterated
+                                                   object: self];
+    }
     
     return instance;
 }
@@ -59,11 +72,81 @@
         
         NSData* audioData = [file readDataToEndOfFile];
         
-        NSString* strData = [[NSString alloc]initWithData: audioData
-                                                 encoding: NSUTF8StringEncoding];
-        
-        NSLog(@"%@", strData);
+        // [TODO] Start testing from this point.
+        [self watsonFinishedWithData: audioData fromPath: audioPath];
     });
+}
+
+
+// ------------------------------------------------------------
+// watsonFinishedWithData:fromPath:
+//
+// Called after each time Watson finishes returning a transcript
+// of a file. This function parses out the transcript of this
+// file, combines them together, and then stores them for later
+// so that all of them can be appended together in the correct
+// order.
+// ------------------------------------------------------------
+- (void) watsonFinishedWithData: (NSData*)audioData fromPath: (NSString*)audioPath
+{
+    NSString* lastComp = [[NSURL URLWithString: audioPath] lastPathComponent];
+    NSString* noTrimmed = [lastComp substringFromIndex: [@"trimmed" length]];
+    NSString* noExt = [noTrimmed substringToIndex: [noTrimmed rangeOfString: @"."].location];
+    
+    NSNumberFormatter* numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle: NSNumberFormatterDecimalStyle];
+    NSNumber* extNumber = [numberFormatter numberFromString: noExt];
+    
+    NSDictionary* resultDict = [CEJSONManipulator getJSONForData: audioData];
+    NSArray* resultsArray = [resultDict objectForKey: @"results"];
+    NSMutableString* resultString = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < [resultsArray count]; ++i)
+    {
+        [resultString appendString: [[[[resultsArray objectAtIndex: i] objectForKey: @"alternatives"] objectAtIndex: 1] objectForKey: @"transcript"]];
+    }
+    
+    NSDictionary* curDict = @{kTranscriptKey : resultString,
+                              @"order" : extNumber};
+    [[self curStrings] addObject: curDict];
+    
+    ++curNumFiles;
+    if (curNumFiles == totalFiles)
+        [[NSNotificationCenter defaultCenter] postNotificationName: kAllFilesTransliterated object: self];
+}
+
+
+// ------------------------------------------------------------
+// orderStrings
+//
+// Orders all of the transliterated strings that Watson returns.
+// The strings are returned from Watson in an unpredictable
+// order (since we're sending concurrent requests to it), so we
+// must order them afterwards to be able to provide a coherent
+// interpretation of them later.
+// ------------------------------------------------------------
+- (void) orderStrings
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
+    if (nil == curStrings || nil == [curStrings firstObject])
+        return;
+    
+    if (1 == [curStrings count])
+        [self getConceptsJSONAsync: [[curStrings firstObject] objectForKey: kTranscriptKey]];
+    
+    NSArray* sorted = [curStrings sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
+        NSNumber* firstNum = [[firstDict allValues] objectAtIndex: 1];
+        NSNumber* secondNum = [[secondDict allValues] objectAtIndex: 1];
+        return [firstNum compare: secondNum];
+    }];
+    
+    NSMutableString* stringBuilder = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < [sorted count]; ++i)
+    {
+        [stringBuilder appendString: [[sorted objectAtIndex: i] objectForKey: kTranscriptKey]];
+    }
+    
+    [self getConceptsJSONAsync: stringBuilder];
 }
 
 
