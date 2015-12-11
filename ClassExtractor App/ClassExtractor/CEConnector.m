@@ -110,6 +110,7 @@
     [[self curStrings] addObject: curDict];
     
     ++curNumFiles;
+    // [TODO] Just call the function directly here instead of posting a notification
     if (curNumFiles == totalFiles)
         [[NSNotificationCenter defaultCenter] postNotificationName: kAllFilesTransliterated object: self];
 }
@@ -128,6 +129,7 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     
+    // [TODO] Show the user some useful error dialog
     if (nil == curStrings || nil == [curStrings firstObject])
         return;
     
