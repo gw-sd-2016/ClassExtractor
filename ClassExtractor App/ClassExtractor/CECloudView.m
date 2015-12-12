@@ -140,7 +140,11 @@
     const NSUInteger multiplier = 50;
     const NSUInteger weighting = [[self representedTopic] importanceWeighting];
     
-    const NSUInteger baseCalculation = weighting * 2;
+    // [TODO] The weightings need a better formula, as right now they're just from
+    // frequencies of each topic, which might be only 2 or 3.
+    const NSUInteger inflatedWeighting = weighting * 20;
+    
+    const NSUInteger baseCalculation = inflatedWeighting * 2;
     const double reciprocal = 1 / (double)weighting;
     const double offsetDiameter = multiplier * reciprocal;
     const double diameter = baseCalculation + offsetDiameter;

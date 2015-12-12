@@ -247,14 +247,14 @@
         [views addObject: cloudView];
     }
     
-    NSArray* sortedViews = [self orderViewsByImportance: views];
-    NSUInteger totalWidthNeeded = [self calculateTotalWidthFromViews: sortedViews];
+//    NSArray* sortedViews = [self orderViewsByImportance: views];
+    NSUInteger totalWidthNeeded = [self calculateTotalWidthFromViews: views];
     
     CGRect frame = [view frame];
     [view setFrame: CGRectMake(frame.origin.x, frame.origin.y, totalWidthNeeded, frame.size.height)];
     
     // [TODO] Clouds are being laid out in reverse order, fix.
-    [self layoutCloudsFromArray: sortedViews];
+    [self layoutCloudsFromArray: views];
 }
 
 
