@@ -30,6 +30,12 @@
                                              selector: @selector(getJSONFromWatsonAsync:)
                                                  name: kGetJSON
                                                object: nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(showWordCloud:)
+                                                 name: kShowWordCloud
+                                               object: nil];
+    
 }
 
 
@@ -41,6 +47,16 @@
     [super viewDidAppear];
     
     [[[self view] window] setTitle: @"Class Extractor"];
+}
+
+
+// ------------------------------------------------------------
+// showWordCloud:
+// ------------------------------------------------------------
+- (void) showWordCloud: (NSNotification*)notification
+{
+    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [notification object]];
 }
 
 

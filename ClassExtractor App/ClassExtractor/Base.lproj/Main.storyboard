@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -690,7 +690,6 @@
                     <view key="view" id="MU8-eI-72O">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <animations/>
                     </view>
                 </viewController>
                 <customObject id="dwX-Qw-w1f" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -711,7 +710,6 @@
                                     <constraint firstAttribute="width" constant="129" id="39S-jf-B38"/>
                                     <constraint firstAttribute="height" constant="21" id="TjW-pR-6Tc"/>
                                 </constraints>
-                                <animations/>
                                 <buttonCell key="cell" type="push" title="Select Audio File" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YYf-5s-UJ4">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -726,13 +724,12 @@
                                     <constraint firstAttribute="width" constant="100" id="hRC-ql-ZIn"/>
                                     <constraint firstAttribute="height" constant="21" id="zyD-fb-se5"/>
                                 </constraints>
-                                <animations/>
                                 <buttonCell key="cell" type="push" title="Word Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dnA-1g-xaC">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <segue destination="c9a-eV-lpH" kind="show" id="aQj-cr-PxJ"/>
+                                    <segue destination="c9a-eV-lpH" kind="show" identifier="showWordCloud" id="aQj-cr-PxJ"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -742,7 +739,6 @@
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="kPw-70-buh"/>
                             <constraint firstAttribute="bottom" secondItem="6j0-xr-4wL" secondAttribute="bottom" constant="20" id="zRN-fv-lTx"/>
                         </constraints>
-                        <animations/>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

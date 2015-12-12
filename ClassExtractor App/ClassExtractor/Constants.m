@@ -17,5 +17,7 @@ NSString* const kChoppingSuccess = @"choppingSuccess"; // doesn't need to be pro
                                                        // this is never displayed to the user
 NSString* const kAllFilesTransliterated = @"allFilesTransliterated";
 NSString* const kTranscriptKey = @"transcript";
+NSString* const kShowWordCloud = @"showWordCloudNotification";
+NSString* const kCloudWindowOpened = @"cloudWindowOpened";
 const NSUInteger kNumMinsPerClip = 5lu;
 const int32_t kTimescale = 1;

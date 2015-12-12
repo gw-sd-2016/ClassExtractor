@@ -107,7 +107,7 @@
 // ------------------------------------------------------------
 // sortFrequencyArray:
 //
-// Sorts the argument array in ascending order by order of
+// Sorts the argument array in descending order by order of
 // occurrences of each word.
 // ------------------------------------------------------------
 + (NSArray*) sortFrequencyArray: (NSArray<NSDictionary*>*)unsorted
@@ -121,7 +121,7 @@
     NSArray* sorted = [unsorted sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
         NSNumber* firstNum = [[firstDict allValues] firstObject];
         NSNumber* secondNum = [[secondDict allValues] firstObject];
-        return [firstNum compare: secondNum];
+        return [secondNum compare: firstNum];
     }];
     
     return sorted;

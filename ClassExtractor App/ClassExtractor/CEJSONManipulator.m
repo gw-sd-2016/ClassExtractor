@@ -22,18 +22,27 @@
 // ------------------------------------------------------------
 + (NSDictionary*) getJSONForData: (NSData*)data
 {
-    NSError* error;
-    NSDictionary* feed = [NSJSONSerialization JSONObjectWithData: data
-                                                         options: kNilOptions
-                                                           error: &error];
-    
-    if (nil == error)
-        return feed;
-    else
+    // [TODO] If data is nil, provide some useful dialog to the user.
+    if (nil != data)
     {
-        NSLog(@"%@", error);
-        return nil;
+        NSError* error;
+        // [TODO] Is NSJSONReadingAllowFragments necessary here? Or can we have kNilOptions?
+        NSDictionary* feed = [NSJSONSerialization JSONObjectWithData: data
+                                                             options: NSJSONReadingAllowFragments
+                                                               error: &error];
+        
+        // [TODO] If there is an error, provide some useful dialog to the user.
+        if (nil == error)
+            return feed;
+        else
+        {
+            NSLog(@"%@", error);
+            return nil;
+        }
     }
+    
+    NSLog(@"Data argument is nil.");
+    return nil;
 }
 
 @end

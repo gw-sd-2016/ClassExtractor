@@ -45,6 +45,14 @@ extern NSString* const kAllFilesTransliterated;
 extern NSString* const kTranscriptKey;
 
 
+// concept frequencies have been calculated, and it's time
+// to display them to the user
+extern NSString* const kShowWordCloud;
+
+
+extern NSString* const kCloudWindowOpened;
+
+
 // the number of minutes per small audio clip (the maximum
 // number of minutes Watson allows is 5)
 //

@@ -9,6 +9,7 @@
 #import "CEConnector.h"
 #import "Constants.h"
 #import "CEJSONManipulator.h"
+#import "CECalculator.h"
 
 @implementation CEConnector
 @synthesize curStrings;
@@ -32,10 +33,6 @@
         [instance setCurNumFiles: 0];
         if (nil == [instance curStrings])
             [instance setCurStrings: [[NSMutableArray alloc] init]];
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector(orderStrings)
-                                                     name: kAllFilesTransliterated
-                                                   object: self];
     }
     
     return instance;
@@ -71,9 +68,17 @@
         [task launch];
         
         NSData* audioData = [file readDataToEndOfFile];
+        NSString* strData = [[NSString alloc]initWithData: audioData
+                                                 encoding: NSUTF8StringEncoding];
         
-        // [TODO] Start testing from this point.
-        [self watsonFinishedWithData: audioData fromPath: audioPath];
+        if ([strData rangeOfString: @"<TITLE>Watson Error</TITLE>"].location != NSNotFound)
+        {
+            // [TODO] Fix race condition of totalFiles and curNumFiles changing
+            --totalFiles;
+            NSLog(@"NOT FOUND");
+        }
+        else
+            [self watsonFinishedWithData: audioData fromPath: audioPath];
     });
 }
 
@@ -102,7 +107,10 @@
     NSMutableString* resultString = [[NSMutableString alloc] init];
     for (NSUInteger i = 0; i < [resultsArray count]; ++i)
     {
-        [resultString appendString: [[[[resultsArray objectAtIndex: i] objectForKey: @"alternatives"] objectAtIndex: 1] objectForKey: @"transcript"]];
+        NSArray* alternatives = [[resultsArray objectAtIndex: i] objectForKey: @"alternatives"];
+        NSDictionary* firstAlternative = [alternatives firstObject];
+        if (firstAlternative != nil)
+            [resultString appendString: [firstAlternative objectForKey: @"transcript"]];
     }
     
     NSDictionary* curDict = @{kTranscriptKey : resultString,
@@ -110,9 +118,8 @@
     [[self curStrings] addObject: curDict];
     
     ++curNumFiles;
-    // [TODO] Just call the function directly here instead of posting a notification
     if (curNumFiles == totalFiles)
-        [[NSNotificationCenter defaultCenter] postNotificationName: kAllFilesTransliterated object: self];
+        [self performSelectorOnMainThread: @selector(orderStrings) withObject: nil waitUntilDone: false];
 }
 
 
@@ -127,8 +134,6 @@
 // ------------------------------------------------------------
 - (void) orderStrings
 {
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    
     // [TODO] Show the user some useful error dialog
     if (nil == curStrings || nil == [curStrings firstObject])
         return;
@@ -164,7 +169,27 @@
     NSString* credentials = @"";
     NSString* basePath = @"https://aylien-text.p.mashape.com/concepts?language=en&text=";
     NSString* formattedString = [rawString stringByReplacingOccurrencesOfString: @" " withString: @"+"];
-    NSString* fullPath = [NSString stringWithFormat: @"%@%@", basePath, formattedString];
+    NSString* noApostrophes = [formattedString stringByReplacingOccurrencesOfString: @"'" withString: @""];
+    
+    // Watson sometimes puts in "%HESITATION" in the string; the "%"s mess up the formatting
+    // [TODO] Get rid of the "HESITATION"s as well
+    NSString* noPercents = [noApostrophes stringByReplacingOccurrencesOfString: @"%" withString: @""];
+   
+    // occaisonally there'll be an extra space at the end of the string, which then gets
+    // turned into a plus, so take that out
+    NSString* noLastPlus = noPercents;
+    if ([noPercents characterAtIndex: [noPercents length] - 1] == '+')
+        noLastPlus = [noPercents substringToIndex: [noPercents length] - 1];
+    
+    // [TODO] Figure out a good max character count, and if that count is exceeded,
+    // splice the strings accordingly.
+    NSString* shorter = noLastPlus;
+    const NSUInteger maxCharCount = 5500;
+    if ([noLastPlus length] > maxCharCount)
+        shorter = [noLastPlus substringToIndex: maxCharCount]; // [TODO] Check to see if last character is a plus (put this before
+                                                               // noLastPlus above).
+    
+    NSString* fullPath = [NSString stringWithFormat: @"%@%@", basePath, shorter];
     NSURL* fullURL = [NSURL URLWithString: fullPath];
     
     NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -175,15 +200,31 @@
     NSURLRequest* urlRequest = [NSURLRequest requestWithURL: fullURL];
     
     NSURLSessionDataTask* dataTask = [urlSession dataTaskWithRequest: urlRequest completionHandler: ^(NSData* data, NSURLResponse* response, NSError* error) {
+        // [TODO] If there's an error, provide some useful dialog to the user.
         if (nil == error)
         {
-            if (0 != [data length])
-            {
-                NSDictionary* jsonDict = [CEJSONManipulator getJSONForData: data];
-                NSLog(@"%@", jsonDict);
-            }
+            NSDictionary* jsonDict = [CEJSONManipulator getJSONForData: data];
+            if (nil == jsonDict)
+                NSLog(@"jsonDict is nil.");
             else
-                NSLog(@"Data Error: Data is nil or data length is 0.");
+            {
+                NSDictionary* concepts = [jsonDict objectForKey: @"concepts"];
+                NSArray* conceptKeys = [concepts allKeys];
+                NSMutableArray<NSString*>* conceptStrings = [[NSMutableArray alloc] init];
+                for (NSUInteger i = 0; i < [conceptKeys count]; ++i)
+                {
+                    NSDictionary* conceptDict = [concepts objectForKey: [conceptKeys objectAtIndex: i]];
+                    NSDictionary* surfaceForms = [[conceptDict objectForKey: @"surfaceForms"] firstObject];
+                    NSString* conceptString = [surfaceForms objectForKey: @"string"];
+                    [conceptStrings addObject: conceptString];
+                }
+                
+                NSString* originalString = [jsonDict objectForKey: @"text"];
+                NSArray* frequencies = [CECalculator calculateFrequencyOfWords: [conceptStrings copy] inString: originalString];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName: kShowWordCloud object: frequencies];
+                });
+            }
         }
         else
             NSLog(@"%@", error);
