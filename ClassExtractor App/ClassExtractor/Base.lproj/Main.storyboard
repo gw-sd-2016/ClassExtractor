@@ -724,7 +724,7 @@
                                     <constraint firstAttribute="width" constant="100" id="hRC-ql-ZIn"/>
                                     <constraint firstAttribute="height" constant="21" id="zyD-fb-se5"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="Word Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="dnA-1g-xaC">
+                                <buttonCell key="cell" type="push" title="Word Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="dnA-1g-xaC">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>

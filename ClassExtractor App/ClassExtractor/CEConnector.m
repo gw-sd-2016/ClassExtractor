@@ -169,17 +169,25 @@
     NSString* credentials = @"";
     NSString* basePath = @"https://aylien-text.p.mashape.com/concepts?language=en&text=";
     NSString* formattedString = [rawString stringByReplacingOccurrencesOfString: @" " withString: @"+"];
-    NSString* noApostrophes = [formattedString stringByReplacingOccurrencesOfString: @"'" withString: @""];
-    
-    // Watson sometimes puts in "%HESITATION" in the string; the "%"s mess up the formatting
-    // [TODO] Get rid of the "HESITATION"s as well
-    NSString* noPercents = [noApostrophes stringByReplacingOccurrencesOfString: @"%" withString: @""];
+    // apostrophes as "'" are allowed, but the following two
+    // forms are not
+    NSString* noApostrophes = [formattedString stringByReplacingOccurrencesOfString: @"’" withString: @""];
+    NSString* noBackwardsApostrophes = [noApostrophes stringByReplacingOccurrencesOfString: @"‘" withString: @""];
+    NSString* noQuotes = [noBackwardsApostrophes stringByReplacingOccurrencesOfString: @"\"" withString: @""];
+    NSString* noColons = [noQuotes stringByReplacingOccurrencesOfString: @":" withString: @""];
+    NSString* noCommas = [noColons stringByReplacingOccurrencesOfString: @"," withString: @""];
+    NSString* noPeriods = [noCommas stringByReplacingOccurrencesOfString: @"." withString: @""];
+    NSString* noSemicolons = [noPeriods stringByReplacingOccurrencesOfString: @";" withString: @""];
+    NSString* noQuestions = [noSemicolons stringByReplacingOccurrencesOfString: @"?" withString: @""];
+    NSString* noSlantedQuotes = [noQuestions stringByReplacingOccurrencesOfString: @"”" withString: @""];
+    NSString* noBackwardsSlantedQuotes = [noSlantedQuotes stringByReplacingOccurrencesOfString: @"“" withString: @""];
+    NSString* noHesitations = [noBackwardsSlantedQuotes stringByReplacingOccurrencesOfString: @"%HESITATION" withString: @""];
    
     // occaisonally there'll be an extra space at the end of the string, which then gets
     // turned into a plus, so take that out
-    NSString* noLastPlus = noPercents;
-    if ([noPercents characterAtIndex: [noPercents length] - 1] == '+')
-        noLastPlus = [noPercents substringToIndex: [noPercents length] - 1];
+    NSString* noLastPlus = noHesitations;
+    if ([noHesitations characterAtIndex: [noHesitations length] - 1] == '+')
+        noLastPlus = [noHesitations substringToIndex: [noHesitations length] - 1];
     
     // [TODO] Figure out a good max character count, and if that count is exceeded,
     // splice the strings accordingly.

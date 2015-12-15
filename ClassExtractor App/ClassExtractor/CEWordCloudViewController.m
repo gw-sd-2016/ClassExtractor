@@ -221,6 +221,16 @@
 //    [self layoutCloudsFromArrayNew: sortedViews];
 }
 
+// ------------------------------------------------------------
+// viewDidAppear
+// ------------------------------------------------------------
+- (void) viewDidAppear
+{
+    [super viewDidAppear];
+    
+    [[[self view] window] setTitle: @"Word Cloud"];
+}
+
 
 // ------------------------------------------------------------
 // cloudWindowOpened:
@@ -241,6 +251,8 @@
         CETopic* topic = [[CETopic alloc] init];
         [topic setTopicName: curTopicString];
 //        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+        
+        // [TODO] Add robust handling for if the importance weighting is 0.
         [topic setImportanceWeighting: [curTopicFrequency integerValue]];
         CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
         [view addSubview: cloudView];
@@ -253,8 +265,8 @@
     CGRect frame = [view frame];
     [view setFrame: CGRectMake(frame.origin.x, frame.origin.y, totalWidthNeeded, frame.size.height)];
     
-    // [TODO] Clouds are being laid out in reverse order, fix.
     [self layoutCloudsFromArray: views];
+//    [self layoutCloudsFromArrayNew: views];
 }
 
 
@@ -486,7 +498,7 @@
 // ------------------------------------------------------------
 - (CGPoint) calculateCenterOfCloudWithIndex: (NSUInteger)index withViewDiameter: (CGFloat)curCloudDiameter withViews: (NSArray<CECloudView*>*)views
 {
-    const NSUInteger levelMultiplier = 300;
+//    const NSUInteger levelMultiplier = 300;
     const NSUInteger curLevel = [self levelForIndex: index];
     const NSUInteger curQuadrant = [self quadrantForCloudIndex: index];
     
@@ -532,8 +544,8 @@
         const NSUInteger secondIndex = [[surroundingIndices objectAtIndex: 1] integerValue];
         const NSUInteger rawIndex = [self rawIndexFromOffset: firstIndex AndLevel: curLevel - 1];
         const NSUInteger secondRawIndex = [self rawIndexFromOffset: secondIndex AndLevel: curLevel - 1];
-        const CGRect firstFrame = [[views objectAtIndex: rawIndex] frame];
-        const CGRect secondFrame = [[views objectAtIndex: secondRawIndex] frame];
+//        const CGRect firstFrame = [[views objectAtIndex: rawIndex] frame];
+//        const CGRect secondFrame = [[views objectAtIndex: secondRawIndex] frame];
         const CGPoint cloudCenter = [self newCloudCenterFromFirstCloud: [views objectAtIndex: rawIndex] andSecondCloud: [views objectAtIndex: secondRawIndex] andCurIndex: index];
         xPos = cloudCenter.x;
         yPos = cloudCenter.y;

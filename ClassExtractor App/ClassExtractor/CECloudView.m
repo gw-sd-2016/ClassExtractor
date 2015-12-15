@@ -38,8 +38,9 @@
         NSColor* color = [self setColorFromRGBWithRed: 219 andGreen: 2 andBlue: 2];
         [layer setBackgroundColor: [color CGColor]];
 
+        // [TODO] Move setting the string value into CETextField's init method
         CETextField* nameField = [[CETextField alloc] initWithCloudView: self];
-        [nameField setStringValue: [[self representedTopic] topicName]];
+        [nameField setStringValue: [[[self representedTopic] topicName] capitalizedString]];
         NSLayoutConstraint* yConstraint = [NSLayoutConstraint constraintWithItem: nameField
                                                                        attribute: NSLayoutAttributeCenterY
                                                                        relatedBy: NSLayoutRelationEqual
@@ -142,10 +143,20 @@
     
     // [TODO] The weightings need a better formula, as right now they're just from
     // frequencies of each topic, which might be only 2 or 3.
-    const NSUInteger inflatedWeighting = weighting * 20;
+    NSUInteger inflatedWeighting;
+    if (weighting == 0)
+        inflatedWeighting = 100;
+    else if (weighting == 1)
+        inflatedWeighting = 130;
+    else if (weighting == 2)
+        inflatedWeighting = 150;
+    else if (weighting <= 5)
+        inflatedWeighting = weighting * 50;
+    else
+        inflatedWeighting = weighting * 20;
     
     const NSUInteger baseCalculation = inflatedWeighting * 2;
-    const double reciprocal = 1 / (double)weighting;
+    const double reciprocal = 1 / (double)inflatedWeighting;
     const double offsetDiameter = multiplier * reciprocal;
     const double diameter = baseCalculation + offsetDiameter;
     
@@ -171,6 +182,8 @@
 
 // ------------------------------------------------------------
 // initWithCloudView:
+//
+// Must be sure to not create a strong reference to cloudView.
 // ------------------------------------------------------------
 - (instancetype) initWithCloudView: (CECloudView*)cloudView
 {
