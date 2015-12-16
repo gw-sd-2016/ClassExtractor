@@ -85,7 +85,7 @@
             // any more audio files
             NSString* result = [[CEAudioHandler sharedInstance] chopUpLargeAudioFile: selectedAudioAsset];
             if (![result isEqualToString: kChoppingSuccess])
-                NSLog(@"%@", result);
+                NSLog(@"%@: %s", result, __PRETTY_FUNCTION__);
         }
     }];
 }

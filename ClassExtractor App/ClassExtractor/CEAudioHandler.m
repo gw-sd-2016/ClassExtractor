@@ -111,6 +111,9 @@
     // executed when the run loop of the main thread is run, which is the
     // same as if this function were called from the main thread and this
     // GCD call weren't here
+    //
+    // [TODO] Does this really need to be called from the main thread? The
+    // above comment is outdated; can we do this async?
     dispatch_async(dispatch_get_main_queue(), ^{
         NSTask* task = [[NSTask alloc] init];
         [task setLaunchPath: @"/usr/bin/afconvert"];

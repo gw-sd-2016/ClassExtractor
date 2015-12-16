@@ -36,12 +36,12 @@
             return feed;
         else
         {
-            NSLog(@"%@", error);
+            NSLog(@"%@: %s", error, __PRETTY_FUNCTION__);
             return nil;
         }
     }
     
-    NSLog(@"Data argument is nil.");
+    NSLog(@"Data argument is nil: %s", __PRETTY_FUNCTION__);
     return nil;
 }
 

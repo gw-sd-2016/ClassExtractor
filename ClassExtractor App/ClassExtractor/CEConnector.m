@@ -72,11 +72,8 @@
                                                  encoding: NSUTF8StringEncoding];
         
         if ([strData rangeOfString: @"<TITLE>Watson Error</TITLE>"].location != NSNotFound)
-        {
             // [TODO] Fix race condition of totalFiles and curNumFiles changing
             --totalFiles;
-            NSLog(@"NOT FOUND");
-        }
         else
             [self watsonFinishedWithData: audioData fromPath: audioPath];
     });
@@ -169,75 +166,78 @@
     NSString* credentials = @"";
     NSString* basePath = @"https://aylien-text.p.mashape.com/concepts?language=en&text=";
     NSString* formattedString = [rawString stringByReplacingOccurrencesOfString: @" " withString: @"+"];
-    // apostrophes as "'" are allowed, but the following two
-    // forms are not
-    NSString* noApostrophes = [formattedString stringByReplacingOccurrencesOfString: @"’" withString: @""];
-    NSString* noBackwardsApostrophes = [noApostrophes stringByReplacingOccurrencesOfString: @"‘" withString: @""];
-    NSString* noQuotes = [noBackwardsApostrophes stringByReplacingOccurrencesOfString: @"\"" withString: @""];
-    NSString* noColons = [noQuotes stringByReplacingOccurrencesOfString: @":" withString: @""];
-    NSString* noCommas = [noColons stringByReplacingOccurrencesOfString: @"," withString: @""];
-    NSString* noPeriods = [noCommas stringByReplacingOccurrencesOfString: @"." withString: @""];
-    NSString* noSemicolons = [noPeriods stringByReplacingOccurrencesOfString: @";" withString: @""];
-    NSString* noQuestions = [noSemicolons stringByReplacingOccurrencesOfString: @"?" withString: @""];
-    NSString* noSlantedQuotes = [noQuestions stringByReplacingOccurrencesOfString: @"”" withString: @""];
-    NSString* noBackwardsSlantedQuotes = [noSlantedQuotes stringByReplacingOccurrencesOfString: @"“" withString: @""];
-    NSString* noHesitations = [noBackwardsSlantedQuotes stringByReplacingOccurrencesOfString: @"%HESITATION" withString: @""];
-   
-    // occaisonally there'll be an extra space at the end of the string, which then gets
-    // turned into a plus, so take that out
-    NSString* noLastPlus = noHesitations;
-    if ([noHesitations characterAtIndex: [noHesitations length] - 1] == '+')
-        noLastPlus = [noHesitations substringToIndex: [noHesitations length] - 1];
     
-    // [TODO] Figure out a good max character count, and if that count is exceeded,
-    // splice the strings accordingly.
-    NSString* shorter = noLastPlus;
-    const NSUInteger maxCharCount = 5500;
-    if ([noLastPlus length] > maxCharCount)
-        shorter = [noLastPlus substringToIndex: maxCharCount]; // [TODO] Check to see if last character is a plus (put this before
-                                                               // noLastPlus above).
+    // [TODO] Check which of these characters actually causes the URL to return null (all of them
+    // are thought to, but none are actually confirmed).
+    // this regex checks for the last character not being a letter (guarding against there being
+    // a last "+" in our string, which replaced a space above) and any invalid characters that
+    // don't play nice with URL formatting
+    NSString* regexPattern = @"([^A-Za-z]+$|(’*‘*'*\"*:*,*;*\\?*!*”*“*\\.*(%HESITATION)*)*)";
+    NSError* error;
+    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern: regexPattern
+                                                                           options: 0
+                                                                             error: &error];
     
-    NSString* fullPath = [NSString stringWithFormat: @"%@%@", basePath, shorter];
-    NSURL* fullURL = [NSURL URLWithString: fullPath];
+    // [TODO] Show the user some useful error dialog here
+    if (error)
+        NSLog(@"Error creating regex: %s", __PRETTY_FUNCTION__);
+    else
+    {
+        NSString* cleanString = [regex stringByReplacingMatchesInString: formattedString
+                                                              options: 0
+                                                                range: NSMakeRange(0, [formattedString length])
+                                                         withTemplate: @""];
     
-    NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    [sessionConfig setHTTPAdditionalHeaders: @{@"X-Mashape-Key" : credentials,
-                                               @"Accept": @"application/json"}];
+        // [TODO] Figure out a good max character count, and if that count is exceeded,
+        // splice the strings accordingly.
+        NSString* shorter = cleanString;
+        const NSUInteger maxCharCount = 5500;
+        if ([cleanString length] > maxCharCount)
+            shorter = [cleanString substringToIndex: maxCharCount]; // [TODO] Check to see if last character of
+                                                                    // the truncated string is a plus.
     
-    NSURLSession* urlSession = [NSURLSession sessionWithConfiguration: sessionConfig];
-    NSURLRequest* urlRequest = [NSURLRequest requestWithURL: fullURL];
+        NSString* fullPath = [NSString stringWithFormat: @"%@%@", basePath, shorter];
+        NSURL* fullURL = [NSURL URLWithString: fullPath];
     
-    NSURLSessionDataTask* dataTask = [urlSession dataTaskWithRequest: urlRequest completionHandler: ^(NSData* data, NSURLResponse* response, NSError* error) {
-        // [TODO] If there's an error, provide some useful dialog to the user.
-        if (nil == error)
-        {
-            NSDictionary* jsonDict = [CEJSONManipulator getJSONForData: data];
-            if (nil == jsonDict)
-                NSLog(@"jsonDict is nil.");
-            else
+        NSURLSessionConfiguration* sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        [sessionConfig setHTTPAdditionalHeaders: @{@"X-Mashape-Key" : credentials,
+                                                   @"Accept": @"application/json"}];
+    
+        NSURLSession* urlSession = [NSURLSession sessionWithConfiguration: sessionConfig];
+        NSURLRequest* urlRequest = [NSURLRequest requestWithURL: fullURL];
+    
+        NSURLSessionDataTask* dataTask = [urlSession dataTaskWithRequest: urlRequest completionHandler: ^(NSData* data, NSURLResponse* response, NSError* error) {
+            // [TODO] If there's an error, provide some useful dialog to the user.
+            if (nil == error)
             {
-                NSDictionary* concepts = [jsonDict objectForKey: @"concepts"];
-                NSArray* conceptKeys = [concepts allKeys];
-                NSMutableArray<NSString*>* conceptStrings = [[NSMutableArray alloc] init];
-                for (NSUInteger i = 0; i < [conceptKeys count]; ++i)
+                NSDictionary* jsonDict = [CEJSONManipulator getJSONForData: data];
+                if (nil == jsonDict)
+                    NSLog(@"JSON dictionary is nil: %s", __PRETTY_FUNCTION__);
+                else
                 {
-                    NSDictionary* conceptDict = [concepts objectForKey: [conceptKeys objectAtIndex: i]];
-                    NSDictionary* surfaceForms = [[conceptDict objectForKey: @"surfaceForms"] firstObject];
-                    NSString* conceptString = [surfaceForms objectForKey: @"string"];
-                    [conceptStrings addObject: conceptString];
+                    NSDictionary* concepts = [jsonDict objectForKey: @"concepts"];
+                    NSArray* conceptKeys = [concepts allKeys];
+                    NSMutableArray<NSString*>* conceptStrings = [[NSMutableArray alloc] init];
+                    for (NSUInteger i = 0; i < [conceptKeys count]; ++i)
+                    {
+                        NSDictionary* conceptDict = [concepts objectForKey: [conceptKeys objectAtIndex: i]];
+                        NSDictionary* surfaceForms = [[conceptDict objectForKey: @"surfaceForms"] firstObject];
+                        NSString* conceptString = [surfaceForms objectForKey: @"string"];
+                        [conceptStrings addObject: conceptString];
+                    }
+    
+                    NSString* originalString = [jsonDict objectForKey: @"text"];
+                    NSArray* frequencies = [CECalculator calculateFrequencyOfWords: [conceptStrings copy] inString: originalString];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [[NSNotificationCenter defaultCenter] postNotificationName: kShowWordCloud object: frequencies];
+                    });
                 }
-                
-                NSString* originalString = [jsonDict objectForKey: @"text"];
-                NSArray* frequencies = [CECalculator calculateFrequencyOfWords: [conceptStrings copy] inString: originalString];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[NSNotificationCenter defaultCenter] postNotificationName: kShowWordCloud object: frequencies];
-                });
             }
-        }
-        else
-            NSLog(@"%@", error);
-    }];
-    [dataTask resume];
+            else
+                NSLog(@"%@: %s", error, __PRETTY_FUNCTION__);
+        }];
+        [dataTask resume];
+    }
 }
 
 @end
