@@ -83,7 +83,7 @@
             // GUI fashion
             // [TODO] If this fails, kill all connections to Watson and don't process
             // any more audio files
-            NSString* result = [[CEAudioHandler sharedInstance] chopUpLargeAudioFile: selectedAudioAsset];
+            NSString* result = [CEAudioHandler chopUpLargeAudioFile: selectedAudioAsset];
             if (![result isEqualToString: kChoppingSuccess])
                 NSLog(@"%@: %s", result, __PRETTY_FUNCTION__);
         }
