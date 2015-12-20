@@ -38,7 +38,6 @@
         NSColor* color = [self setColorFromRGBWithRed: 219 andGreen: 2 andBlue: 2];
         [layer setBackgroundColor: [color CGColor]];
 
-        // [TODO] Move setting the string value into CETextField's init method
         CETextField* nameField = [[CETextField alloc] initWithCloudView: self];
         [nameField setStringValue: [[[self representedTopic] topicName] capitalizedString]];
         NSLayoutConstraint* yConstraint = [NSLayoutConstraint constraintWithItem: nameField

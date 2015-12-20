@@ -19,8 +19,6 @@
 // is each word with its number of occurrences. The array is
 // ascending by number of occurrences.
 //
-// [TODO] Hook up this function to Watson's output.
-//
 // [TODO] Add temporal information into this array, so that it
 // not only keeps track of how many times something is said, but
 // also when it is said.

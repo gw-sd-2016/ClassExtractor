@@ -71,12 +71,30 @@
         NSString* strData = [[NSString alloc]initWithData: audioData
                                                  encoding: NSUTF8StringEncoding];
         
-        if ([strData rangeOfString: @"<TITLE>Watson Error</TITLE>"].location != NSNotFound)
-            // [TODO] Fix race condition of totalFiles and curNumFiles changing
-            --totalFiles;
+        if (NSNotFound != [strData rangeOfString: @"<TITLE>Watson Error</TITLE>"].location)
+            [self evaluateNumFiles];
         else
             [self watsonFinishedWithData: audioData fromPath: audioPath];
     });
+}
+
+
+// ------------------------------------------------------------
+// evaluateNumFiles
+//
+// curNumFiles tracks the number of files that have either returned
+// an error from Watson or have returned a valid JSON response
+// with transliterated text.
+// ------------------------------------------------------------
+- (void) evaluateNumFiles
+{
+    @synchronized(self)
+    {
+        ++curNumFiles;
+        
+        if (curNumFiles == totalFiles)
+            [self orderStrings];
+    }
 }
 
 
@@ -114,9 +132,7 @@
                               @"order" : extNumber};
     [[self curStrings] addObject: curDict];
     
-    ++curNumFiles;
-    if (curNumFiles == totalFiles)
-        [self performSelectorOnMainThread: @selector(orderStrings) withObject: nil waitUntilDone: false];
+    [self evaluateNumFiles];
 }
 
 
@@ -150,7 +166,7 @@
         [stringBuilder appendString: [[sorted objectAtIndex: i] objectForKey: kTranscriptKey]];
     }
     
-    [self getConceptsJSONAsync: stringBuilder];
+    [self getConceptsJSON: stringBuilder];
 }
 
 
@@ -161,7 +177,7 @@
 // to talk to the Aylien API for concept extraction. For now,
 // the only supported language is English.
 // ------------------------------------------------------------
-- (void) getConceptsJSONAsync: (NSString*)rawString
+- (void) getConceptsJSON: (NSString*)rawString
 {
     NSString* credentials = @"";
     NSString* basePath = @"https://aylien-text.p.mashape.com/concepts?language=en&text=";
