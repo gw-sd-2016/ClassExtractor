@@ -77,15 +77,16 @@
         {
             // we only allow selection of one file, so it's ok to get just the first object
             NSURL* selectedFilePath = [[openFileDialogue URLs] firstObject];
-            AVURLAsset* selectedAudioAsset = [[AVURLAsset alloc] initWithURL: selectedFilePath options: nil];
+//            AVURLAsset* selectedAudioAsset = [[AVURLAsset alloc] initWithURL: selectedFilePath options: nil];
             
             // [TODO] Instead of just logging the error, report it to the user in some nice
             // GUI fashion
             // [TODO] If this fails, kill all connections to Watson and don't process
             // any more audio files
-            NSString* result = [CEAudioHandler chopUpLargeAudioFile: selectedAudioAsset];
-            if (![result isEqualToString: kChoppingSuccess])
-                NSLog(@"%@: %s", result, __PRETTY_FUNCTION__);
+//            NSString* result = [CEAudioHandler chopUpLargeAudioFile: selectedAudioAsset];
+            [CEAudioHandler convertToWav: [selectedFilePath path]];
+//            if (![result isEqualToString: kChoppingSuccess])
+//                NSLog(@"%@: %s", result, __PRETTY_FUNCTION__);
         }
     }];
 }

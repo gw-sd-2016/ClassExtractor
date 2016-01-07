@@ -55,8 +55,9 @@
     NSTask* task = [[NSTask alloc] init];
     [task setLaunchPath: @"/usr/bin/afconvert"];
     
-    NSString* convertedFilePath = [pathToAudio stringByReplacingOccurrencesOfString: @".m4a" withString: @".wav"];
-        
+//    NSString* convertedFilePath = [pathToAudio stringByReplacingOccurrencesOfString: @".m4a" withString: @".wav"];
+    NSString* convertedFilePath = [pathToAudio stringByReplacingOccurrencesOfString: @".mp3" withString: @".wav"];
+    
     [task setArguments: @[@"-d", @"LEI16", @"-f", @"WAVE", pathToAudio, convertedFilePath]];
 
     NSPipe* pipe = [NSPipe pipe];
@@ -69,7 +70,9 @@
     NSData* taskData = [file readDataToEndOfFile];
     if (nil != taskData && 0 == [taskData length])
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON object: convertedFilePath];
+//        [[NSNotificationCenter defaultCenter] postNotificationName: kGetJSON object: convertedFilePath];
+        
+        [CEAudioHandler chopUpWav: convertedFilePath];
         
         NSError* error;
         [[NSFileManager defaultManager] removeItemAtPath: pathToAudio error: &error];
@@ -129,6 +132,35 @@
     }
     
     return kChoppingSuccess;
+}
+
+
+// ------------------------------------------------------------
+// chopUpWav:
+// ------------------------------------------------------------
++ (void) chopUpWav: (NSString*)wavPath
+{
+    NSData* wavData = [NSData dataWithContentsOfFile: wavPath];
+    const NSUInteger kLength = [wavData length];
+    const NSUInteger kChunkSize = 4 * 1000 * 1000; // a little bit less than 4 megabytes
+    NSUInteger index = 0;
+    NSUInteger offset = 0;
+    do {
+        const NSUInteger chunkSize = kLength - offset > kChunkSize ? kChunkSize : kLength - offset;
+        NSData* wavChunk = [NSData dataWithBytesNoCopy: (char*)[wavData bytes] + offset
+                                                length: chunkSize
+                                          freeWhenDone: NO];
+        offset += chunkSize;
+        
+        NSString* const kBundlePath = [[NSBundle mainBundle] resourcePath];
+        NSString* filePath = [NSString stringWithFormat: @"%@/trimmed%lu.wav", kBundlePath, (unsigned long)index];
+        
+        [wavChunk writeToFile: filePath atomically: false];
+        
+        [[CEConnector sharedInstance] getJSONFromWatsonAsync: filePath];
+        
+        ++index;
+    } while (offset < kLength);
 }
 
 @end

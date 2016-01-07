@@ -15,5 +15,6 @@
 + (AVAudioPlayer*) playAudioFile: (NSString*)audioFilePath;
 + (void) convertToWav: (NSString*)pathToAudio;
 + (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset;
++ (void) chopUpWav: (NSString*)wavPath;
 
 @end

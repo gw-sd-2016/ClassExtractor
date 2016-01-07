@@ -11,6 +11,10 @@
 #import "CEJSONManipulator.h"
 #import "CECalculator.h"
 
+#import <OpenEars/OELanguageModelGenerator.h>
+#import <OpenEars/OEPocketsphinxController.h>
+#import <OpenEars/OEAcousticModel.h>
+
 @implementation CEConnector
 @synthesize curStrings;
 @synthesize totalFiles;
@@ -33,6 +37,19 @@
         [instance setCurNumFiles: 0];
         if (nil == [instance curStrings])
             [instance setCurStrings: [[NSMutableArray alloc] init]];
+        
+//        NSString *lmPath = nil;
+//        NSString *dicPath = nil;
+//        
+//        OELanguageModelGenerator *lmGenerator = [[OELanguageModelGenerator alloc] init];
+//        lmPath = [lmGenerator pathToSuccessfullyGeneratedLanguageModelWithRequestedName:@"NameIWantForMyLanguageModelFiles"];
+//        dicPath = [lmGenerator pathToSuccessfullyGeneratedDictionaryWithRequestedName:@"NameIWantForMyLanguageModelFiles"];
+//            
+//        [[OEPocketsphinxController sharedInstance] setActive:TRUE error:nil];
+//        [[OEPocketsphinxController sharedInstance] startListeningWithLanguageModelAtPath: lmPath
+//                                                                        dictionaryAtPath: dicPath
+//                                                                     acousticModelAtPath: [OEAcousticModel pathToModel: @"AcousticModelEnglish"]
+//                                                                     languageModelIsJSGF: NO]; // Change "AcousticModelEnglish" to "AcousticModelSpanish" to perform Spanish recognition instead of English.
     }
     
     return instance;
@@ -46,7 +63,8 @@
 //
 // [TODO] Investigate into using libcurl here instead of NSTask
 // ------------------------------------------------------------
-- (void) getJSONFromWatsonAsync: (NSNotification*)notification
+//- (void) getJSONFromWatsonAsync: (NSNotification*)notification
+- (void) getJSONFromWatsonAsync: (NSString*)path
 {
     dispatch_queue_t globalConcurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatch_async(globalConcurrentQueue, ^{
@@ -55,9 +73,14 @@
         
         NSString* credentials = @"";
         
-        NSString* audioPath = [NSString stringWithFormat: @"@%@", [notification object]];
+//        NSString* audioPath = [NSString stringWithFormat: @"@%@", [notification object]];
+        NSString* audioPath = [NSString stringWithFormat: @"@%@", path];
         
-        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/wav", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
+        const NSUInteger length = [[NSData dataWithContentsOfFile: path] length];
+        NSString* lengthString = [NSString stringWithFormat: @"Content-length: %lu", length];
+        
+//        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/wav", @"--header", @"Transfer-Encoding: chunked", @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
+        NSArray* arguments = @[@"-u", credentials, @"-X", @"POST", @"--limit-rate", @"40000", @"--header", @"Content-Type: audio/wav", @"--header", lengthString, @"--data-binary", audioPath, @"https://stream.watsonplatform.net/speech-to-text/api/v1/recognize?continuous=true"];
         [task setArguments: arguments];
         
         NSPipe* pipe = [NSPipe pipe];
@@ -152,7 +175,7 @@
         return;
     
     if (1 == [curStrings count])
-        [self getConceptsJSONAsync: [[curStrings firstObject] objectForKey: kTranscriptKey]];
+        [self getConceptsJSON: [[curStrings firstObject] objectForKey: kTranscriptKey]];
     
     NSArray* sorted = [curStrings sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
         NSNumber* firstNum = [[firstDict allValues] objectAtIndex: 1];

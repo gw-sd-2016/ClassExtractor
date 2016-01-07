@@ -15,7 +15,8 @@
 @property NSUInteger curNumFiles;
 
 + (CEConnector*) sharedInstance;
-- (void) getJSONFromWatsonAsync: (NSNotification*)notification;
-- (void) getConceptsJSONAsync: (NSString*)rawString;
+//- (void) getJSONFromWatsonAsync: (NSNotification*)notification;
+- (void) getJSONFromWatsonAsync: (NSString*)path;
+- (void) getConceptsJSON: (NSString*)rawString;
 
 @end

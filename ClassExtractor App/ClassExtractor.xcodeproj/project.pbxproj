@@ -15,6 +15,12 @@
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
 		8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */; };
+		8B28EAAA1C26687000FA1A36 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B28EAA91C26687000FA1A36 /* AudioToolbox.framework */; };
+		8B28EAAC1C26687B00FA1A36 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B28EAAB1C26687B00FA1A36 /* AVFoundation.framework */; };
+		8B28EAB41C266A1100FA1A36 /* AcousticModelEnglish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8B28EAB01C266A1100FA1A36 /* AcousticModelEnglish.bundle */; };
+		8B28EAB51C266A1100FA1A36 /* AcousticModelSpanish.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8B28EAB11C266A1100FA1A36 /* AcousticModelSpanish.bundle */; };
+		8B28EAB61C266A1100FA1A36 /* OpenEars.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B28EAB21C266A1100FA1A36 /* OpenEars.framework */; };
+		8B28EAB71C266A1100FA1A36 /* Slt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B28EAB31C266A1100FA1A36 /* Slt.framework */; };
 		8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A6E3C1BFC11C20090E8AA /* Constants.m */; };
 		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
@@ -59,6 +65,12 @@
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEWordCloudViewController.h; sourceTree = "<group>"; };
 		8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEWordCloudViewController.m; sourceTree = "<group>"; };
+		8B28EAA91C26687000FA1A36 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		8B28EAAB1C26687B00FA1A36 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		8B28EAB01C266A1100FA1A36 /* AcousticModelEnglish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelEnglish.bundle; sourceTree = "<group>"; };
+		8B28EAB11C266A1100FA1A36 /* AcousticModelSpanish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelSpanish.bundle; sourceTree = "<group>"; };
+		8B28EAB21C266A1100FA1A36 /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
+		8B28EAB31C266A1100FA1A36 /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
 		8B2A6E3C1BFC11C20090E8AA /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		8B7D28721C0272A50059FE84 /* CEConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEConnector.h; sourceTree = "<group>"; };
@@ -80,6 +92,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B28EAB71C266A1100FA1A36 /* Slt.framework in Frameworks */,
+				8B28EAAC1C26687B00FA1A36 /* AVFoundation.framework in Frameworks */,
+				8B28EAAA1C26687000FA1A36 /* AudioToolbox.framework in Frameworks */,
+				8B28EAB61C266A1100FA1A36 /* OpenEars.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +119,8 @@
 		8B0375DB1BCF0E8F005DFD86 = {
 			isa = PBXGroup;
 			children = (
+				8B28EAAB1C26687B00FA1A36 /* AVFoundation.framework */,
+				8B28EAA91C26687000FA1A36 /* AudioToolbox.framework */,
 				8B0375E61BCF0E8F005DFD86 /* ClassExtractor */,
 				8B0375FD1BCF0E8F005DFD86 /* ClassExtractorTests */,
 				8B0376081BCF0E8F005DFD86 /* ClassExtractorUITests */,
@@ -123,6 +141,7 @@
 		8B0375E61BCF0E8F005DFD86 /* ClassExtractor */ = {
 			isa = PBXGroup;
 			children = (
+				8B28EAAF1C266A1100FA1A36 /* Framework */,
 				8B1360141C0545820003C38A /* Application */,
 				8B1360151C0545A60003C38A /* Backend */,
 				8B1360131C0545680003C38A /* GUI */,
@@ -199,6 +218,17 @@
 				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
 			);
 			name = Backend;
+			sourceTree = "<group>";
+		};
+		8B28EAAF1C266A1100FA1A36 /* Framework */ = {
+			isa = PBXGroup;
+			children = (
+				8B28EAB01C266A1100FA1A36 /* AcousticModelEnglish.bundle */,
+				8B28EAB11C266A1100FA1A36 /* AcousticModelSpanish.bundle */,
+				8B28EAB21C266A1100FA1A36 /* OpenEars.framework */,
+				8B28EAB31C266A1100FA1A36 /* Slt.framework */,
+			);
+			path = Framework;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,6 +335,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B28EAB41C266A1100FA1A36 /* AcousticModelEnglish.bundle in Resources */,
+				8B28EAB51C266A1100FA1A36 /* AcousticModelSpanish.bundle in Resources */,
 				8B0375F11BCF0E8F005DFD86 /* Assets.xcassets in Resources */,
 				8B0375F41BCF0E8F005DFD86 /* Main.storyboard in Resources */,
 			);
@@ -489,8 +521,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ClassExtractor/Framework",
+				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = ClassExtractor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/ClassExtractor",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecl.ClassExtractor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -501,8 +542,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ClassExtractor/Framework",
+				);
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = ClassExtractor/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/ClassExtractor",
+					"$(PROJECT_DIR)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.ecl.ClassExtractor;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
