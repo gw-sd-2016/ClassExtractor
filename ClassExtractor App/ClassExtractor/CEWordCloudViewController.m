@@ -15,6 +15,7 @@
 // CEWordCloudViewController
 // ============================================================
 @implementation CEWordCloudViewController
+@synthesize curCenterIndex;
 
 // ------------------------------------------------------------
 // viewDidLoad
@@ -27,6 +28,8 @@
                                              selector: @selector(cloudWindowOpened:)
                                                  name: kCloudWindowOpened
                                                object: nil];
+    
+    curCenterIndex = 0;
     
 //    NSMutableArray* views = [[NSMutableArray alloc] init];
 //    NSView* view = [self view];
@@ -259,14 +262,15 @@
         [views addObject: cloudView];
     }
     
-//    NSArray* sortedViews = [self orderViewsByImportance: views];
-    NSUInteger totalWidthNeeded = [self calculateTotalWidthFromViews: views];
-    
-    CGRect frame = [view frame];
-    [view setFrame: CGRectMake(frame.origin.x, frame.origin.y, totalWidthNeeded, frame.size.height)];
-    
-    [self layoutCloudsFromArray: views];
-//    [self layoutCloudsFromArrayNew: views];
+    NSArray* sortedViews = [self orderViewsByImportance: views];
+//    NSUInteger totalWidthNeeded = [self calculateTotalWidthFromViews: views];
+//    
+//    CGRect frame = [view frame];
+//    [view setFrame: CGRectMake(frame.origin.x, frame.origin.y, totalWidthNeeded, frame.size.height)];
+//    
+//    [self layoutCloudsFromArray: views];
+//    [self test: views];
+    [self layoutCloudsFromArrayNew: views];
 }
 
 
@@ -490,6 +494,103 @@
     return totalClouds;
 }
 
+
+- (NSUInteger) ringIndexOfPastCloudForCenterIndex: (NSUInteger)centerIndex
+{
+    static NSUInteger lastCenter = 2;
+    static NSUInteger indexCounter = 3;
+    
+    if (lastCenter == centerIndex)
+        indexCounter = (indexCounter + 1) % 6;
+    
+    lastCenter = centerIndex;
+    
+    return indexCounter;
+}
+
+//- (NSUInteger) ringIndexOfRawIndex: (NSUInteger)rawIndex forCenterIndex: (NSUInteger)centerIndex
+//{
+//    const NSUInteger offsetRaw = rawIndex - centerIndex;
+//    return offsetRaw % 6;
+//}
+
+//- (void) test: (NSArray*)views
+//{
+////    NSArray* views;
+//    NSUInteger counter = 0;
+//    for (NSUInteger i = 1; i < [views count]; ++i)
+//    {
+//        [[[views objectAtIndex: counter] ringTracker] fillInIndex: (i - counter) % 6];
+//        
+//        if (i != 0 && i % 6 == 0)
+//        {
+//            ++counter;
+//        }
+////        for (NSUInteger j = 0; j < 6; ++j)
+////        {
+////            [[views objectAtIndex: j] ringTracker] fillInIndex:<#(NSUInteger)#>
+////        }
+//    }
+//}
+
+
+// the center is equivalent to curCenterIndex, and rawRingIndex is the raw index for which we are
+// trying to calculate the ring index for
+//
+// the new way for calculating ring index is ((index % 6) - curCenterIndex). This keeps the positions stable
+- (NSUInteger) ringIndexForCenterIndex: (NSUInteger)centerIndex andRingRawIndex: (NSUInteger)rawRingIndex
+{
+//    if (centerIndex > 5 && rawRingIndex > 0)
+    if (centerIndex > 6)
+    {
+        static NSUInteger lastRawRingIndex = 1;
+        static NSUInteger lastCenterIndex = 7;
+        static NSUInteger counter = 2;
+        
+        if (lastRawRingIndex == curCenterIndex)
+        {
+            if (centerIndex == lastCenterIndex)
+                counter = (counter + 1) % 6;
+        }
+        
+        lastRawRingIndex = curCenterIndex;
+        lastCenterIndex = centerIndex;
+        
+        return counter;
+    }
+    NSUInteger test = rawRingIndex - centerIndex;
+    
+    if (test == NSUIntegerMax && rawRingIndex != 0)
+        test = rawRingIndex - 1;
+    else if (rawRingIndex == 0)
+    {
+        test = 1;
+        return (centerIndex % 6 + 3) % 6;
+    }
+    
+    const NSUInteger modTest = test % 6;
+    
+//    return (modTest + 3) % 6;
+    return modTest;
+//    switch (test) {
+//        case 0:
+//            return 3;
+//        case 1:
+//            return 4;
+//        case 2:
+//            return 5;
+//        case 3:
+//            return 0;
+//        case 4:
+//            return 1;
+//        default: // case 5
+//            return 2;
+//    }
+//    const NSUInteger offsetIndex = rawRingIndex + centerIndex;
+//    const NSUInteger modIndex = 6 - (offsetIndex % 6);
+//    return modIndex;
+}
+
 // ------------------------------------------------------------
 // calculateCenterOfCloud:withIndex:
 //
@@ -498,105 +599,187 @@
 // ------------------------------------------------------------
 - (CGPoint) calculateCenterOfCloudWithIndex: (NSUInteger)index withViewDiameter: (CGFloat)curCloudDiameter withViews: (NSArray<CECloudView*>*)views
 {
-//    const NSUInteger levelMultiplier = 300;
-    const NSUInteger curLevel = [self levelForIndex: index];
-    const NSUInteger curQuadrant = [self quadrantForCloudIndex: index];
+    if (0 == index)
+        // [TODO] Decide on a good starting center point.
+        return CGPointMake(250, 250);
     
-    bool shouldReverse = false;
+    // index is the index for the current view among all of the views
+    // curCenterIndex is the index of the cloud we are currently circling around
+    // ringIndex is the offset of the current cloud within the curCenterIndex cloud
     
-    CGFloat xPos = 0;
-    CGFloat yPos = 0;
-    if (index <= 4)
+    if (curCenterIndex != index)
     {
-        // [TODO] These should be calculated such that the circles are all the same distance from touching the central circle
-        switch (index) {
-            case 0:
-                xPos += 600;
-                yPos += 250;
-                break;
-            case 1:
-                yPos += 200;
-                xPos += 600;
-                yPos += 250;
-                break;
-            case 2:
-                xPos += 200;
-                xPos += 600;
-                yPos += 250;
-                break;
-            case 3:
-                yPos -= 200;
-                xPos += 600;
-                yPos += 250;
-                break;
-            default: // 4
-                xPos -= 200;
-                xPos += 600;
-                yPos += 250;
-                break;
-        }
-    }
-    else if (index > 4)
-    {
-//        shouldReverse = true;
-        NSArray* surroundingIndices = [self surroundingIndicesForIndex: index];
-        const NSUInteger firstIndex = [[surroundingIndices objectAtIndex: 0] integerValue];
-        const NSUInteger secondIndex = [[surroundingIndices objectAtIndex: 1] integerValue];
-        const NSUInteger rawIndex = [self rawIndexFromOffset: firstIndex AndLevel: curLevel - 1];
-        const NSUInteger secondRawIndex = [self rawIndexFromOffset: secondIndex AndLevel: curLevel - 1];
-//        const CGRect firstFrame = [[views objectAtIndex: rawIndex] frame];
-//        const CGRect secondFrame = [[views objectAtIndex: secondRawIndex] frame];
-        const CGPoint cloudCenter = [self newCloudCenterFromFirstCloud: [views objectAtIndex: rawIndex] andSecondCloud: [views objectAtIndex: secondRawIndex] andCurIndex: index];
-        xPos = cloudCenter.x;
-        yPos = cloudCenter.y;
-        // FIRST QUADRANT:
-        // ✓ // radius should the radius of the circle created by the two circles it should be between
-            // ✓ // need some way of getting the two circles it should be between
-        // ✓ // radius can be calculated by taking the difference of the two x positions of the circle's centers
-        // ✓ // Calculate circle center (do this before negation)
-            // ✓ // add x to first circle, subtract y from second circle
-        // center of cloud should be center of circle
-        // Add some small constant to the x and y of center to push cloud out a little bit to prevent clouds from overlapping
-            // Really, should figure out if they do overlap, and if they do, push the new cloud out just enough so they don't overlap
-//        const NSUInteger numCloudsOnCurLevel = [self numCloudsForLevel: curLevel];
-//        const NSUInteger anglesCreatedByClouds = numCloudsOnCurLevel;
-//        const NSUInteger degreesPerCloud = 90 / anglesCreatedByClouds;
-//        const CGFloat radians = degreesPerCloud * M_PI / 180;
-//        const NSUInteger curLevelDiameter = curLevel * levelMultiplier;
-//        xPos = cos(radians) * curLevelDiameter / 2;
-//        yPos = sin(radians) * curLevelDiameter / 2;
-    }
-    // [TODO] Account for positions within a quadrant per level, instead of just the level itself.
-    // [TODO] Tighten the spiral; the varying sizes of the circles makes it so we don't currently
-    // take into account the differently sized spaces between the circles of different levels.
-//    NSInteger x = xPos + curLevel * levelMultiplier;
-//    NSInteger y = yPos + curLevel * levelMultiplier;
-    NSInteger x = xPos;
-    NSInteger y = yPos;
-    
-//    const NSUInteger radiusOffset = curCloudDiameter / 2;
-//    y += radiusOffset;
-//    x += radiusOffset;
-    
-    if (shouldReverse)
-    {
-        if (curQuadrant == 1)
-            y = -y;
-        else if (curQuadrant == 2)
+        // ringIndex is only applicable to the current center circle (i.e. it is meaningless
+        // when talking about other circles)
+        const NSUInteger ringIndex = index % 6 - curCenterIndex;
+        
+        // fill in the circle for the current center circle
+        if (curCenterIndex == 0)
+            [[[views objectAtIndex: curCenterIndex] ringTracker] fillInIndex: index % 6 withView: [views objectAtIndex: index]];
+        else
+            [[[views objectAtIndex: curCenterIndex] ringTracker] fillInIndex: [[[views objectAtIndex: curCenterIndex] ringTracker] nextIndex] withView: [views objectAtIndex: index]];
+        
+        // fill in the circle for the new circle (the clouds to be filled in for this circle are
+        // the current center cloud as well as the previous cloud)
+        [[[views objectAtIndex: index] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index andRingRawIndex: curCenterIndex] withView: [views objectAtIndex: curCenterIndex]];
+        if (ringIndex != 1 || (ringIndex == 1 && [[[views objectAtIndex: curCenterIndex] ringTracker] indexFilled: 5]))
+            [[[views objectAtIndex: index] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index andRingRawIndex: index - 1] withView: [views objectAtIndex: index - 1]];
+        
+        // fill in the circle for the last circle (and, if this cloud completes the circle, then
+        // also fill in the circle for the first index)
+        if (ringIndex == 0)
         {
-            x = -x;
-            y = -y;
+            // fill in the fifth index
+            [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index - 1 andRingRawIndex: index] withView: [views objectAtIndex: index]];
+            if ([[[views objectAtIndex: curCenterIndex] ringTracker] indexFilled: 1])
+            {
+                // fill in the first index
+                [[[views objectAtIndex: index - 5] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index - 5 andRingRawIndex: index] withView: [views objectAtIndex: index]];
+                // make the zeroth index aware of the first index
+                [[[views objectAtIndex: index] ringTracker] fillInIndex: 2 withView: [views objectAtIndex: index - 5]];
+            }
         }
-        else if (curQuadrant == 3)
-            x = -x;
+        // check if this is the first index, as if it is, there will not be a zeroth index yet
+        else if (ringIndex != 1)
+        {
+            // fill in the last ring index
+//            [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index - 1 andRingRawIndex: index]];
+            [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexOfPastCloudForCenterIndex: curCenterIndex] withView: [views objectAtIndex: curCenterIndex - 1]];
+        }
+        
+        // the case where we haven't filled in the previous circle with the new cloud (i.e. making 7 aware of 8)
+        if (index > 0 && curCenterIndex != 0)
+        {
+//            if (![[[views objectAtIndex: index - 1] ringTracker] indexFilled: [self ringIndexOfRawIndex: index forCenterIndex: index - 1]])
+            if (![[[views objectAtIndex: index - 1] ringTracker] indexFilled: ringIndex+1])
+            {
+                [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: ringIndex+1 withView: [views objectAtIndex: index]];
+            }
+        }
+        // fill in the circle of the next center circle
+//        [[[views objectAtIndex: curCenterIndex + 1] ringTracker] fillInIndex: ];
+        
+//        if (0 == ringIndex)
+        if (kRingFull == [[[views objectAtIndex: curCenterIndex] ringTracker] nextIndex])
+//        {
+            ++curCenterIndex;
+            // lastIndex needs to reset here
+//            lastIndex = index % 6;
+//        }
+//        else
+//            lastIndex = (lastIndex + 1) % 6;
+//        
+//        lastIndex = [[[views objectAtIndex: index] ringTracker] nextIndex];
     }
-//    const NSUInteger originOffset = 600;
-//    y += 250;
-//    x += originOffset;
     
-
-
-    return CGPointMake(x, y);
+    
+    
+    return CGPointMake(0, 0);
+    
+    
+    
+    
+    
+    
+////    const NSUInteger levelMultiplier = 300;
+//    const NSUInteger curLevel = [self levelForIndex: index];
+//    const NSUInteger curQuadrant = [self quadrantForCloudIndex: index];
+//    
+//    bool shouldReverse = false;
+//    
+//    CGFloat xPos = 0;
+//    CGFloat yPos = 0;
+//    if (index <= 4)
+//    {
+//        // [TODO] These should be calculated such that the circles are all the same distance from touching the central circle
+//        switch (index) {
+//            case 0:
+//                xPos += 600;
+//                yPos += 250;
+//                break;
+//            case 1:
+//                yPos += 200;
+//                xPos += 600;
+//                yPos += 250;
+//                break;
+//            case 2:
+//                xPos += 200;
+//                xPos += 600;
+//                yPos += 250;
+//                break;
+//            case 3:
+//                yPos -= 200;
+//                xPos += 600;
+//                yPos += 250;
+//                break;
+//            default: // 4
+//                xPos -= 200;
+//                xPos += 600;
+//                yPos += 250;
+//                break;
+//        }
+//    }
+//    else if (index > 4)
+//    {
+////        shouldReverse = true;
+//        NSArray* surroundingIndices = [self surroundingIndicesForIndex: index];
+//        const NSUInteger firstIndex = [[surroundingIndices objectAtIndex: 0] integerValue];
+//        const NSUInteger secondIndex = [[surroundingIndices objectAtIndex: 1] integerValue];
+//        const NSUInteger rawIndex = [self rawIndexFromOffset: firstIndex AndLevel: curLevel - 1];
+//        const NSUInteger secondRawIndex = [self rawIndexFromOffset: secondIndex AndLevel: curLevel - 1];
+////        const CGRect firstFrame = [[views objectAtIndex: rawIndex] frame];
+////        const CGRect secondFrame = [[views objectAtIndex: secondRawIndex] frame];
+//        const CGPoint cloudCenter = [self newCloudCenterFromFirstCloud: [views objectAtIndex: rawIndex] andSecondCloud: [views objectAtIndex: secondRawIndex] andCurIndex: index];
+//        xPos = cloudCenter.x;
+//        yPos = cloudCenter.y;
+//        // FIRST QUADRANT:
+//        // ✓ // radius should the radius of the circle created by the two circles it should be between
+//            // ✓ // need some way of getting the two circles it should be between
+//        // ✓ // radius can be calculated by taking the difference of the two x positions of the circle's centers
+//        // ✓ // Calculate circle center (do this before negation)
+//            // ✓ // add x to first circle, subtract y from second circle
+//        // center of cloud should be center of circle
+//        // Add some small constant to the x and y of center to push cloud out a little bit to prevent clouds from overlapping
+//            // Really, should figure out if they do overlap, and if they do, push the new cloud out just enough so they don't overlap
+////        const NSUInteger numCloudsOnCurLevel = [self numCloudsForLevel: curLevel];
+////        const NSUInteger anglesCreatedByClouds = numCloudsOnCurLevel;
+////        const NSUInteger degreesPerCloud = 90 / anglesCreatedByClouds;
+////        const CGFloat radians = degreesPerCloud * M_PI / 180;
+////        const NSUInteger curLevelDiameter = curLevel * levelMultiplier;
+////        xPos = cos(radians) * curLevelDiameter / 2;
+////        yPos = sin(radians) * curLevelDiameter / 2;
+//    }
+//    // [TODO] Account for positions within a quadrant per level, instead of just the level itself.
+//    // [TODO] Tighten the spiral; the varying sizes of the circles makes it so we don't currently
+//    // take into account the differently sized spaces between the circles of different levels.
+////    NSInteger x = xPos + curLevel * levelMultiplier;
+////    NSInteger y = yPos + curLevel * levelMultiplier;
+//    NSInteger x = xPos;
+//    NSInteger y = yPos;
+//    
+////    const NSUInteger radiusOffset = curCloudDiameter / 2;
+////    y += radiusOffset;
+////    x += radiusOffset;
+//    
+//    if (shouldReverse)
+//    {
+//        if (curQuadrant == 1)
+//            y = -y;
+//        else if (curQuadrant == 2)
+//        {
+//            x = -x;
+//            y = -y;
+//        }
+//        else if (curQuadrant == 3)
+//            x = -x;
+//    }
+////    const NSUInteger originOffset = 600;
+////    y += 250;
+////    x += originOffset;
+//    
+//
+//
+//    return CGPointMake(x, y);
 }
 
 

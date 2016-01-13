@@ -10,9 +10,13 @@
 #import <Cocoa/Cocoa.h>
 #import "CETopic.h"
 
+@class CERingTracker;
+
+
 @interface CECloudView : NSView
 
 @property CETopic* representedTopic;
+@property CERingTracker* ringTracker;
 
 - (instancetype) initWithTopic: (CETopic*)topic;
 
@@ -22,5 +26,18 @@
 @interface CETextField : NSTextField
 
 - (instancetype) initWithCloudView: (CECloudView*)cloudView;
+
+@end
+
+
+@interface CERingTracker : NSObject
+{
+    @private
+    NSMutableArray* ringArray;
+}
+
+- (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView;
+- (NSUInteger) nextIndex;
+- (bool) indexFilled: (NSUInteger)index;
 
 @end

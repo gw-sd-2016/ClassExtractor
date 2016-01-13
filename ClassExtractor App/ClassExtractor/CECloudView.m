@@ -7,6 +7,7 @@
 //
 
 #import "CECloudView.h"
+#import "Constants.h"
 
 // ============================================================
 // CECloudView
@@ -59,6 +60,9 @@
                                                                             metrics: nil
                                                                               views: viewsForConstraints];
         [NSLayoutConstraint activateConstraints: heightConstraint];
+        
+        // create the ring tracker
+        [self setRingTracker: [[CERingTracker alloc] init]];
     }
     
     return self;
@@ -168,7 +172,7 @@
 // ------------------------------------------------------------
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"CECloudView: %@", [self representedTopic]];
+    return [NSString stringWithFormat: @"CECloudView: %@\r     %@", [self representedTopic], [self ringTracker]];
 }
 
 @end
@@ -221,6 +225,126 @@
     }
     
     return self;
+}
+
+@end
+
+
+// ============================================================
+// CERingTracker
+// ============================================================
+@implementation CERingTracker
+
+// ------------------------------------------------------------
+// init
+// ------------------------------------------------------------
+- (instancetype) init
+{
+    self = [super init];
+    
+    if (self)
+        ringArray = [[NSMutableArray alloc] init];
+    
+    return self;
+}
+
+
+// ------------------------------------------------------------
+// fillInIndex:
+//
+// Fills in the argument index with the argument cloud view.
+// ------------------------------------------------------------
+- (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView
+{
+    // if an index greater than five is given, reject it
+    if (index > 5)
+        return;
+    
+    @synchronized(ringArray)
+    {
+        // [TODO] Change this to binary search, since ringArray is sorted.
+        for (NSUInteger i = 0; i < [ringArray count]; ++i)
+        {
+            if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] == index)
+                return;
+        }
+        
+//        [ringArray addObject: @{[NSNumber numberWithUnsignedInteger: index] : [NSNumber numberWithBool: true]}];
+        [ringArray addObject: @{[NSNumber numberWithUnsignedInteger: index] : cloudView}];
+        
+        ringArray = [[ringArray sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
+            NSNumber* firstNum = [[firstDict allKeys] firstObject];
+            NSNumber* secondNum = [[secondDict allKeys] firstObject];
+            return [firstNum compare: secondNum]; // ascending
+        }] mutableCopy];
+    }
+}
+
+
+// ------------------------------------------------------------
+// nextIndex
+//
+// Returns the next index that should be filled in. If all
+// possible indices are already filled in, then return kRingFull.
+// ------------------------------------------------------------
+- (NSUInteger) nextIndex
+{
+    const NSUInteger ringCount = [ringArray count] + 1;
+    
+    if (ringCount == 7)
+        return kRingFull;
+    
+    NSMutableArray* filledIndicies = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary* dict in ringArray)
+    {
+        [filledIndicies addObject: [[dict allKeys] firstObject]];
+    }
+    
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] != i)
+            return i;
+    }
+    
+    return [ringArray count];
+}
+
+
+// ------------------------------------------------------------
+// indexFilled:
+//
+// Returns whether or not the argument index has already been
+// filled in.
+// ------------------------------------------------------------
+- (bool) indexFilled: (NSUInteger)index
+{
+    // if an index greater than five is given, reject it
+    if (index > 5)
+        return false;
+    
+    // iterate through the array, if a key is present that matches
+    // the argument index, then that index has been filled in
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] == index)
+            return true;
+    }
+    
+    return false;
+}
+
+
+// ------------------------------------------------------------
+// description
+// ------------------------------------------------------------
+- (NSString*) description
+{
+    NSString* ringTrackerDesc = [NSString stringWithFormat: @"CERingTracker: %@", ringArray];
+    
+    // -description doesn't handle "\n" correctly, so swap those with "\r" (when printing,
+    // arrays have a newline character for every index)
+    return [ringTrackerDesc stringByReplacingOccurrencesOfString: @"\n" withString: @"\r"];
 }
 
 @end

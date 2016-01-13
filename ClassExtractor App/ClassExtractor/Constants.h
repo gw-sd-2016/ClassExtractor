@@ -72,4 +72,9 @@ extern const NSUInteger kNumMinsPerClip;
 extern const int32_t kTimescale;
 
 
+// the value returned when a given CECloudView's ring tracker
+// is full
+extern const NSUInteger kRingFull;
+
+
 #endif /* Constants_h */
