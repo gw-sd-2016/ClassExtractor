@@ -61,6 +61,13 @@
                        @{@"beer" : [NSNumber numberWithInteger: 1]},
                        @{@"chili" : [NSNumber numberWithInteger: 1]},
                        @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
                        @{@"nndb" : [NSNumber numberWithInteger: 1]}];
     
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
