@@ -234,6 +234,7 @@
 // CERingTracker
 // ============================================================
 @implementation CERingTracker
+@synthesize centerCloud;
 
 // ------------------------------------------------------------
 // init
@@ -335,16 +336,28 @@
 }
 
 
+
+//- (void) setCenterCloudWithCloud: (CECloudView*)inCenterCloud
+//{
+//    centerCloud = inCenterCloud;
+//}
+
+
 // ------------------------------------------------------------
 // description
 // ------------------------------------------------------------
 - (NSString*) description
 {
-    NSString* ringTrackerDesc = [NSString stringWithFormat: @"CERingTracker: %@", ringArray];
+    NSMutableString* ringArrayDesc = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        [ringArrayDesc appendString: [NSString stringWithFormat: @"%lu", [[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue]]];
+    }
+//    NSString* ringTrackerDesc = [NSString stringWithFormat: @"CERingTracker: %@", ringArray];
     
     // -description doesn't handle "\n" correctly, so swap those with "\r" (when printing,
     // arrays have a newline character for every index)
-    return [ringTrackerDesc stringByReplacingOccurrencesOfString: @"\n" withString: @"\r"];
+    return [ringArrayDesc stringByReplacingOccurrencesOfString: @"\n" withString: @"\r"];
 }
 
 @end

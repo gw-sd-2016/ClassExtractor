@@ -10,6 +10,4 @@
 
 @interface CEWordCloudViewController : NSViewController
 
-@property NSUInteger curCenterIndex;
-
 @end

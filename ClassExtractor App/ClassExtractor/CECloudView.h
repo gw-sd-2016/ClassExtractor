@@ -36,8 +36,11 @@
     NSMutableArray* ringArray;
 }
 
+@property CECloudView* centerCloud;
+
 - (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView;
 - (NSUInteger) nextIndex;
 - (bool) indexFilled: (NSUInteger)index;
+//- (void) setCenterCloudWithCloud: (CECloudView*)inCenterCloud;
 
 @end
