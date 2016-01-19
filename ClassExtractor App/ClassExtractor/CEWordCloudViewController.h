@@ -10,4 +10,6 @@
 
 @interface CEWordCloudViewController : NSViewController
 
+@property NSArray* topics;
+
 @end

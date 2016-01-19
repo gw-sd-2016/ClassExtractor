@@ -7,6 +7,7 @@
 //
 
 #import "CEWelcomeViewController.h"
+#import "CEWordCloudViewController.h"
 #import "CECalculator.h"
 #import "CEConnector.h"
 #import "Constants.h"
@@ -38,39 +39,6 @@
     
     // test code
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
-    
-//    NSArray* array = @[@{@"chile" : [NSNumber numberWithInteger: 4]},
-//                       @{@"comparative advantage" : [NSNumber numberWithInteger: 4]},
-//                       @{@"opportunity cost" : [NSNumber numberWithInteger: 1]},
-//                       @{@"absolute advantage" : [NSNumber numberWithInteger: 0]},
-//                       @{@"bob dole" : [NSNumber numberWithInteger: 0]},
-//                       @{@"argentina" : [NSNumber numberWithInteger: 0]},
-//                       @{@"production possibilities frontier" : [NSNumber numberWithInteger: 0]},
-//                       @{@"onenote" : [NSNumber numberWithInteger: 0]},
-//                       @{@"beer" : [NSNumber numberWithInteger: 0]},
-//                       @{@"chili" : [NSNumber numberWithInteger: 0]},
-//                       @{@"nndb" : [NSNumber numberWithInteger: 0]}];
-    NSArray* array = @[@{@"chile" : [NSNumber numberWithInteger: 1]},
-                       @{@"comparative advantage" : [NSNumber numberWithInteger: 1]},
-                       @{@"opportunity cost" : [NSNumber numberWithInteger: 1]},
-                       @{@"absolute advantage" : [NSNumber numberWithInteger: 1]},
-                       @{@"bob dole" : [NSNumber numberWithInteger: 1]},
-                       @{@"argentina" : [NSNumber numberWithInteger: 1]},
-                       @{@"production possibilities frontier" : [NSNumber numberWithInteger: 1]},
-                       @{@"onenote" : [NSNumber numberWithInteger: 1]},
-                       @{@"beer" : [NSNumber numberWithInteger: 1]},
-                       @{@"chili" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                       @{@"nndb" : [NSNumber numberWithInteger: 1]}];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 }
 
 
@@ -92,6 +60,40 @@
 {
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [notification object]];
+}
+
+
+// ------------------------------------------------------------
+// prepareForSegue:sender:
+// ------------------------------------------------------------
+- (void) prepareForSegue: (NSStoryboardSegue*)segue sender: (id)sender
+{
+    if ([[segue identifier] isEqualToString: @"showWordCloud"])
+    {
+        CEWordCloudViewController* wordCloudViewController = [segue destinationController];
+        
+        NSArray* array = @[@{@"chile" : [NSNumber numberWithInteger: 1]},
+                           @{@"comparative advantage" : [NSNumber numberWithInteger: 1]},
+                           @{@"opportunity cost" : [NSNumber numberWithInteger: 1]},
+                           @{@"absolute advantage" : [NSNumber numberWithInteger: 1]},
+                           @{@"bob dole" : [NSNumber numberWithInteger: 1]},
+                           @{@"argentina" : [NSNumber numberWithInteger: 1]},
+                           @{@"production possibilities frontier" : [NSNumber numberWithInteger: 1]},
+                           @{@"onenote" : [NSNumber numberWithInteger: 1]},
+                           @{@"beer" : [NSNumber numberWithInteger: 1]},
+                           @{@"chili" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
+                           @{@"nndb" : [NSNumber numberWithInteger: 1]}];
+        
+        [wordCloudViewController setTopics: array];
+    }
 }
 
 

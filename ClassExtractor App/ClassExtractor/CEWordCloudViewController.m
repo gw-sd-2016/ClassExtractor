@@ -14,23 +14,10 @@
 // CEWordCloudViewController
 // ============================================================
 @implementation CEWordCloudViewController
+@synthesize topics;
 
 
 #pragma mark - ViewController
-
-
-// ------------------------------------------------------------
-// viewDidLoad
-// ------------------------------------------------------------
-- (void) viewDidLoad
-{
-    [super viewDidLoad];
-
-    [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(cloudWindowOpened:)
-                                                 name: kCloudWindowOpened
-                                               object: nil];
-}
 
 
 // ------------------------------------------------------------
@@ -41,6 +28,8 @@
     [super viewDidAppear];
     
     [[[self view] window] setTitle: @"Word Cloud"];
+    
+    [self cloudWindowAppeared];
 }
 
 
@@ -48,36 +37,35 @@
 
 
 // ------------------------------------------------------------
-// cloudWindowOpened:
+// cloudWindowAppeared
 // ------------------------------------------------------------
-- (void) cloudWindowOpened: (NSNotification*)notification
+- (void) cloudWindowAppeared
 {
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    
-    NSMutableArray* views = [[NSMutableArray alloc] init];
-    NSView* view = [self view];
-    
-    NSArray* topics = [notification object];
-    
-    for (NSUInteger i = 0; i < [topics count]; ++i)
+    if (topics)
     {
-        NSDictionary* curTopic = [topics objectAtIndex: i];
-        NSString* curTopicString = [[curTopic allKeys] firstObject];
-        NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
+        NSMutableArray* views = [[NSMutableArray alloc] init];
+        NSView* view = [self view];
         
-        CETopic* topic = [[CETopic alloc] init];
-        [topic setTopicName: curTopicString];
-//        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+        for (NSUInteger i = 0; i < [topics count]; ++i)
+        {
+            NSDictionary* curTopic = [topics objectAtIndex: i];
+            NSString* curTopicString = [[curTopic allKeys] firstObject];
+            NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
+            
+            CETopic* topic = [[CETopic alloc] init];
+            [topic setTopicName: curTopicString];
+    //        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+            
+            // [TODO] Add robust handling for if the importance weighting is 0.
+            [topic setImportanceWeighting: [curTopicFrequency integerValue]];
+            CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
+            [view addSubview: cloudView];
+            [views addObject: cloudView];
+        }
         
-        // [TODO] Add robust handling for if the importance weighting is 0.
-        [topic setImportanceWeighting: [curTopicFrequency integerValue]];
-        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
-        [view addSubview: cloudView];
-        [views addObject: cloudView];
+        NSArray* sortedViews = [self orderViewsByImportance: views];
+        [self layoutCloudsWithArray: sortedViews];
     }
-    
-    NSArray* sortedViews = [self orderViewsByImportance: views];
-    [self layoutCloudsWithArray: sortedViews];
 }
 
 
@@ -226,8 +214,7 @@
         [indexRingTracker fillInIndex: ringIndexRelativeToNewCloud
                              withView: [views objectAtIndex: index - 5]];
         
-        // [TODO] Can we use nextRingIndex as the parameter here?
-        CECloudView* nextRingCloud = [curCenterRingTracker cloudViewAtRingIndex: (ringIndex + 1) % kNumCloudsPerRing];
+        CECloudView* nextRingCloud = [curCenterRingTracker cloudViewAtRingIndex: nextRingIndex];
         
         [[nextRingCloud ringTracker] fillInIndex: [self reverseRingIndexForRingIndex: ringIndexRelativeToNewCloud]
                                                                             withView: indexCloudView];
