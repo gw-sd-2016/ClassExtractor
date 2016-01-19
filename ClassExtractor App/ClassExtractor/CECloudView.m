@@ -235,6 +235,7 @@
 // ============================================================
 @implementation CERingTracker
 @synthesize centerCloud;
+@synthesize ringFull;
 
 // ------------------------------------------------------------
 // init
@@ -279,36 +280,9 @@
             return [firstNum compare: secondNum]; // ascending
         }] mutableCopy];
     }
-}
-
-
-// ------------------------------------------------------------
-// nextIndex
-//
-// Returns the next index that should be filled in. If all
-// possible indices are already filled in, then return kRingFull.
-// ------------------------------------------------------------
-- (NSUInteger) nextIndex
-{
-    const NSUInteger ringCount = [ringArray count] + 1;
     
-    if (ringCount == 7)
-        return kRingFull;
-    
-    NSMutableArray* filledIndicies = [[NSMutableArray alloc] init];
-    
-    for (NSDictionary* dict in ringArray)
-    {
-        [filledIndicies addObject: [[dict allKeys] firstObject]];
-    }
-    
-    for (NSUInteger i = 0; i < [ringArray count]; ++i)
-    {
-        if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] != i)
-            return i;
-    }
-    
-    return [ringArray count];
+    if ([ringArray count] == kNumCloudsPerRing)
+        ringFull = true;
 }
 
 
@@ -336,11 +310,15 @@
 }
 
 
-
-//- (void) setCenterCloudWithCloud: (CECloudView*)inCenterCloud
-//{
-//    centerCloud = inCenterCloud;
-//}
+// ------------------------------------------------------------
+// cloudViewAtRingIndex:
+// ------------------------------------------------------------
+- (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex
+{
+    NSDictionary* cloudDict = [ringArray objectAtIndex: ringIndex];
+    NSArray* valueArray = [cloudDict allValues];
+    return [valueArray firstObject];
+}
 
 
 // ------------------------------------------------------------

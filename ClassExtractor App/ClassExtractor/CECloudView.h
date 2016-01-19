@@ -37,10 +37,10 @@
 }
 
 @property CECloudView* centerCloud;
+@property bool ringFull;
 
 - (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView;
-- (NSUInteger) nextIndex;
 - (bool) indexFilled: (NSUInteger)index;
-//- (void) setCenterCloudWithCloud: (CECloudView*)inCenterCloud;
+- (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex;
 
 @end

@@ -21,4 +21,4 @@ NSString* const kShowWordCloud = @"showWordCloudNotification";
 NSString* const kCloudWindowOpened = @"cloudWindowOpened";
 const NSUInteger kNumMinsPerClip = 5lu;
 const int32_t kTimescale = 1;
-const NSUInteger kRingFull = 100lu;
+const NSUInteger kNumCloudsPerRing = 6;

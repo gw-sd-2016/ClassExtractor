@@ -15,6 +15,10 @@
 // ============================================================
 @implementation CEWordCloudViewController
 
+
+#pragma mark - ViewController
+
+
 // ------------------------------------------------------------
 // viewDidLoad
 // ------------------------------------------------------------
@@ -38,6 +42,9 @@
     
     [[[self view] window] setTitle: @"Word Cloud"];
 }
+
+
+#pragma mark - High Level Cloud Creation
 
 
 // ------------------------------------------------------------
@@ -107,7 +114,9 @@
 {
     NSUInteger numViews = [views count];
     
-    for (NSUInteger i = 0; i < numViews; ++i)
+    // we start at 1 because there's no ring to add the zeroth
+    // cloud to
+    for (NSUInteger i = 1; i < numViews; ++i)
     {
         [self createCloudModel: i withViews: views];
     }
@@ -126,7 +135,7 @@
             const CGFloat offset = 300;
             const CGPoint centerOrigin = [centerCloud frame].origin;
             
-            switch (i % 6) {
+            switch (i % kNumCloudsPerRing) {
                 case 1:
                     [view setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y + offset, diameter, diameter)];
                     break;
@@ -151,119 +160,7 @@
 }
 
 
-// ------------------------------------------------------------
-// ringIndexOfPastCloudForCenterIndex:
-// ------------------------------------------------------------
-- (NSUInteger) ringIndexOfPastCloudForCenterIndex: (NSUInteger)centerIndex
-{
-    static NSUInteger lastCenter = 2;
-    static NSUInteger indexCounter = 3;
-    
-    if (lastCenter == centerIndex)
-        indexCounter = (indexCounter + 1) % 6;
-    
-    lastCenter = centerIndex;
-    
-    return indexCounter;
-}
-
-
-// ------------------------------------------------------------
-// ringIndexForOldRingWithCenterIndex:andRawIndex:andCurCenterIndex:
-//
-// This function is to be used to make the previous cloud
-// aware of the new cloud when adding a cloud when curCenter
-// is not 0.
-// ------------------------------------------------------------
-- (NSUInteger) ringIndexForOldRingWithCenterIndex: (NSUInteger)centerIndex
-                                      andRawIndex: (NSUInteger)rawIndex
-                                andCurCenterIndex: (NSUInteger)curCenterIndex
-{
-    static NSUInteger lastRawRingIndex = 1;
-    static NSUInteger lastCenterIndex = 7;
-    static NSUInteger counter = 2;
-    
-    if (lastRawRingIndex == curCenterIndex)
-    {
-        if (centerIndex == lastCenterIndex)
-            counter = (counter + 1) % 6;
-    }
-    
-    lastRawRingIndex = curCenterIndex;
-    lastCenterIndex = centerIndex;
-    
-    return counter;
-}
-
-
-// ------------------------------------------------------------
-// ringIndexForNewRingWithCenterIndex:andRawIndex:andCurCenterIndex:
-//
-// This function is to be used to make the new cloud aware of
-// the previous cloud when adding a cloud when curCenter
-// is not 0.
-// ------------------------------------------------------------
-- (NSUInteger) ringIndexForNewRingWithCenterIndex: (NSUInteger)centerIndex
-                                andCurCenterIndex: (NSUInteger)curCenterIndex
-{
-    static NSUInteger lastCenterIndex = 1;
-    static NSUInteger counter = 4;
-    
-    if (lastCenterIndex == curCenterIndex)
-        counter = (counter + 1) % 6;
-
-    lastCenterIndex = curCenterIndex;
-    
-    return counter;
-}
-
-
-// the center is equivalent to curCenterIndex, and rawRingIndex is the raw index for which we are
-// trying to calculate the ring index for
-- (NSUInteger) ringIndexForCenterIndex: (NSUInteger)centerIndex andRingRawIndex: (NSUInteger)rawRingIndex andCurCenterIndex: (NSUInteger)curCenterIndex
-{
-    if (centerIndex > 6)
-    {
-        static NSUInteger lastRawRingIndex = 1;
-        static NSUInteger lastCenterIndex = 7;
-        static NSUInteger counter = 2;
-        
-        if (lastRawRingIndex == curCenterIndex)
-        {
-            if (centerIndex == lastCenterIndex)
-                counter = (counter + 1) % 6;
-        }
-        
-        lastRawRingIndex = curCenterIndex;
-        lastCenterIndex = centerIndex;
-        
-        return counter;
-    }
-    
-    NSUInteger test = rawRingIndex - centerIndex;
-    
-    if (test == NSUIntegerMax && rawRingIndex != 0)
-        test = rawRingIndex - 1;
-    else if (rawRingIndex == 0)
-    {
-        test = 1;
-        return (centerIndex % 6 + 3) % 6;
-    }
-    
-    const NSUInteger modTest = test % 6;
-    
-    return modTest;
-}
-
-- (NSUInteger) calculateRingIndexForRawIndex: (NSUInteger)rawIndex andCenterIndex: (NSUInteger)centerIndex
-{
-    return (rawIndex - centerIndex + 3) % 6;
-}
-
-- (NSUInteger) reverseRingIndex: (NSUInteger)rawIndex
-{
-    return (rawIndex + 3) % 6;
-}
+#pragma mark - Cloud Model Creation
 
 
 // ------------------------------------------------------------
@@ -276,134 +173,164 @@
 // "ringIndex" is the offset of the current cloud within the
 // "curCenterIndex" cloud.
 // ------------------------------------------------------------
-- (void) createCloudModel: (NSUInteger)index withViews: (NSArray<CECloudView*>*)views
+- (void) createCloudModel: (NSUInteger)index
+                withViews: (NSArray<CECloudView*>*)views
 {
     static NSUInteger curCenterIndex = 0;
-    
-    if (11 == index)
-        NSLog(@"%@", views);
-    
-    // a center cloud should not be added to its own ring (or to other rings - it is
-    // added to other rings while evaluating those rings' center)
-    if (curCenterIndex != index)
-    {
-        // ringIndex is only applicable to the current center cloud (i.e. it is meaningless
-        // when talking about other clouds)
-        // we need to subtract curCenterIndex to keep the index positions the same
-        // (otherwise they would rotate around each successive center cloud)
-        const NSUInteger ringIndex = index % 6 - curCenterIndex;
-        
-        CECloudView* indexCloudView = [views objectAtIndex: index];
-        CECloudView* curCenterCloudView = [views objectAtIndex: curCenterIndex];
-        CERingTracker* indexRingTracker = [indexCloudView ringTracker];
-        CERingTracker* curCenterRingTracker = [curCenterCloudView ringTracker];
-        
-        // keep track of what the index cloud's center cloud is so we can lay out
-        // the views later
-        [indexRingTracker setCenterCloud: curCenterCloudView];
-        
-        // fill in the ring for the current center cloud
-        if (curCenterIndex == 0)
-            // if curCenterIndex equals 0, then -nextIndex would return 0, even though we want to
-            // start from 1
-            [curCenterRingTracker fillInIndex: index % 6
-                                     withView: indexCloudView];
-        else
-            [curCenterRingTracker fillInIndex: [curCenterRingTracker nextIndex]
-                                     withView: indexCloudView];
-        
-        // fill in the ring for the index cloud (the clouds to be filled in for this ring are
-        // the current center cloud, as well as the previous cloud if this isn't the first index)
-        if (index < 6)
-        [indexRingTracker fillInIndex: [self ringIndexForCenterIndex: index
-                                                     andRingRawIndex: curCenterIndex
-                                                   andCurCenterIndex: curCenterIndex]
-                             withView: curCenterCloudView];
-        else
-            [indexRingTracker fillInIndex: [self calculateRingIndexForRawIndex: index
-                                                                andCenterIndex: curCenterIndex]
-                                 withView: curCenterCloudView];
-        
-        // we do, however, want to fill in the last cloud if this is the first index
-        // in the event that the zeroth index cloud was created before the first index
-        // cloud (such as when creating the eighth cloud, the seventh cloud was already
-        // created (seven has a ringIndex of 0 and eight of 1 when the curCenterIndex is 1))
-        if (ringIndex != 1 || (ringIndex == 1 && [curCenterRingTracker indexFilled: 5]))
-        {
-            if (index < 6)
-                [indexRingTracker fillInIndex: [self ringIndexForCenterIndex: index
-                                                             andRingRawIndex: index - 1
-                                                           andCurCenterIndex: curCenterIndex]
-                                     withView: [views objectAtIndex: index - 1]];
-            else
-                [indexRingTracker fillInIndex: [self ringIndexForNewRingWithCenterIndex: index
-                                                                      andCurCenterIndex: curCenterIndex]
-                                     withView: [views objectAtIndex: index - 1]];
-        }
-        
-        // fill in the ring for the previous cloud (and, if this cloud completes the ring (i.e. is
-        // zeroth index when curCenterIndex equals 0), then also fill in the ring for the first index)
-        if (ringIndex == 0)
-        {
-            // fill in the ring for the previous cloud
-            if (index < 6)
-                [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index - 1
-                                                                                           andRingRawIndex: index
-                                                                                         andCurCenterIndex: curCenterIndex]
-                                                                   withView: indexCloudView];
-            else
-                [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexForOldRingWithCenterIndex: index - 1
-                                                                                                          andRawIndex: index
-                                                                                                    andCurCenterIndex: curCenterIndex]
-                                                                   withView: indexCloudView];
-            
-            if ([curCenterRingTracker indexFilled: 1])
-            {
-                // fill in the first index's ring
-                [[[views objectAtIndex: index - 5] ringTracker] fillInIndex: [self ringIndexForCenterIndex: index - 5
-                                                                                           andRingRawIndex: index
-                                                                                         andCurCenterIndex: curCenterIndex]
-                                                                   withView: indexCloudView];
-                
-                // make the zeroth index aware of the first index
-                [indexRingTracker fillInIndex: 2
-                                     withView: [views objectAtIndex: index - 5]];
-            }
-        }
-        // check if this is the first index, as if it is, there will not be a zeroth index yet
-        else if (curCenterIndex == 0 && ringIndex != 1)
-        {
-            if (index == 9)
-                NSLog(@"");
-            // fill in the last ring index
-            [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self ringIndexOfPastCloudForCenterIndex: curCenterIndex]
-                                                               withView: indexCloudView];
-        }
-        
-        // the case where we haven't filled in the previous circle with the new cloud (i.e. making 7 aware of 8)
-        if (index > 0 && curCenterIndex != 0)
-        {
-            if (![[[views objectAtIndex: index - 1] ringTracker] indexFilled: ringIndex + 1])
-                [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: ringIndex + 1
-                                                                   withView: indexCloudView];
-        }
-        
-        // the case where a cloud is being created with two center clouds (i.e. 9 - it has 1 and 2 as center clouds)
-        if (index > 6 && [curCenterRingTracker indexFilled: (ringIndex + 1) % 6])
-        {
-            CECloudView* otherCenterCloud = [views objectAtIndex: curCenterIndex + 1];
-            const NSUInteger ringIndexForSecondCenter = [self calculateRingIndexForRawIndex: index andCenterIndex: curCenterIndex + 1];
-            
-            // fill in the ring for index
-            [indexRingTracker fillInIndex: ringIndexForSecondCenter  withView: otherCenterCloud];
-            
-            // fill in the ring for the other center
-            [[otherCenterCloud ringTracker] fillInIndex: [self reverseRingIndex: ringIndexForSecondCenter] withView: indexCloudView];
-        }
 
-        if (kRingFull == [curCenterRingTracker nextIndex])
-            ++curCenterIndex;
+    // ringIndex is only applicable to the current center cloud (i.e. it is meaningless
+    // when talking about other clouds)
+    // we need to subtract curCenterIndex to keep the index positions the same
+    // (otherwise they would rotate around each successive center cloud)
+    const NSUInteger ringIndex = (index - curCenterIndex) % kNumCloudsPerRing;
+
+    CECloudView* indexCloudView = [views objectAtIndex: index];
+    CECloudView* curCenterCloudView = [views objectAtIndex: curCenterIndex];
+    CERingTracker* indexRingTracker = [indexCloudView ringTracker];
+    CERingTracker* curCenterRingTracker = [curCenterCloudView ringTracker];
+
+    // keep track of what the index cloud's center cloud is so we can lay out
+    // the views later
+    [indexRingTracker setCenterCloud: curCenterCloudView];
+
+    // make curCenterIndex aware of index
+    [curCenterRingTracker fillInIndex: ringIndex
+                             withView: indexCloudView];
+    
+    // make index aware of curCenterIndex
+    [indexRingTracker fillInIndex: [self reverseRingIndexForRingIndex: ringIndex]
+                         withView: curCenterCloudView];
+    
+    // make index aware of index - 1
+    // make index - 1 aware of index
+    const NSUInteger previousRingIndex = (index - 1 - curCenterIndex) % kNumCloudsPerRing;
+    if ([curCenterRingTracker indexFilled: previousRingIndex])
+    {
+        const NSUInteger newIndex = [self ringIndexOfPreviousCloudForNewIndex: index
+                                                                withRingIndex: ringIndex];
+        
+        [indexRingTracker fillInIndex: newIndex
+                             withView: [views objectAtIndex: index - 1]];
+    
+        [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self reverseRingIndexForRingIndex: newIndex]
+                                                           withView: indexCloudView];
     }
+    
+    // make ringIndex + 1 aware of index
+    // make index aware of ringIndex + 1
+    const NSUInteger nextRingIndex = (index + 1 - curCenterIndex) % kNumCloudsPerRing;
+    if ([curCenterRingTracker indexFilled: nextRingIndex])
+    {
+        const NSUInteger ringIndexRelativeToNewCloud = [self ringIndexOfNextRingCloudForRingIndex: ringIndex];
+        
+        [indexRingTracker fillInIndex: ringIndexRelativeToNewCloud
+                             withView: [views objectAtIndex: index - 5]];
+        
+        // [TODO] Can we use nextRingIndex as the parameter here?
+        CECloudView* nextRingCloud = [curCenterRingTracker cloudViewAtRingIndex: (ringIndex + 1) % kNumCloudsPerRing];
+        
+        [[nextRingCloud ringTracker] fillInIndex: [self reverseRingIndexForRingIndex: ringIndexRelativeToNewCloud]
+                                                                            withView: indexCloudView];
+    }
+    
+    if ([curCenterRingTracker ringFull])
+        ++curCenterIndex;
+}
+
+
+// ------------------------------------------------------------
+// reverseRingIndexForRingIndex:
+//
+// Returns the ring index opposite the argument ring index (i.e.
+// 1->4, 2->5, 3->6, 4->1, 5->2, 6->3)
+// ------------------------------------------------------------
+- (NSUInteger) reverseRingIndexForRingIndex: (NSUInteger)ringIndex
+{
+    const NSUInteger halfRing = kNumCloudsPerRing / 2;
+    const NSUInteger newIndex = ringIndex + halfRing;
+    return newIndex % kNumCloudsPerRing;
+}
+
+
+// ------------------------------------------------------------
+// ringIndexOfPreviousCloudForNewIndex:withRingIndex:
+//
+// Returns the ring index of the previous cloud within the
+// ring of the cloud that was just added. rawIndex is the index
+// of the new cloud, ringIndex is the new cloud's ring index
+// within it's center ring.
+// ------------------------------------------------------------
+- (NSUInteger) ringIndexOfPreviousCloudForNewIndex: (NSUInteger)rawIndex
+                                     withRingIndex: (NSUInteger)ringIndex
+{
+    static NSUInteger counter = 5;
+    static NSUInteger lastRingIndex = 1;
+    
+    if (ringIndex != lastRingIndex)
+        counter = (counter + 1) % kNumCloudsPerRing;
+    
+    lastRingIndex = ringIndex;
+    
+    return counter;
+}
+
+
+// ------------------------------------------------------------
+// ringIndexOfNextRingCloudForRingIndex:
+//
+// Returns the ring index of the next cloud of the array within
+// the new cloud's ring (i.e. if 18 was just added, this
+// returns the ring index of 7 within 18's ring).
+// ------------------------------------------------------------
+- (NSUInteger) ringIndexOfNextRingCloudForRingIndex: (NSUInteger)ringIndex
+{
+    return (ringIndex + 2) % kNumCloudsPerRing;
+}
+
+
+# pragma mark - Levels
+
+
+// ------------------------------------------------------------
+// levelForIndex:
+//
+// The level is returned as zero-offset.
+// ------------------------------------------------------------
+- (NSUInteger) levelForIndex: (NSUInteger)rawIndex
+{
+    NSInteger rawLevel = ceil((double)rawIndex / (double)kNumCloudsPerRing);
+    NSUInteger counter = 1;
+    
+    while (rawLevel > 0)
+    {
+        rawLevel -= counter;
+        ++counter;
+    }
+    
+    return counter - 1;
+}
+
+
+// ------------------------------------------------------------
+// totalCloudsForLevel:
+//
+// Returns the total number of clouds for the argument level and
+// all lower levels given that the argument level is filled in
+// (and, therefore, that all lower levels are filled in as well).
+// ------------------------------------------------------------
+- (NSUInteger) totalCloudsForLevel: (NSUInteger)level
+{
+    // base case: the zeroth level has exactly one cloud,
+    // the zeroth cloud
+    if (0 == level)
+        return 1;
+    
+    // the number of clouds on each level grows by a factor of 6
+    const NSUInteger cloudsOnCurLevel = level * kNumCloudsPerRing;
+    
+    // return the number of clouds on the current level plus all
+    // of the clouds from lower levels
+    return cloudsOnCurLevel + [self totalCloudsForLevel: level - 1];
 }
 
 @end

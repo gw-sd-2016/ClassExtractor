@@ -72,9 +72,8 @@ extern const NSUInteger kNumMinsPerClip;
 extern const int32_t kTimescale;
 
 
-// the value returned when a given CECloudView's ring tracker
-// is full
-extern const NSUInteger kRingFull;
+// the number of clouds per ring in the Word Cloud interface
+extern const NSUInteger kNumCloudsPerRing;
 
 
 #endif /* Constants_h */
