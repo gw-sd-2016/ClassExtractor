@@ -317,12 +317,38 @@
 
 // ------------------------------------------------------------
 // cloudViewAtRingIndex:
+//
+// Returns nil if the argument index is not present in the
+// array.
 // ------------------------------------------------------------
 - (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex
 {
-    NSDictionary* cloudDict = [ringArray objectAtIndex: ringIndex];
-    NSArray* valueArray = [cloudDict allValues];
-    return [valueArray firstObject];
+    // check if we were given an invalid index
+    if (ringIndex > kNumCloudsPerRing - 1)
+        return nil;
+    
+    // if ringArray is full, then the cloud we want is at ringIndex
+    if ([ringArray count] == kNumCloudsPerRing)
+        return [[[ringArray objectAtIndex: ringIndex] allValues] firstObject];
+    
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        NSDictionary* cloudDict = [ringArray objectAtIndex: i];
+        
+        // check if this is the correct index
+        NSArray* keyArray = [cloudDict allKeys];
+        NSNumber* indexNum = [keyArray firstObject];
+        NSUInteger index = [indexNum unsignedIntegerValue];
+        
+        if (index == ringIndex)
+        {
+            NSArray* valueArray = [cloudDict allValues];
+            CECloudView* cloudView = [valueArray firstObject];
+            return cloudView;
+        }
+    }
+    
+    return nil;
 }
 
 
