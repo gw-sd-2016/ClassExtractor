@@ -10,7 +10,6 @@
 
 @interface CEWordCloudViewController : NSViewController
 
-@property NSArray* topics;
 @property NSMutableArray<NSNumber*>* centerClouds;
 
 @end

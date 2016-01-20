@@ -14,11 +14,26 @@
 // CEWordCloudViewController
 // ============================================================
 @implementation CEWordCloudViewController
-@synthesize topics;
 @synthesize centerClouds;
 
 
 #pragma mark - ViewController
+
+
+// ------------------------------------------------------------
+// viewDidLoad
+// ------------------------------------------------------------
+- (void) viewDidLoad
+{
+    [super viewDidLoad];
+
+    centerClouds = [[NSMutableArray alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(cloudWindowAppeared:)
+                                                 name: kCloudWindowOpened
+                                               object: nil];
+}
 
 
 // ------------------------------------------------------------
@@ -29,10 +44,6 @@
     [super viewDidAppear];
     
     [[[self view] window] setTitle: @"Word Cloud"];
-    
-    centerClouds = [[NSMutableArray alloc] init];
-    
-    [self cloudWindowAppeared];
 }
 
 
@@ -42,65 +53,66 @@
 // ------------------------------------------------------------
 // cloudWindowAppeared
 // ------------------------------------------------------------
-- (void) cloudWindowAppeared
+- (void) cloudWindowAppeared: (NSNotification*)notification
 {
-    if (topics)
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
+    NSArray* topics = [notification object];
+    
+    const CGFloat cornerRadius = 8.0f;
+    NSMutableArray* views = [[NSMutableArray alloc] init];
+    NSView* view = [self view];
+    [view setWantsLayer: true];
+    [[view layer] setCornerRadius: cornerRadius];
+    
+    NSScrollView* scrollView = [[NSScrollView alloc] init];
+    [scrollView setWantsLayer: true];
+    [[scrollView layer] setCornerRadius: cornerRadius];
+    [view addSubview: scrollView];
+    [scrollView setHasVerticalScroller: true];
+    [scrollView setHasHorizontalScroller: true];
+    
+    [scrollView setTranslatesAutoresizingMaskIntoConstraints: false];
+    NSDictionary* layoutViews = @{@"scrollView" : scrollView};
+    NSString* horizFormatString = @"H:|-[scrollView]-|";
+    NSString* vertFormatString = @"V:|-[scrollView]-|";
+    NSArray* horizConstraints = [NSLayoutConstraint constraintsWithVisualFormat: horizFormatString
+                                                                        options: NSLayoutFormatAlignAllBaseline
+                                                                        metrics: nil
+                                                                          views: layoutViews];
+    NSArray* vertConstraints = [NSLayoutConstraint constraintsWithVisualFormat: vertFormatString
+                                                                       options: NSLayoutFormatAlignAllBaseline
+                                                                       metrics: nil
+                                                                         views: layoutViews];
+    
+    [NSLayoutConstraint activateConstraints: horizConstraints];
+    [NSLayoutConstraint activateConstraints: vertConstraints ];
+    
+    
+    NSView* documentView = [[NSView alloc] init];
+    [scrollView setDocumentView: documentView];
+    
+    for (NSUInteger i = 0; i < [topics count]; ++i)
     {
-        const CGFloat cornerRadius = 8.0f;
-        NSMutableArray* views = [[NSMutableArray alloc] init];
-        NSView* view = [self view];
-        [view setWantsLayer: true];
-        [[view layer] setCornerRadius: cornerRadius];
+        NSDictionary* curTopic = [topics objectAtIndex: i];
+        NSString* curTopicString = [[curTopic allKeys] firstObject];
+        NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
         
-        NSScrollView* scrollView = [[NSScrollView alloc] init];
-        [scrollView setWantsLayer: true];
-        [[scrollView layer] setCornerRadius: cornerRadius];
-        [view addSubview: scrollView];
-        [scrollView setHasVerticalScroller: true];
-        [scrollView setHasHorizontalScroller: true];
+        CETopic* topic = [[CETopic alloc] init];
+        [topic setTopicName: curTopicString];
+//        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
         
-        [scrollView setTranslatesAutoresizingMaskIntoConstraints: false];
-        NSDictionary* layoutViews = @{@"scrollView" : scrollView};
-        NSString* horizFormatString = @"H:|-[scrollView]-|";
-        NSString* vertFormatString = @"V:|-[scrollView]-|";
-        NSArray* horizConstraints = [NSLayoutConstraint constraintsWithVisualFormat: horizFormatString
-                                                                            options: NSLayoutFormatAlignAllBaseline
-                                                                            metrics: nil
-                                                                              views: layoutViews];
-        NSArray* vertConstraints = [NSLayoutConstraint constraintsWithVisualFormat: vertFormatString
-                                                                           options: NSLayoutFormatAlignAllBaseline
-                                                                           metrics: nil
-                                                                             views: layoutViews];
-        
-        [NSLayoutConstraint activateConstraints: horizConstraints];
-        [NSLayoutConstraint activateConstraints: vertConstraints ];
-        
-        
-        NSView* documentView = [[NSView alloc] init];
-        [scrollView setDocumentView: documentView];
-        
-        for (NSUInteger i = 0; i < [topics count]; ++i)
-        {
-            NSDictionary* curTopic = [topics objectAtIndex: i];
-            NSString* curTopicString = [[curTopic allKeys] firstObject];
-            NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
-            
-            CETopic* topic = [[CETopic alloc] init];
-            [topic setTopicName: curTopicString];
-    //        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
-            
-            // [TODO] Add robust handling for if the importance weighting is 0.
-            [topic setImportanceWeighting: [curTopicFrequency integerValue]];
-            CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
-            [documentView addSubview: cloudView];
-            [views addObject: cloudView];
-        }
-        
-        [documentView setFrame: CGRectMake(0, 0, 3000, 3000)];
-        
-        NSArray* sortedViews = [self orderViewsByImportance: views];
-        [self layoutCloudsWithArray: sortedViews];
+        // [TODO] Add robust handling for if the importance weighting is 0.
+        [topic setImportanceWeighting: [curTopicFrequency integerValue]];
+        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
+        [documentView addSubview: cloudView];
+        [views addObject: cloudView];
     }
+    
+    [documentView setFrame: CGRectMake(0, 0, 3000, 3000)];
+    
+    NSArray* sortedViews = [self orderViewsByImportance: views];
+    [self layoutCloudsWithArray: sortedViews];
 }
 
 
@@ -148,14 +160,15 @@
     }
     
     const NSUInteger numCenterClouds = [centerClouds count];
-    
     for (NSUInteger i = 0; i < numCenterClouds; ++i)
     {
         CECloudView* view = [views objectAtIndex: i];
-        const CGFloat diameter = [view frame].size.width; // the view is a circle, so the width and height are equal
         
         if (i == 0)
-            [view setFrame: CGRectMake(800, 800, diameter, diameter)];
+        {
+            const CGFloat centerDiameter = [view frame].size.width; // the view is a circle, so the width and height are equal
+            [view setFrame: CGRectMake(800, 800, centerDiameter, centerDiameter)];
+        }
         
         CERingTracker* viewRingTracker = [view ringTracker];
         NSArray* filledIndices = [viewRingTracker filledIndices];
@@ -166,10 +179,11 @@
             NSNumber* indexValue = [filledIndices objectAtIndex: j];
             NSUInteger index = [indexValue integerValue];
             CECloudView* ringCloud = [viewRingTracker cloudViewAtRingIndex: index];
+            const CGFloat diameter = [ringCloud frame].size.width; // the view is a circle, so the width and height are equal
             
             if (ringCloud && ![ringCloud layedOut])
             {
-                const CGFloat offset = 210;
+                const CGFloat offset = diameter + 10;
                 const CGPoint centerOrigin = [view frame].origin;
                 
                 switch (index) {

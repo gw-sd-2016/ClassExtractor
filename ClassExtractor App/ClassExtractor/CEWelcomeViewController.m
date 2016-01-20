@@ -38,7 +38,28 @@
                                                object: nil];
     
     // test code
+    NSArray* array = @[@{@"Chile"                               : [NSNumber numberWithInteger: 10]},
+                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
+                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
+                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
+                       @{@"Bob Dole"                            : [NSNumber numberWithInteger: 5]},
+                       @{@"Argentina"                           : [NSNumber numberWithInteger: 5]},
+                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
+                       @{@"Onenote"                             : [NSNumber numberWithInteger: 4]},
+                       @{@"Beer"                                : [NSNumber numberWithInteger: 3]},
+                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
+                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
+                       @{@"Microeconomics"                      : [NSNumber numberWithInteger: 3]},
+                       @{@"Macroeconomics"                      : [NSNumber numberWithInteger: 2]},
+                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
+                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
+                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
+                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
+                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
+                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
+    
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 }
 
 
@@ -60,40 +81,6 @@
 {
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [notification object]];
-}
-
-
-// ------------------------------------------------------------
-// prepareForSegue:sender:
-// ------------------------------------------------------------
-- (void) prepareForSegue: (NSStoryboardSegue*)segue sender: (id)sender
-{
-    if ([[segue identifier] isEqualToString: @"showWordCloud"])
-    {
-        CEWordCloudViewController* wordCloudViewController = [segue destinationController];
-        
-        NSArray* array = @[@{@"Chile"                               : [NSNumber numberWithInteger: 1]},
-                           @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 1]},
-                           @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 1]},
-                           @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 1]},
-                           @{@"Bob Dole"                            : [NSNumber numberWithInteger: 1]},
-                           @{@"Argentina"                           : [NSNumber numberWithInteger: 1]},
-                           @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 1]},
-                           @{@"Onenote"                             : [NSNumber numberWithInteger: 1]},
-                           @{@"Beer"                                : [NSNumber numberWithInteger: 1]},
-                           @{@"Chili"                               : [NSNumber numberWithInteger: 1]},
-                           @{@"Computers"                           : [NSNumber numberWithInteger: 1]},
-                           @{@"Microeconomics"                      : [NSNumber numberWithInteger: 1]},
-                           @{@"Macroeconomics"                      : [NSNumber numberWithInteger: 1]},
-                           @{@"Industry"                            : [NSNumber numberWithInteger: 1]},
-                           @{@"Government"                          : [NSNumber numberWithInteger: 1]},
-                           @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
-                           @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
-                           @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
-                           @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
-        
-        [wordCloudViewController setTopics: array];
-    }
 }
 
 
