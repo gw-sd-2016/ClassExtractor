@@ -17,6 +17,7 @@
 
 @property CETopic* representedTopic;
 @property CERingTracker* ringTracker;
+@property bool layedOut;
 
 - (instancetype) initWithTopic: (CETopic*)topic;
 
@@ -42,5 +43,6 @@
 - (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView;
 - (bool) indexFilled: (NSUInteger)index;
 - (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex;
+- (NSArray<NSNumber*>*) filledIndices;
 
 @end

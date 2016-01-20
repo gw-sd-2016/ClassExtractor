@@ -14,6 +14,7 @@
 // ============================================================
 @implementation CECloudView
 @synthesize representedTopic;
+@synthesize layedOut;
 
 // ------------------------------------------------------------
 // initWithTopic:
@@ -163,7 +164,11 @@
     const double offsetDiameter = multiplier * reciprocal;
     const double diameter = baseCalculation + offsetDiameter;
     
-    return CGSizeMake(diameter, diameter);
+    // [TODO] This is test code to make the views easily manageable,
+    // change this back so that we can actually calculate the diameter
+    // based on the importance of the topic.
+//    return CGSizeMake(diameter, diameter);
+    return CGSizeMake(200, 200);
 }
 
 
@@ -318,6 +323,26 @@
     NSDictionary* cloudDict = [ringArray objectAtIndex: ringIndex];
     NSArray* valueArray = [cloudDict allValues];
     return [valueArray firstObject];
+}
+
+
+// ------------------------------------------------------------
+// filledIndices
+//
+// Returns the indices in this ring that have been filled.
+// ------------------------------------------------------------
+- (NSArray<NSNumber*>*) filledIndices
+{
+    NSMutableArray<NSNumber*>* indices = [[NSMutableArray alloc] init];
+    
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        NSDictionary* cloudDict = [ringArray objectAtIndex: i];
+        NSArray* keyArray = [cloudDict allKeys];
+        [indices addObject: [keyArray firstObject]];
+    }
+    
+    return [indices copy];
 }
 
 

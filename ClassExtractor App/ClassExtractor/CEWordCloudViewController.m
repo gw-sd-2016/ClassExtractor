@@ -15,6 +15,7 @@
 // ============================================================
 @implementation CEWordCloudViewController
 @synthesize topics;
+@synthesize centerClouds;
 
 
 #pragma mark - ViewController
@@ -28,6 +29,8 @@
     [super viewDidAppear];
     
     [[[self view] window] setTitle: @"Word Cloud"];
+    
+    centerClouds = [[NSMutableArray alloc] init];
     
     [self cloudWindowAppeared];
 }
@@ -93,7 +96,7 @@
             [views addObject: cloudView];
         }
         
-        [documentView setFrame: CGRectMake(0, 0, 2000, 2000)];
+        [documentView setFrame: CGRectMake(0, 0, 3000, 3000)];
         
         NSArray* sortedViews = [self orderViewsByImportance: views];
         [self layoutCloudsWithArray: sortedViews];
@@ -134,6 +137,9 @@
 {
     NSUInteger numViews = [views count];
     
+    if (numViews > 1)
+        [centerClouds addObject: [NSNumber numberWithUnsignedInteger: 0]];
+    
     // we start at 1 because there's no ring to add the zeroth
     // cloud to
     for (NSUInteger i = 1; i < numViews; ++i)
@@ -141,39 +147,53 @@
         [self createCloudModel: i withViews: views];
     }
     
-    for (NSUInteger i = 0; i < numViews; ++i)
+    const NSUInteger numCenterClouds = [centerClouds count];
+    
+    for (NSUInteger i = 0; i < numCenterClouds; ++i)
     {
         CECloudView* view = [views objectAtIndex: i];
-        CECloudView* centerCloud = [[view ringTracker] centerCloud];
-        
         const CGFloat diameter = [view frame].size.width; // the view is a circle, so the width and height are equal
         
         if (i == 0)
-            [view setFrame: CGRectMake(200, 200, diameter, diameter)];
-        else
+            [view setFrame: CGRectMake(800, 800, diameter, diameter)];
+        
+        CERingTracker* viewRingTracker = [view ringTracker];
+        NSArray* filledIndices = [viewRingTracker filledIndices];
+        const NSUInteger numFilledIndices = [filledIndices count];
+        
+        for (NSUInteger j = 0; j < numFilledIndices; ++j)
         {
-            const CGFloat offset = 300;
-            const CGPoint centerOrigin = [centerCloud frame].origin;
+            NSNumber* indexValue = [filledIndices objectAtIndex: j];
+            NSUInteger index = [indexValue integerValue];
+            CECloudView* ringCloud = [viewRingTracker cloudViewAtRingIndex: index];
             
-            switch (i % kNumCloudsPerRing) {
-                case 1:
-                    [view setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y + offset, diameter, diameter)];
-                    break;
-                case 2:
-                    [view setFrame: CGRectMake(centerOrigin.x + offset, centerOrigin.y, diameter, diameter)];
-                    break;
-                case 3:
-                    [view setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y - offset, diameter, diameter)];
-                    break;
-                case 4:
-                    [view setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y - offset, diameter, diameter)];
-                    break;
-                case 5:
-                    [view setFrame: CGRectMake(centerOrigin.x - offset, centerOrigin.y, diameter, diameter)];
-                    break;
-                default: // 0
-                    [view setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y + offset, diameter, diameter)];
-                    break;
+            if (ringCloud && ![ringCloud layedOut])
+            {
+                const CGFloat offset = 210;
+                const CGPoint centerOrigin = [view frame].origin;
+                
+                switch (index) {
+                    case 1:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y + offset, diameter, diameter)];
+                        break;
+                    case 2:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x + offset, centerOrigin.y, diameter, diameter)];
+                        break;
+                    case 3:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y - offset, diameter, diameter)];
+                        break;
+                    case 4:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y - offset, diameter, diameter)];
+                        break;
+                    case 5:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x - offset, centerOrigin.y, diameter, diameter)];
+                        break;
+                    default: // 0
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y + offset, diameter, diameter)];
+                        break;
+                }
+                
+                [ringCloud setLayedOut: true];
             }
         }
     }
@@ -253,7 +273,10 @@
     }
     
     if ([curCenterRingTracker ringFull])
+    {
         ++curCenterIndex;
+        [centerClouds addObject: [NSNumber numberWithUnsignedInteger: curCenterIndex]];
+    }
 }
 
 

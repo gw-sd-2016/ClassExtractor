@@ -72,25 +72,25 @@
     {
         CEWordCloudViewController* wordCloudViewController = [segue destinationController];
         
-        NSArray* array = @[@{@"chile" : [NSNumber numberWithInteger: 1]},
-                           @{@"comparative advantage" : [NSNumber numberWithInteger: 1]},
-                           @{@"opportunity cost" : [NSNumber numberWithInteger: 1]},
-                           @{@"absolute advantage" : [NSNumber numberWithInteger: 1]},
-                           @{@"bob dole" : [NSNumber numberWithInteger: 1]},
-                           @{@"argentina" : [NSNumber numberWithInteger: 1]},
-                           @{@"production possibilities frontier" : [NSNumber numberWithInteger: 1]},
-                           @{@"onenote" : [NSNumber numberWithInteger: 1]},
-                           @{@"beer" : [NSNumber numberWithInteger: 1]},
-                           @{@"chili" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]},
-                           @{@"nndb" : [NSNumber numberWithInteger: 1]}];
+        NSArray* array = @[@{@"Chile"                               : [NSNumber numberWithInteger: 1]},
+                           @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 1]},
+                           @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 1]},
+                           @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 1]},
+                           @{@"Bob Dole"                            : [NSNumber numberWithInteger: 1]},
+                           @{@"Argentina"                           : [NSNumber numberWithInteger: 1]},
+                           @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 1]},
+                           @{@"Onenote"                             : [NSNumber numberWithInteger: 1]},
+                           @{@"Beer"                                : [NSNumber numberWithInteger: 1]},
+                           @{@"Chili"                               : [NSNumber numberWithInteger: 1]},
+                           @{@"Computers"                           : [NSNumber numberWithInteger: 1]},
+                           @{@"Microeconomics"                      : [NSNumber numberWithInteger: 1]},
+                           @{@"Macroeconomics"                      : [NSNumber numberWithInteger: 1]},
+                           @{@"Industry"                            : [NSNumber numberWithInteger: 1]},
+                           @{@"Government"                          : [NSNumber numberWithInteger: 1]},
+                           @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
+                           @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
+                           @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
+                           @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
         
         [wordCloudViewController setTopics: array];
     }
