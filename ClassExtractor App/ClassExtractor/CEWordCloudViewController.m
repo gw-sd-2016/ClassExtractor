@@ -43,8 +43,38 @@
 {
     if (topics)
     {
+        const CGFloat cornerRadius = 8.0f;
         NSMutableArray* views = [[NSMutableArray alloc] init];
         NSView* view = [self view];
+        [view setWantsLayer: true];
+        [[view layer] setCornerRadius: cornerRadius];
+        
+        NSScrollView* scrollView = [[NSScrollView alloc] init];
+        [scrollView setWantsLayer: true];
+        [[scrollView layer] setCornerRadius: cornerRadius];
+        [view addSubview: scrollView];
+        [scrollView setHasVerticalScroller: true];
+        [scrollView setHasHorizontalScroller: true];
+        
+        [scrollView setTranslatesAutoresizingMaskIntoConstraints: false];
+        NSDictionary* layoutViews = @{@"scrollView" : scrollView};
+        NSString* horizFormatString = @"H:|-[scrollView]-|";
+        NSString* vertFormatString = @"V:|-[scrollView]-|";
+        NSArray* horizConstraints = [NSLayoutConstraint constraintsWithVisualFormat: horizFormatString
+                                                                            options: NSLayoutFormatAlignAllBaseline
+                                                                            metrics: nil
+                                                                              views: layoutViews];
+        NSArray* vertConstraints = [NSLayoutConstraint constraintsWithVisualFormat: vertFormatString
+                                                                           options: NSLayoutFormatAlignAllBaseline
+                                                                           metrics: nil
+                                                                             views: layoutViews];
+        
+        [NSLayoutConstraint activateConstraints: horizConstraints];
+        [NSLayoutConstraint activateConstraints: vertConstraints ];
+        
+        
+        NSView* documentView = [[NSView alloc] init];
+        [scrollView setDocumentView: documentView];
         
         for (NSUInteger i = 0; i < [topics count]; ++i)
         {
@@ -59,9 +89,11 @@
             // [TODO] Add robust handling for if the importance weighting is 0.
             [topic setImportanceWeighting: [curTopicFrequency integerValue]];
             CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
-            [view addSubview: cloudView];
+            [documentView addSubview: cloudView];
             [views addObject: cloudView];
         }
+        
+        [documentView setFrame: CGRectMake(0, 0, 2000, 2000)];
         
         NSArray* sortedViews = [self orderViewsByImportance: views];
         [self layoutCloudsWithArray: sortedViews];
