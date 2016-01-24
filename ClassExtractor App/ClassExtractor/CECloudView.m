@@ -9,12 +9,17 @@
 #import "CECloudView.h"
 #import "Constants.h"
 
+#pragma mark CECloudView
+
 // ============================================================
 // CECloudView
 // ============================================================
 @implementation CECloudView
 @synthesize representedTopic;
 @synthesize layedOut;
+
+#pragma mark - Initialization
+
 
 // ------------------------------------------------------------
 // initWithTopic:
@@ -71,6 +76,28 @@
 
 
 // ------------------------------------------------------------
+// setColorFromRGBWithRed:andGreen:andBlue:
+//
+// A convenience method for creating an NSColor and setting it
+// as the fill and stroke colors in the current drawing context.
+// ------------------------------------------------------------
+- (NSColor*) setColorFromRGBWithRed: (unsigned char)red andGreen: (unsigned char)green andBlue: (unsigned char)blue
+{
+    NSColor* calibratedColor = [NSColor colorWithCalibratedRed: (red   / 255.0f)
+                                                         green: (green / 255.0f)
+                                                          blue: (blue  / 255.0f)
+                                                         alpha: 1.0];
+    
+    [calibratedColor set];
+    
+    return calibratedColor;
+}
+
+
+#pragma mark - Helper Methods
+
+
+// ------------------------------------------------------------
 // formatTime
 //
 // Takes the represented topic's time duration and formats it
@@ -106,25 +133,6 @@
                               formattedEndSeconds];
     
     return formatString;
-}
-
-
-// ------------------------------------------------------------
-// setColorFromRGBWithRed:andGreen:andBlue:
-//
-// A convenience method for creating an NSColor and setting it
-// as the fill and stroke colors in the current drawing context.
-// ------------------------------------------------------------
-- (NSColor*) setColorFromRGBWithRed: (unsigned char)red andGreen: (unsigned char)green andBlue: (unsigned char)blue
-{
-    NSColor* calibratedColor = [NSColor colorWithCalibratedRed: (red   / 255.0f)
-                                                         green: (green / 255.0f)
-                                                          blue: (blue  / 255.0f)
-                                                         alpha: 1.0];
-    
-    [calibratedColor set];
-    
-    return calibratedColor;
 }
 
 
@@ -172,6 +180,9 @@
 }
 
 
+#pragma mark - Other
+
+
 // ------------------------------------------------------------
 // description
 // ------------------------------------------------------------
@@ -181,6 +192,9 @@
 }
 
 @end
+
+
+#pragma mark - CETextField
 
 
 // ============================================================
@@ -235,12 +249,17 @@
 @end
 
 
+#pragma mark - CERingTracker
+
+
 // ============================================================
 // CERingTracker
 // ============================================================
 @implementation CERingTracker
 @synthesize centerCloud;
-@synthesize ringFull;
+
+#pragma mark - Initialization
+
 
 // ------------------------------------------------------------
 // init
@@ -256,6 +275,9 @@
 }
 
 
+#pragma mark - Modifying the Ring Tracker
+
+
 // ------------------------------------------------------------
 // fillInIndex:
 //
@@ -264,19 +286,14 @@
 - (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView
 {
     // if an index greater than five is given, reject it
-    if (index > 5)
+    if (index > kNumCloudsPerRing - 1)
         return;
     
     @synchronized(ringArray)
     {
-        // [TODO] Change this to binary search, since ringArray is sorted.
-        for (NSUInteger i = 0; i < [ringArray count]; ++i)
-        {
-            if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] == index)
-                return;
-        }
+        if ([self indexFilled: index])
+            return;
         
-//        [ringArray addObject: @{[NSNumber numberWithUnsignedInteger: index] : [NSNumber numberWithBool: true]}];
         [ringArray addObject: @{[NSNumber numberWithUnsignedInteger: index] : cloudView}];
         
         ringArray = [[ringArray sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
@@ -291,6 +308,9 @@
 }
 
 
+#pragma mark - Querying the Ring Tracker
+
+
 // ------------------------------------------------------------
 // indexFilled:
 //
@@ -300,9 +320,10 @@
 - (bool) indexFilled: (NSUInteger)index
 {
     // if an index greater than five is given, reject it
-    if (index > 5)
+    if (index > kNumCloudsPerRing - 1)
         return false;
     
+    // [TODO] Change this to binary search, since ringArray is sorted.
     // iterate through the array, if a key is present that matches
     // the argument index, then that index has been filled in
     for (NSUInteger i = 0; i < [ringArray count]; ++i)
@@ -361,15 +382,30 @@
 {
     NSMutableArray<NSNumber*>* indices = [[NSMutableArray alloc] init];
     
-    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    @synchronized(ringArray)
     {
-        NSDictionary* cloudDict = [ringArray objectAtIndex: i];
-        NSArray* keyArray = [cloudDict allKeys];
-        [indices addObject: [keyArray firstObject]];
+        for (NSUInteger i = 0; i < [ringArray count]; ++i)
+        {
+            NSDictionary* cloudDict = [ringArray objectAtIndex: i];
+            NSArray* keyArray = [cloudDict allKeys];
+            [indices addObject: [keyArray firstObject]];
+        }
     }
     
     return [indices copy];
 }
+
+
+// ------------------------------------------------------------
+// ringFull
+// ------------------------------------------------------------
+- (bool) ringFull
+{
+    return ringFull;
+}
+
+
+#pragma mark - Other
 
 
 // ------------------------------------------------------------

@@ -34,15 +34,16 @@
 @interface CERingTracker : NSObject
 {
     @private
-    NSMutableArray* ringArray;
+    NSMutableArray<NSDictionary*>* ringArray;
+    bool ringFull;
 }
 
 @property CECloudView* centerCloud;
-@property bool ringFull;
 
 - (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView;
 - (bool) indexFilled: (NSUInteger)index;
 - (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex;
 - (NSArray<NSNumber*>*) filledIndices;
+- (bool) ringFull;
 
 @end

@@ -176,17 +176,20 @@
         
         for (NSUInteger j = 0; j < numFilledIndices; ++j)
         {
-            NSNumber* indexValue = [filledIndices objectAtIndex: j];
-            NSUInteger index = [indexValue integerValue];
-            CECloudView* ringCloud = [viewRingTracker cloudViewAtRingIndex: index];
-            const CGFloat diameter = [ringCloud frame].size.width; // the view is a circle, so the width and height are equal
+            NSNumber* ringIndexValue = [filledIndices objectAtIndex: j];
+            NSUInteger ringIndex = [ringIndexValue integerValue];
+            CECloudView* ringCloud = [viewRingTracker cloudViewAtRingIndex: ringIndex];
             
             if (ringCloud && ![ringCloud layedOut])
             {
+                const CGFloat diameter = [ringCloud frame].size.width; // the view is a circle, so the width and height are equal
                 const CGFloat offset = diameter + 10;
                 const CGPoint centerOrigin = [view frame].origin;
                 
-                switch (index) {
+                switch (ringIndex) {
+                    case 0:
+                        [ringCloud setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y + offset, diameter, diameter)];
+                        break;
                     case 1:
                         [ringCloud setFrame: CGRectMake(centerOrigin.x + offset / 2, centerOrigin.y + offset, diameter, diameter)];
                         break;
@@ -202,8 +205,9 @@
                     case 5:
                         [ringCloud setFrame: CGRectMake(centerOrigin.x - offset, centerOrigin.y, diameter, diameter)];
                         break;
-                    default: // 0
-                        [ringCloud setFrame: CGRectMake(centerOrigin.x - offset / 2, centerOrigin.y + offset, diameter, diameter)];
+                    default:
+                        // since this should never happen, we can simply use "false" here
+                        NSAssert1(false, @"Invalid ring index value: %lu", ringIndex);
                         break;
                 }
                 
