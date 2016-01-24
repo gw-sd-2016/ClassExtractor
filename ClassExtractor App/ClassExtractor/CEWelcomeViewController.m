@@ -7,6 +7,7 @@
 //
 
 #import "CEWelcomeViewController.h"
+#import "CEWordCloudViewController.h"
 #import "CECalculator.h"
 #import "CEConnector.h"
 #import "Constants.h"
@@ -35,6 +36,30 @@
                                              selector: @selector(showWordCloud:)
                                                  name: kShowWordCloud
                                                object: nil];
+    
+    // test code
+    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
+                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
+                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
+                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
+                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
+                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
+                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
+                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
+                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
+                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
+                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
+                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
+                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
+                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
+                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
+                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
+                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
+                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
+                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
+    
+    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 }
 
 

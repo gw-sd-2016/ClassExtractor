@@ -72,4 +72,8 @@ extern const NSUInteger kNumMinsPerClip;
 extern const int32_t kTimescale;
 
 
+// the number of clouds per ring in the Word Cloud interface
+extern const NSUInteger kNumCloudsPerRing;
+
+
 #endif /* Constants_h */

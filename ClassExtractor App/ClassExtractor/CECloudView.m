@@ -7,12 +7,19 @@
 //
 
 #import "CECloudView.h"
+#import "Constants.h"
+
+#pragma mark CECloudView
 
 // ============================================================
 // CECloudView
 // ============================================================
 @implementation CECloudView
 @synthesize representedTopic;
+@synthesize layedOut;
+
+#pragma mark - Initialization
+
 
 // ------------------------------------------------------------
 // initWithTopic:
@@ -59,10 +66,35 @@
                                                                             metrics: nil
                                                                               views: viewsForConstraints];
         [NSLayoutConstraint activateConstraints: heightConstraint];
+        
+        // create the ring tracker
+        [self setRingTracker: [[CERingTracker alloc] init]];
     }
     
     return self;
 }
+
+
+// ------------------------------------------------------------
+// setColorFromRGBWithRed:andGreen:andBlue:
+//
+// A convenience method for creating an NSColor and setting it
+// as the fill and stroke colors in the current drawing context.
+// ------------------------------------------------------------
+- (NSColor*) setColorFromRGBWithRed: (unsigned char)red andGreen: (unsigned char)green andBlue: (unsigned char)blue
+{
+    NSColor* calibratedColor = [NSColor colorWithCalibratedRed: (red   / 255.0f)
+                                                         green: (green / 255.0f)
+                                                          blue: (blue  / 255.0f)
+                                                         alpha: 1.0];
+    
+    [calibratedColor set];
+    
+    return calibratedColor;
+}
+
+
+#pragma mark - Helper Methods
 
 
 // ------------------------------------------------------------
@@ -105,25 +137,6 @@
 
 
 // ------------------------------------------------------------
-// setColorFromRGBWithRed:andGreen:andBlue:
-//
-// A convenience method for creating an NSColor and setting it
-// as the fill and stroke colors in the current drawing context.
-// ------------------------------------------------------------
-- (NSColor*) setColorFromRGBWithRed: (unsigned char)red andGreen: (unsigned char)green andBlue: (unsigned char)blue
-{
-    NSColor* calibratedColor = [NSColor colorWithCalibratedRed: (red   / 255.0f)
-                                                         green: (green / 255.0f)
-                                                          blue: (blue  / 255.0f)
-                                                         alpha: 1.0];
-    
-    [calibratedColor set];
-    
-    return calibratedColor;
-}
-
-
-// ------------------------------------------------------------
 // calculateSizeFromImportance
 //
 // Calculates the diameter of the circle based on the
@@ -159,8 +172,15 @@
     const double offsetDiameter = multiplier * reciprocal;
     const double diameter = baseCalculation + offsetDiameter;
     
-    return CGSizeMake(diameter, diameter);
+    // [TODO] This is test code to make the views easily manageable,
+    // change this back so that we can actually calculate the diameter
+    // based on the importance of the topic.
+//    return CGSizeMake(diameter, diameter);
+    return CGSizeMake(200, 200);
 }
+
+
+#pragma mark - Other
 
 
 // ------------------------------------------------------------
@@ -168,10 +188,13 @@
 // ------------------------------------------------------------
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"CECloudView: %@", [self representedTopic]];
+    return [NSString stringWithFormat: @"CECloudView: %@\r     %@", [self representedTopic], [self ringTracker]];
 }
 
 @end
+
+
+#pragma mark - CETextField
 
 
 // ============================================================
@@ -221,6 +244,185 @@
     }
     
     return self;
+}
+
+@end
+
+
+#pragma mark - CERingTracker
+
+
+// ============================================================
+// CERingTracker
+// ============================================================
+@implementation CERingTracker
+@synthesize centerCloud;
+
+#pragma mark - Initialization
+
+
+// ------------------------------------------------------------
+// init
+// ------------------------------------------------------------
+- (instancetype) init
+{
+    self = [super init];
+    
+    if (self)
+        ringArray = [[NSMutableArray alloc] init];
+    
+    return self;
+}
+
+
+#pragma mark - Modifying the Ring Tracker
+
+
+// ------------------------------------------------------------
+// fillInIndex:
+//
+// Fills in the argument index with the argument cloud view.
+// ------------------------------------------------------------
+- (void) fillInIndex: (NSUInteger)index withView: (CECloudView*)cloudView
+{
+    // if an index greater than five is given, reject it
+    if (index > kNumCloudsPerRing - 1)
+        return;
+    
+    @synchronized(ringArray)
+    {
+        if ([self indexFilled: index])
+            return;
+        
+        [ringArray addObject: @{[NSNumber numberWithUnsignedInteger: index] : cloudView}];
+        
+        ringArray = [[ringArray sortedArrayUsingComparator: ^NSComparisonResult(NSDictionary* firstDict, NSDictionary* secondDict) {
+            NSNumber* firstNum = [[firstDict allKeys] firstObject];
+            NSNumber* secondNum = [[secondDict allKeys] firstObject];
+            return [firstNum compare: secondNum]; // ascending
+        }] mutableCopy];
+    }
+    
+    if ([ringArray count] == kNumCloudsPerRing)
+        ringFull = true;
+}
+
+
+#pragma mark - Querying the Ring Tracker
+
+
+// ------------------------------------------------------------
+// indexFilled:
+//
+// Returns whether or not the argument index has already been
+// filled in.
+// ------------------------------------------------------------
+- (bool) indexFilled: (NSUInteger)index
+{
+    // if an index greater than five is given, reject it
+    if (index > kNumCloudsPerRing - 1)
+        return false;
+    
+    // [TODO] Change this to binary search, since ringArray is sorted.
+    // iterate through the array, if a key is present that matches
+    // the argument index, then that index has been filled in
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        if ([[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue] == index)
+            return true;
+    }
+    
+    return false;
+}
+
+
+// ------------------------------------------------------------
+// cloudViewAtRingIndex:
+//
+// Returns nil if the argument index is not present in the
+// array.
+// ------------------------------------------------------------
+- (CECloudView*) cloudViewAtRingIndex: (NSUInteger)ringIndex
+{
+    // check if we were given an invalid index
+    if (ringIndex > kNumCloudsPerRing - 1)
+        return nil;
+    
+    // if ringArray is full, then the cloud we want is at ringIndex
+    if ([ringArray count] == kNumCloudsPerRing)
+        return [[[ringArray objectAtIndex: ringIndex] allValues] firstObject];
+    
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        NSDictionary* cloudDict = [ringArray objectAtIndex: i];
+        
+        // check if this is the correct index
+        NSArray* keyArray = [cloudDict allKeys];
+        NSNumber* indexNum = [keyArray firstObject];
+        NSUInteger index = [indexNum unsignedIntegerValue];
+        
+        if (index == ringIndex)
+        {
+            NSArray* valueArray = [cloudDict allValues];
+            CECloudView* cloudView = [valueArray firstObject];
+            return cloudView;
+        }
+    }
+    
+    return nil;
+}
+
+
+// ------------------------------------------------------------
+// filledIndices
+//
+// Returns the indices in this ring that have been filled.
+// ------------------------------------------------------------
+- (NSArray<NSNumber*>*) filledIndices
+{
+    NSMutableArray<NSNumber*>* indices = [[NSMutableArray alloc] init];
+    
+    @synchronized(ringArray)
+    {
+        for (NSUInteger i = 0; i < [ringArray count]; ++i)
+        {
+            NSDictionary* cloudDict = [ringArray objectAtIndex: i];
+            NSArray* keyArray = [cloudDict allKeys];
+            [indices addObject: [keyArray firstObject]];
+        }
+    }
+    
+    return [indices copy];
+}
+
+
+// ------------------------------------------------------------
+// ringFull
+// ------------------------------------------------------------
+- (bool) ringFull
+{
+    return ringFull;
+}
+
+
+#pragma mark - Other
+
+
+// ------------------------------------------------------------
+// description
+// ------------------------------------------------------------
+- (NSString*) description
+{
+    NSMutableString* ringArrayDesc = [[NSMutableString alloc] init];
+    for (NSUInteger i = 0; i < [ringArray count]; ++i)
+    {
+        [ringArrayDesc appendString: [NSString stringWithFormat: @"%lu", [[[[ringArray objectAtIndex: i] allKeys] firstObject] integerValue]]];
+    }
+//    NSString* ringTrackerDesc = [NSString stringWithFormat: @"CERingTracker: %@", ringArray];
+    
+    // -description doesn't handle "\n" correctly, so swap those with "\r" (when printing,
+    // arrays have a newline character for every index)
+    return [ringArrayDesc stringByReplacingOccurrencesOfString: @"\n" withString: @"\r"];
 }
 
 @end
