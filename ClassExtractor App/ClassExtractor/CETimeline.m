@@ -79,6 +79,28 @@
 @synthesize topic1LeadingConstraint;
 @synthesize topic1TrailingConstraint;
 @synthesize timelineBarHorizConstraint;
+@synthesize topic1Name;
+@synthesize topic2Name;
+@synthesize topic3Name;
+@synthesize topic4Name;
+@synthesize topic5Name;
+@synthesize topicNameTextFields;
+@synthesize topicLeadingConstraints;
+@synthesize topicTrailingConstraints;
+@synthesize topic2LeadingConstraint;
+@synthesize topic3LeadingConstraint;
+@synthesize topic4LeadingConstraint;
+@synthesize topic5LeadingConstraint;
+@synthesize topic2TrailingConstraint;
+@synthesize topic3TrailingConstraint;
+@synthesize topic4TrailingConstraint;
+@synthesize topic5TrailingConstraint;
+@synthesize timelineBar5;
+@synthesize timelineBar4;
+@synthesize timelineBar3;
+@synthesize timelineBar2;
+@synthesize timelineBar1;
+@synthesize topicTimelines;
 
 
 // ------------------------------------------------------------
@@ -88,30 +110,54 @@
                    andTotalTime: (CMTime)totalTime
 {
     [totalTimeTextField setStringValue: [self formatTime: totalTime]];
+  
+    [self organizeUIElements];
     
-    // calculate the start and end times of the new topic
-    CETopic* topic1 = [topics objectAtIndex: 0];
-    const CMTimeRange kTopic1Range = [topic1 topicRange];
-    const CMTimeValue kTopic1StartTime = kTopic1Range.start.value;
-    const CMTimeValue kTopic1EndTime = kTopic1StartTime + kTopic1Range.duration.value;
+    NSUInteger counter = 0;
     
-    // calculate the percentage of the total time the start and end times fall at
-    const CGFloat kTopic1StartTimePercentage = (CGFloat)kTopic1StartTime / (CGFloat)totalTime.value;
-    const CGFloat kTopic1EndTimePercentage = (CGFloat)kTopic1EndTime / (CGFloat)totalTime.value;
+    for (NSUInteger i = 0; i < [topics count]; ++i)
+    {
+        if (i > 4)
+            break;
+        
+        // calculate the start and end times of the new topic
+        CETopic* topic = [topics objectAtIndex: i];
+        const CMTimeRange kTopicRange = [topic topicRange];
+        const CMTimeValue kTopicStartTime = kTopicRange.start.value;
+        const CMTimeValue kTopicEndTime = kTopicStartTime + kTopicRange.duration.value;
+        
+        // calculate the percentage of the total time the start and end times fall at
+        const CGFloat kTopicStartTimePercentage = (CGFloat)kTopicStartTime / (CGFloat)totalTime.value;
+        const CGFloat kTopicEndTimePercentage = (CGFloat)kTopicEndTime / (CGFloat)totalTime.value;
+        
+        // calculate the position at which the new topic should start and end
+        const CGFloat kTimelineBarWidth = [timelineBar frame].size.width;
+        const CGFloat kStartPos = kTimelineBarWidth * kTopicStartTimePercentage;
+        const CGFloat kEndPos = kTimelineBarWidth * kTopicEndTimePercentage;
+        
+        // calculate the constraint constants
+        const CGFloat kLeadingConstant = kStartPos + timelineBarHorizConstraint.constant;
+        const CGFloat kWindowWidth = [self frame].size.width;
+        const CGFloat kTrailingConstant = kWindowWidth - kEndPos;
+        
+        // set the constants
+        [[topicLeadingConstraints objectAtIndex: i] setConstant: kLeadingConstant];
+        [[topicTrailingConstraints objectAtIndex: i] setConstant: kTrailingConstant];
+        
+        // set the name
+        [[topicNameTextFields objectAtIndex: i] setStringValue: [topic topicName]];
+        
+        ++counter;
+    }
     
-    // calculate the position at which the new topic should start and end
-    const CGFloat kTimelineBarWidth = [timelineBar frame].size.width;
-    const CGFloat kStartPos = kTimelineBarWidth * kTopic1StartTimePercentage;
-    const CGFloat kEndPos = kTimelineBarWidth * kTopic1EndTimePercentage;
-    
-    // calculate the constraint constants
-    const CGFloat kLeadingConstant = kStartPos + timelineBarHorizConstraint.constant;
-    const CGFloat kWindowWidth = [self frame].size.width;
-    const CGFloat kTrailingConstant = kWindowWidth - kEndPos;
-    
-    // set the constants
-    [topic1LeadingConstraint setConstant: kLeadingConstant];
-    [topic1TrailingConstraint setConstant: kTrailingConstant];
+    // we have fewer than 5 topics, so hide the timeline bars that are unused
+    if (counter < 4)
+    {
+        for (NSUInteger i = counter; i <= 4; ++i)
+        {
+            [[topicTimelines objectAtIndex: i] setHidden: true];
+        }
+    }
 }
 
 
@@ -138,6 +184,37 @@
                               formattedStartSeconds];
     
     return formatString;
+}
+
+
+// ------------------------------------------------------------
+// organizeUIElements
+// ------------------------------------------------------------
+- (void) organizeUIElements
+{
+    topicNameTextFields = @[topic1Name,
+                            topic2Name,
+                            topic3Name,
+                            topic4Name,
+                            topic5Name];
+    
+    topicLeadingConstraints = @[topic1LeadingConstraint,
+                                topic2LeadingConstraint,
+                                topic3LeadingConstraint,
+                                topic4LeadingConstraint,
+                                topic5LeadingConstraint];
+    
+    topicTrailingConstraints = @[topic1TrailingConstraint,
+                                 topic2TrailingConstraint,
+                                 topic3TrailingConstraint,
+                                 topic4TrailingConstraint,
+                                 topic5TrailingConstraint];
+    
+    topicTimelines = @[timelineBar1,
+                       timelineBar2,
+                       timelineBar3,
+                       timelineBar4,
+                       timelineBar5];
 }
 
 @end
@@ -175,7 +252,7 @@
     timeRange3.duration = CMTimeMake(200, 1);
     [topic3 setTopicRange: timeRange3];
     
-    CETimelineBarModel* timelineBarModel = [[CETimelineBarModel alloc] initWithTotalTime: CMTimeMake(327, 1)];
+    CETimelineBarModel* timelineBarModel = [[CETimelineBarModel alloc] initWithTotalTime: CMTimeMake(427, 1)];
     [timelineBarModel addTopic: topic1];
     [timelineBarModel addTopic: topic2];
     [timelineBarModel addTopic: topic3];
