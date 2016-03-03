@@ -264,4 +264,12 @@
                                andTotalTime: [timelineModel totalTime]];
 }
 
+- (void) viewWillAppear
+{
+    NSWindow* window = [[self view] window];
+    const CGPoint winPos = [window frame].origin;
+    [window setMinSize: CGSizeMake(774, 320)];
+    [window setFrame: CGRectMake(winPos.x, winPos.y, 774, 320) display: true];
+}
+
 @end
