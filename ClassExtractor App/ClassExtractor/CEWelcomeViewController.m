@@ -17,6 +17,9 @@
 // ViewController
 // ============================================================
 @implementation CEWelcomeViewController
+@synthesize progressIndicator;
+@synthesize selectAudioButton;
+@synthesize selectAudioButtonVerticalCenterConstraint;
 
 
 // ------------------------------------------------------------
@@ -25,6 +28,13 @@
 - (void) viewDidLoad
 {
     [super viewDidLoad];
+    
+    NSView* selfView = [self view];
+    [selfView setWantsLayer: true];
+    [[selfView layer] setBackgroundColor: [[NSColor blackColor] CGColor]];
+    
+    [progressIndicator setAlphaValue: 0.0f];
+    [progressIndicator startAnimation: self];
     
     // [TODO] Remove this observer, and instead have CEAudioHandler call
     // the method directly.
@@ -107,6 +117,19 @@
             NSURL* selectedFilePath = [[openFileDialogue URLs] firstObject];
             AVURLAsset* selectedAudioAsset = [[AVURLAsset alloc] initWithURL: selectedFilePath options: nil];
             
+            [NSAnimationContext beginGrouping];
+            [[NSAnimationContext currentContext] setDuration: 2.0f];
+            [[progressIndicator animator] setAlphaValue: 1.0f];
+            [[selectAudioButton animator] setAlphaValue: 0.0f];
+            [[selectAudioButtonVerticalCenterConstraint animator] setConstant: 20];
+            [NSAnimationContext endGrouping];
+            
+            [NSAnimationContext runAnimationGroup: ^(NSAnimationContext* context) {
+                [context setDuration: 2.0f];
+                [[selectAudioButtonVerticalCenterConstraint animator] setConstant: 20];
+                [selectAudioButton display];
+            } completionHandler: nil];
+
             // [TODO] Instead of just logging the error, report it to the user in some nice
             // GUI fashion
             // [TODO] If this fails, kill all connections to Watson and don't process

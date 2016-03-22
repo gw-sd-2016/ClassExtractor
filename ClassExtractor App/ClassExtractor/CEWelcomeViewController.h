@@ -15,6 +15,9 @@
     // the audioPlayer, audioPlayer is released and the file never gets played
     AVAudioPlayer* audioPlayer;
 }
+@property (strong) IBOutlet NSProgressIndicator* progressIndicator;
+@property (strong) IBOutlet NSButton *selectAudioButton;
+@property (strong) IBOutlet NSLayoutConstraint *selectAudioButtonVerticalCenterConstraint;
 
 - (IBAction) importAudioFile: (id)sender;
 
