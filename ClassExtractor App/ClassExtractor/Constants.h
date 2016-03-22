@@ -78,5 +78,8 @@ extern const NSUInteger kNumCloudsPerRing;
 
 extern NSString* const kShowStudyInterface;
 
+#define DEMO 1
+
+
 
 #endif /* Constants_h */

@@ -120,18 +120,72 @@
 }
 
 
+// ------------------------------------------------------------
+// showStudyInterface:
+// ------------------------------------------------------------
 - (void) showStudyInterface: (NSNotification*)notification
 {
+#if DEMO
+    [self performSelector: @selector(createDelayedStudyInterface) withObject: nil afterDelay: 4];
+#else
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration: 1.0f];
     [[studyView animator] setAlphaValue: 1.0f];
     [NSAnimationContext endGrouping];
     
-    // [TODO] Test what happens here in full screen.
     const NSPoint windowOrigin = [[[self view] window] frame].origin;
-    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, 400, 400) display: true animate: true];
+    const CGSize windowSize = [[[self view] window] frame].size;
+    CGFloat valueToSetWidthTo, valueToSetHeightTo;
+    if (windowSize.width < 600)
+        valueToSetWidthTo = 600;
+    else
+        valueToSetWidthTo = windowSize.width;
+    
+    if (windowSize.height < 600)
+        valueToSetHeightTo = 600;
+    else
+        valueToSetHeightTo = windowSize.height;
+    
+    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
+
+    
+    // [TODO] Need some way of notifying cloud view to create its clouds.
+#endif
+}
+
+
+// ------------------------------------------------------------
+// createDelayedStudyInterface
 //
-//    // this array is for testing only
+// This function delays the creation of the study interface. In
+// a real world scenario, the delay will happen naturally from
+// Watson processing the audio, but for the sake of the demo,
+// the demo is synthetic to illustrate what would happen. Pre-
+// loaded data from Watson will be at the ready for the demo.
+// ------------------------------------------------------------
+- (void) createDelayedStudyInterface
+{
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration: 0.8f];
+    [[studyView animator] setAlphaValue: 1.0f];
+    [NSAnimationContext endGrouping];
+    
+    const NSPoint windowOrigin = [[[self view] window] frame].origin;
+    const CGSize windowSize = [[[self view] window] frame].size;
+    CGFloat valueToSetWidthTo, valueToSetHeightTo;
+    if (windowSize.width < 600)
+        valueToSetWidthTo = 600;
+    else
+        valueToSetWidthTo = windowSize.width;
+    
+    if (windowSize.height < 600)
+        valueToSetHeightTo = 600;
+    else
+        valueToSetHeightTo = windowSize.height;
+    
+    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
+    
+    //    // this array is for testing only
     NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
                        @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
                        @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
@@ -154,6 +208,8 @@
     
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 }
+
+
 
 
 // ------------------------------------------------------------
@@ -184,12 +240,6 @@
             [[selectAudioButton animator] setAlphaValue: 0.0f];
             [[selectAudioButtonVerticalCenterConstraint animator] setConstant: 20];
             [NSAnimationContext endGrouping];
-            
-            [NSAnimationContext runAnimationGroup: ^(NSAnimationContext* context) {
-                [context setDuration: 2.0f];
-                [[selectAudioButtonVerticalCenterConstraint animator] setConstant: 20];
-                [selectAudioButton display];
-            } completionHandler: nil];
 
             // [TODO] Instead of just logging the error, report it to the user in some nice
             // GUI fashion
@@ -215,6 +265,8 @@
 // mouseDragged:
 //
 // Allow the user to drag the window around from its background.
+//
+// [TODO] Don't do this when dragging from the title bar.
 // ------------------------------------------------------------
 - (void) mouseDragged: (NSEvent*)theEvent
 {
