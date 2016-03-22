@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CEAudioHandler.h"
+#import "CECloudViewScrollView.h"
 
 @interface CEWelcomeViewController : NSViewController
 {
@@ -19,6 +20,10 @@
 @property (strong) IBOutlet NSButton* selectAudioButton;
 @property (strong) IBOutlet NSLayoutConstraint* selectAudioButtonVerticalCenterConstraint;
 @property (strong) IBOutlet NSView* studyView;
+@property (strong) IBOutlet NSSegmentedControl *interfaceChooser;
+@property (strong) IBOutlet CECloudViewScrollView* cloudView;
+@property (strong) IBOutlet NSView* timelineView;
+- (IBAction)changeSegment:(id)sender;
 
 - (IBAction) importAudioFile: (id)sender;
 

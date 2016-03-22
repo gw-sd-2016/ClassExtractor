@@ -21,6 +21,9 @@
 @synthesize selectAudioButton;
 @synthesize selectAudioButtonVerticalCenterConstraint;
 @synthesize studyView;
+@synthesize interfaceChooser;
+@synthesize timelineView;
+@synthesize cloudView;
 
 
 // ------------------------------------------------------------
@@ -35,6 +38,7 @@
     [[selfView layer] setBackgroundColor: [[NSColor blackColor] CGColor]];
     
     [progressIndicator setAlphaValue: 0.0f];
+    [interfaceChooser setAlphaValue: 0.0f];
     
     [studyView setWantsLayer: true];
     [studyView setAlphaValue: 0.0f];
@@ -131,6 +135,7 @@
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration: 1.0f];
     [[studyView animator] setAlphaValue: 1.0f];
+    [[interfaceChooser animator] setAlphaValue: 1.0f];
     [NSAnimationContext endGrouping];
     
     const NSPoint windowOrigin = [[[self view] window] frame].origin;
@@ -167,6 +172,7 @@
 {
     [NSAnimationContext beginGrouping];
     [[NSAnimationContext currentContext] setDuration: 0.8f];
+    [[interfaceChooser animator] setAlphaValue: 1.0f];
     [[studyView animator] setAlphaValue: 1.0f];
     [NSAnimationContext endGrouping];
     
@@ -210,6 +216,27 @@
 }
 
 
+- (IBAction) changeSegment: (id)sender
+{
+    const NSInteger selectedSegment = [interfaceChooser selectedSegment];
+    [self switchVisibleInterfaceWithNewSelectedSegment: selectedSegment];
+}
+
+
+- (void) switchVisibleInterfaceWithNewSelectedSegment: (NSInteger)selectedSegment
+{
+    // 0 corresponds to Word Cloud, 1 to Timeline
+    if (selectedSegment == 0)
+    {
+        [cloudView setHidden: false];
+        [timelineView setHidden: true];
+    }
+    else if (selectedSegment == 1)
+    {
+        [cloudView setHidden: true];
+        [timelineView setHidden: false];
+    }
+}
 
 
 // ------------------------------------------------------------

@@ -725,38 +725,64 @@
                                 </constraints>
                             </progressIndicator>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3Zk-0i-WV0">
-                                <rect key="frame" x="20" y="9" width="307" height="96"/>
+                                <rect key="frame" x="20" y="49" width="307" height="56"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="I0A-W2-0Ha" customClass="CECloudViewScrollView">
-                                        <rect key="frame" x="0.0" y="0.0" width="307" height="96"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="307" height="56"/>
+                                    </customView>
+                                    <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="foi-81-Jhl">
+                                        <rect key="frame" x="0.0" y="0.0" width="307" height="56"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="foi-81-Jhl" secondAttribute="trailing" id="4HN-wK-tfk"/>
                                     <constraint firstAttribute="bottom" secondItem="I0A-W2-0Ha" secondAttribute="bottom" id="SVP-9n-Zb0"/>
+                                    <constraint firstItem="foi-81-Jhl" firstAttribute="leading" secondItem="3Zk-0i-WV0" secondAttribute="leading" id="ch2-X1-Vd3"/>
+                                    <constraint firstAttribute="bottom" secondItem="foi-81-Jhl" secondAttribute="bottom" id="k8q-Ld-YhD"/>
                                     <constraint firstItem="I0A-W2-0Ha" firstAttribute="leading" secondItem="3Zk-0i-WV0" secondAttribute="leading" id="lcK-Xv-x7F"/>
                                     <constraint firstAttribute="trailing" secondItem="I0A-W2-0Ha" secondAttribute="trailing" id="lhK-cv-8t7"/>
+                                    <constraint firstItem="foi-81-Jhl" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="top" id="mAO-BS-TMi"/>
                                     <constraint firstItem="I0A-W2-0Ha" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="top" id="oJZ-Pp-fGt"/>
                                 </constraints>
                             </customView>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BxW-Ow-Xyk">
+                                <rect key="frame" x="93" y="18" width="160" height="24"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="u0B-iC-DLO">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="Word Cloud" width="77" selected="YES"/>
+                                        <segment label="Timeline" width="76" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="changeSegment:" target="XfG-lQ-9wD" id="oUl-j9-5qQ"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="1Uv-Ot-wKf"/>
                             <constraint firstAttribute="trailing" secondItem="3Zk-0i-WV0" secondAttribute="trailing" constant="20" id="6SP-8I-14I"/>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="8ow-3H-7sF"/>
+                            <constraint firstItem="BxW-Ow-Xyk" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="Dbf-Wa-lj4"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="OnT-Iw-9mU"/>
                             <constraint firstItem="8WY-by-wAB" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="SDd-CZ-nDI"/>
-                            <constraint firstAttribute="bottom" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="9" id="WFP-ZA-9vf"/>
+                            <constraint firstAttribute="bottom" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="49" id="WFP-ZA-9vf"/>
                             <constraint firstItem="8WY-by-wAB" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="67" id="Wmd-cc-gQD"/>
+                            <constraint firstAttribute="bottom" secondItem="BxW-Ow-Xyk" secondAttribute="bottom" constant="20" id="dHJ-ju-gVv"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="65" id="fOv-rM-Ii6"/>
                             <constraint firstItem="3Zk-0i-WV0" firstAttribute="top" secondItem="8WY-by-wAB" secondAttribute="bottom" constant="21" id="rpT-6j-8cU"/>
+                            <constraint firstItem="BxW-Ow-Xyk" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="8" id="tfJ-5b-xCI"/>
                             <constraint firstItem="3Zk-0i-WV0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="yQw-wy-dwg"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="cloudView" destination="I0A-W2-0Ha" id="n4b-UA-Yr9"/>
+                        <outlet property="interfaceChooser" destination="BxW-Ow-Xyk" id="2EF-pK-Ff6"/>
                         <outlet property="progressIndicator" destination="8WY-by-wAB" id="Y9v-3i-La2"/>
                         <outlet property="selectAudioButton" destination="ETe-RY-ht7" id="A2P-DT-kYc"/>
                         <outlet property="selectAudioButtonVerticalCenterConstraint" destination="fOv-rM-Ii6" id="dc9-LS-A5h"/>
                         <outlet property="studyView" destination="3Zk-0i-WV0" id="nUf-XL-EQp"/>
+                        <outlet property="timelineView" destination="foi-81-Jhl" id="hu8-te-sdi"/>
                         <segue destination="2Ha-4f-IV1" kind="show" identifier="showTimeline" id="lJL-ye-PXw"/>
                     </connections>
                 </viewController>
