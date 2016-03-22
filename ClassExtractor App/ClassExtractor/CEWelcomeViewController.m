@@ -20,6 +20,7 @@
 @synthesize progressIndicator;
 @synthesize selectAudioButton;
 @synthesize selectAudioButtonVerticalCenterConstraint;
+@synthesize studyView;
 
 
 // ------------------------------------------------------------
@@ -35,43 +36,54 @@
     
     [progressIndicator setAlphaValue: 0.0f];
     
+    [studyView setWantsLayer: true];
+    [studyView setAlphaValue: 0.0f];
+    [[studyView layer] setBackgroundColor: [[NSColor whiteColor] CGColor]];
+    [[studyView layer] setCornerRadius: 8.0f];
+    
     // [TODO] Remove this observer, and instead have CEAudioHandler call
     // the method directly.
-    [[NSNotificationCenter defaultCenter] addObserver: [CEConnector sharedInstance]
-                                             selector: @selector(getJSONFromWatsonAsync:)
-                                                 name: kGetJSON
-                                               object: nil];
+//    [[NSNotificationCenter defaultCenter] addObserver: [CEConnector sharedInstance]
+//                                             selector: @selector(getJSONFromWatsonAsync:)
+//                                                 name: kGetJSON
+//                                               object: nil];
+   
+//    [[NSNotificationCenter defaultCenter] addObserver: self
+//                                             selector: @selector(showWordCloud:)
+//                                                 name: kShowWordCloud
+//                                               object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(showWordCloud:)
-                                                 name: kShowWordCloud
+                                             selector: @selector(showStudyInterface:)
+                                                 name: kShowStudyInterface
                                                object: nil];
     
+    
     // test code
-    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
-                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
-                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
-                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
-                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
-                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
-                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
-                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
-                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
-                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
-                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
-                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
-                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
-                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
-                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
-                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
-                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
-                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
-                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
-    
-    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
-    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
-    
-    [self performSegueWithIdentifier: @"showTimeline" sender: self];
+//    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
+//                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
+//                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
+//                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
+//                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
+//                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
+//                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
+//                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
+//                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
+//                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
+//                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
+//                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
+//                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
+//                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
+//                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
+//                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
+//                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
+//                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
+//                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
+//    
+//    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
+//    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
+//    
+//    [self performSegueWithIdentifier: @"showTimeline" sender: self];
 }
 
 
@@ -105,6 +117,42 @@
 {
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [notification object]];
+}
+
+
+- (void) showStudyInterface: (NSNotification*)notification
+{
+    [NSAnimationContext beginGrouping];
+    [[NSAnimationContext currentContext] setDuration: 1.0f];
+    [[studyView animator] setAlphaValue: 1.0f];
+    [NSAnimationContext endGrouping];
+    
+    // [TODO] Test what happens here in full screen.
+    const NSPoint windowOrigin = [[[self view] window] frame].origin;
+    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, 400, 400) display: true animate: true];
+//
+//    // this array is for testing only
+    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
+                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
+                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
+                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
+                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
+                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
+                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
+                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
+                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
+                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
+                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
+                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
+                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
+                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
+                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
+                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
+                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
+                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
+                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 }
 
 

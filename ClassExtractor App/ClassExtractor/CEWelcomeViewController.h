@@ -16,8 +16,9 @@
     AVAudioPlayer* audioPlayer;
 }
 @property (strong) IBOutlet NSProgressIndicator* progressIndicator;
-@property (strong) IBOutlet NSButton *selectAudioButton;
-@property (strong) IBOutlet NSLayoutConstraint *selectAudioButtonVerticalCenterConstraint;
+@property (strong) IBOutlet NSButton* selectAudioButton;
+@property (strong) IBOutlet NSLayoutConstraint* selectAudioButtonVerticalCenterConstraint;
+@property (strong) IBOutlet NSView* studyView;
 
 - (IBAction) importAudioFile: (id)sender;
 

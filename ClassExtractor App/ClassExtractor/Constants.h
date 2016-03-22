@@ -76,4 +76,7 @@ extern const int32_t kTimescale;
 extern const NSUInteger kNumCloudsPerRing;
 
 
+extern NSString* const kShowStudyInterface;
+
+
 #endif /* Constants_h */

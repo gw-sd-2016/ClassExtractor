@@ -83,7 +83,8 @@
 
 + (void) shortCircuit
 {
-    
+    [[NSNotificationCenter defaultCenter] postNotificationName: kShowStudyInterface
+                                                        object: nil];
 }
 
 

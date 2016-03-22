@@ -720,27 +720,6 @@
                                     <action selector="importAudioFile:" target="XfG-lQ-9wD" id="0gL-WH-HBO"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6j0-xr-4wL">
-                                <rect key="frame" x="354" y="13" width="112" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="hRC-ql-ZIn"/>
-                                    <constraint firstAttribute="height" constant="21" id="zyD-fb-se5"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Word Cloud" bezelStyle="rounded" alignment="center" borderStyle="border" transparent="YES" imageScaling="proportionallyDown" inset="2" id="dnA-1g-xaC">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <segue destination="c9a-eV-lpH" kind="show" identifier="showWordCloud" id="aQj-cr-PxJ"/>
-                                </connections>
-                            </button>
-                            <progressIndicator wantsLayer="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8WY-by-wAB">
-                                <rect key="frame" x="109" y="125" width="129" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="129" id="CnI-RS-Z1L"/>
-                                    <constraint firstAttribute="height" constant="18" id="udR-1P-xAd"/>
-                                </constraints>
-                            </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="exx-KY-5X8">
                                 <rect key="frame" x="65" y="211" width="217" height="39"/>
                                 <constraints>
@@ -753,22 +732,46 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <progressIndicator wantsLayer="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8WY-by-wAB">
+                                <rect key="frame" x="109" y="125" width="129" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="129" id="CnI-RS-Z1L"/>
+                                    <constraint firstAttribute="height" constant="18" id="udR-1P-xAd"/>
+                                </constraints>
+                            </progressIndicator>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="3Zk-0i-WV0">
+                                <rect key="frame" x="20" y="9" width="307" height="96"/>
+                                <subviews>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="I0A-W2-0Ha" customClass="CECloudViewScrollView">
+                                        <rect key="frame" x="0.0" y="0.0" width="307" height="96"/>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="I0A-W2-0Ha" secondAttribute="bottom" id="SVP-9n-Zb0"/>
+                                    <constraint firstItem="I0A-W2-0Ha" firstAttribute="leading" secondItem="3Zk-0i-WV0" secondAttribute="leading" id="lcK-Xv-x7F"/>
+                                    <constraint firstAttribute="trailing" secondItem="I0A-W2-0Ha" secondAttribute="trailing" id="lhK-cv-8t7"/>
+                                    <constraint firstItem="I0A-W2-0Ha" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="top" id="oJZ-Pp-fGt"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="1Uv-Ot-wKf"/>
-                            <constraint firstAttribute="trailing" secondItem="6j0-xr-4wL" secondAttribute="trailing" constant="20" id="6rT-u7-Jj9"/>
+                            <constraint firstAttribute="trailing" secondItem="3Zk-0i-WV0" secondAttribute="trailing" constant="20" id="6SP-8I-14I"/>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="8ow-3H-7sF"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="OnT-Iw-9mU"/>
                             <constraint firstItem="8WY-by-wAB" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="SDd-CZ-nDI"/>
+                            <constraint firstAttribute="bottom" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="9" id="WFP-ZA-9vf"/>
                             <constraint firstItem="8WY-by-wAB" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="67" id="Wmd-cc-gQD"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="65" id="fOv-rM-Ii6"/>
-                            <constraint firstAttribute="bottom" secondItem="6j0-xr-4wL" secondAttribute="bottom" constant="20" id="zRN-fv-lTx"/>
+                            <constraint firstItem="3Zk-0i-WV0" firstAttribute="top" secondItem="8WY-by-wAB" secondAttribute="bottom" constant="21" id="rpT-6j-8cU"/>
+                            <constraint firstItem="3Zk-0i-WV0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="yQw-wy-dwg"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="progressIndicator" destination="8WY-by-wAB" id="Y9v-3i-La2"/>
                         <outlet property="selectAudioButton" destination="ETe-RY-ht7" id="A2P-DT-kYc"/>
                         <outlet property="selectAudioButtonVerticalCenterConstraint" destination="fOv-rM-Ii6" id="dc9-LS-A5h"/>
+                        <outlet property="studyView" destination="3Zk-0i-WV0" id="nUf-XL-EQp"/>
                         <segue destination="2Ha-4f-IV1" kind="show" identifier="showTimeline" id="lJL-ye-PXw"/>
                     </connections>
                 </viewController>
@@ -1041,7 +1044,4 @@
             <point key="canvasLocation" x="328" y="1329.5"/>
         </scene>
     </scenes>
-    <inferredMetricsTieBreakers>
-        <segue reference="aQj-cr-PxJ"/>
-    </inferredMetricsTieBreakers>
 </document>
