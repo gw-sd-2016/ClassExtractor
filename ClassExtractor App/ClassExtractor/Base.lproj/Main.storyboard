@@ -655,8 +655,9 @@
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+                        <rect key="contentRect" x="196" y="240" width="347" height="230"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
+                        <value key="minSize" type="size" width="347" height="230"/>
                     </window>
                     <connections>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
@@ -702,11 +703,11 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="CEWelcomeViewController" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="0.0" width="347" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ETe-RY-ht7">
-                                <rect key="frame" x="170" y="118" width="141" height="32"/>
+                                <rect key="frame" x="103" y="118" width="141" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="129" id="39S-jf-B38"/>
                                     <constraint firstAttribute="height" constant="21" id="TjW-pR-6Tc"/>
@@ -719,7 +720,7 @@
                                     <action selector="importAudioFile:" target="XfG-lQ-9wD" id="0gL-WH-HBO"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6j0-xr-4wL">
+                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6j0-xr-4wL">
                                 <rect key="frame" x="354" y="13" width="112" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="hRC-ql-ZIn"/>
@@ -733,8 +734,15 @@
                                     <segue destination="c9a-eV-lpH" kind="show" identifier="showWordCloud" id="aQj-cr-PxJ"/>
                                 </connections>
                             </button>
+                            <progressIndicator wantsLayer="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8WY-by-wAB">
+                                <rect key="frame" x="109" y="125" width="129" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="129" id="CnI-RS-Z1L"/>
+                                    <constraint firstAttribute="height" constant="18" id="udR-1P-xAd"/>
+                                </constraints>
+                            </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="exx-KY-5X8">
-                                <rect key="frame" x="132" y="211" width="217" height="39"/>
+                                <rect key="frame" x="65" y="211" width="217" height="39"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="213" id="7kN-3J-P9l"/>
                                     <constraint firstAttribute="height" constant="39" id="GvN-PR-F7o"/>
@@ -745,13 +753,6 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <progressIndicator wantsLayer="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8WY-by-wAB">
-                                <rect key="frame" x="176" y="125" width="129" height="20"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="129" id="CnI-RS-Z1L"/>
-                                    <constraint firstAttribute="height" constant="18" id="udR-1P-xAd"/>
-                                </constraints>
-                            </progressIndicator>
                         </subviews>
                         <constraints>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="1Uv-Ot-wKf"/>
@@ -773,7 +774,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="75.5" y="655"/>
         </scene>
         <!--Timeline Bar View Controller-->
         <scene sceneID="TDN-ff-WfN">

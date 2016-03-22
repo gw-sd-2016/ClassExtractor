@@ -81,6 +81,12 @@
 }
 
 
++ (void) shortCircuit
+{
+    
+}
+
+
 // ------------------------------------------------------------
 // chopUpLargeAudioFile:
 //
@@ -90,6 +96,11 @@
 // ------------------------------------------------------------
 + (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
 {
+    //// DEMO CODE
+    [CEAudioHandler shortCircuit];
+    return kChoppingSuccess;
+    //// DEMO CODE
+    
     const CMTime kDuration = [selectedAudioAsset duration];
     if (0 == kDuration.value)
         return kZeroDurationError;

@@ -34,7 +34,6 @@
     [[selfView layer] setBackgroundColor: [[NSColor blackColor] CGColor]];
     
     [progressIndicator setAlphaValue: 0.0f];
-    [progressIndicator startAnimation: self];
     
     // [TODO] Remove this observer, and instead have CEAudioHandler call
     // the method directly.
@@ -82,8 +81,20 @@
 - (void) viewDidAppear
 {
     [super viewDidAppear];
+
+    NSWindow* selfWindow = [[self view] window];
     
-    [[[self view] window] setTitle: @"Class Extractor"];
+    [selfWindow setStyleMask: NSTitledWindowMask |
+                                NSFullSizeContentViewWindowMask |
+                                NSClosableWindowMask |
+                                NSMiniaturizableWindowMask |
+                                NSResizableWindowMask];
+    
+    [selfWindow setTitlebarAppearsTransparent: true];
+    
+    // even though the titlebar is transparent, we still want to set the title
+    // because the titlebar appears when the user is in split screen
+    [selfWindow setTitle: @"Class Extractor"];
 }
 
 
@@ -116,6 +127,8 @@
             // we only allow selection of one file, so it's ok to get just the first object
             NSURL* selectedFilePath = [[openFileDialogue URLs] firstObject];
             AVURLAsset* selectedAudioAsset = [[AVURLAsset alloc] initWithURL: selectedFilePath options: nil];
+            
+            [progressIndicator startAnimation: self];
             
             [NSAnimationContext beginGrouping];
             [[NSAnimationContext currentContext] setDuration: 2.0f];
