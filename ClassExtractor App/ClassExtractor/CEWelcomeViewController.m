@@ -204,3 +204,24 @@
 
 @end
 
+
+// ============================================================
+// CEWelcomeView
+// ============================================================
+@implementation CEWelcomeView
+
+
+// ------------------------------------------------------------
+// mouseDragged:
+//
+// Allow the user to drag the window around from its background.
+// ------------------------------------------------------------
+- (void) mouseDragged: (NSEvent*)theEvent
+{
+    NSWindow* selfWindow = [self window];
+    const CGPoint kWindowOrigin = [selfWindow frame].origin;
+    [selfWindow setFrameOrigin: CGPointMake(kWindowOrigin.x + [theEvent deltaX], kWindowOrigin.y - [theEvent deltaY])];
+}
+
+@end
+

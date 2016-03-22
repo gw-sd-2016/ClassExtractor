@@ -23,3 +23,8 @@
 - (IBAction) importAudioFile: (id)sender;
 
 @end
+
+
+@interface CEWelcomeView : NSView
+
+@end
