@@ -18,6 +18,7 @@
 		8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A6E3C1BFC11C20090E8AA /* Constants.m */; };
 		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
 		8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */; };
+		8B7F527C1C8640D1008A0303 /* CETimeline.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7F527B1C8640D1008A0303 /* CETimeline.m */; };
 		8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */; };
 		8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BA6FCDA1C02A4550045524B /* CEJSONManipulator.m */; };
 		8BB325AF1C066BAB0070F2FA /* CECloudView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BB325AE1C066BAB0070F2FA /* CECloudView.m */; };
@@ -65,6 +66,8 @@
 		8B7D28731C0272A50059FE84 /* CEConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEConnector.m; sourceTree = "<group>"; };
 		8B7E72041BEB10A200FD3EBD /* CEAudioHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEAudioHandler.h; sourceTree = "<group>"; };
 		8B7E72051BEB10A200FD3EBD /* CEAudioHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEAudioHandler.m; sourceTree = "<group>"; };
+		8B7F527A1C8640D1008A0303 /* CETimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CETimeline.h; sourceTree = "<group>"; };
+		8B7F527B1C8640D1008A0303 /* CETimeline.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CETimeline.m; sourceTree = "<group>"; };
 		8B8056FD1BFAEBEB0063D9AE /* CECalculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECalculator.h; sourceTree = "<group>"; };
 		8B8056FE1BFAEBEB0063D9AE /* CECalculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CECalculator.m; sourceTree = "<group>"; };
 		8BA6FCD91C02A4550045524B /* CEJSONManipulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEJSONManipulator.h; sourceTree = "<group>"; };
@@ -197,6 +200,8 @@
 				8BB325B11C066C700070F2FA /* CETopic.m */,
 				8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */,
 				8B2A6E3C1BFC11C20090E8AA /* Constants.m */,
+				8B7F527A1C8640D1008A0303 /* CETimeline.h */,
+				8B7F527B1C8640D1008A0303 /* CETimeline.m */,
 			);
 			name = Backend;
 			sourceTree = "<group>";
@@ -356,6 +361,7 @@
 				8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */,
 				8BB325AF1C066BAB0070F2FA /* CECloudView.m in Sources */,
 				8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */,
+				8B7F527C1C8640D1008A0303 /* CETimeline.m in Sources */,
 				8B8056FF1BFAEBEB0063D9AE /* CECalculator.m in Sources */,
 				8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */,
 				8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */,

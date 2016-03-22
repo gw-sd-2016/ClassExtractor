@@ -10,6 +10,7 @@
 #import "CEWordCloudViewController.h"
 #import "CECalculator.h"
 #import "CEConnector.h"
+#import "CETimeline.h"
 #import "Constants.h"
 
 // ============================================================
@@ -60,6 +61,8 @@
     
     [self performSegueWithIdentifier: @"showWordCloud" sender: self];
     [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
+    
+    [self performSegueWithIdentifier: @"showTimeline" sender: self];
 }
 
 
