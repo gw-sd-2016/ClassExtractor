@@ -10,15 +10,6 @@
 #import <Foundation/Foundation.h>
 #import "CETopic.h"
 
-@interface CETimelineBarModel : NSObject
-
-@property CMTime totalTime;
-@property NSMutableArray<CETopic*>* topics;
-
-- (void) addTopic: (CETopic*)newTopic;
-
-@end
-
 @interface CETimelineBarView : NSView
 @property (strong) IBOutlet NSTextField* topic1Name;
 @property (strong) IBOutlet NSTextField* topic2Name;
@@ -54,11 +45,5 @@
 
 - (void) drawTimeBarsWithTopics: (NSArray<CETopic*>*)topics
                    andTotalTime: (CMTime)totalTime;
-
-@end
-
-@interface CETimelineBarViewController : NSViewController
-
-@property CETimelineBarModel* timelineModel;
 
 @end
