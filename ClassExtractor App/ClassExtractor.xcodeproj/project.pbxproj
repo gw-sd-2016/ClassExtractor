@@ -14,7 +14,6 @@
 		8B0375F41BCF0E8F005DFD86 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8B0375F21BCF0E8F005DFD86 /* Main.storyboard */; };
 		8B0375FF1BCF0E8F005DFD86 /* ClassExtractorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0375FE1BCF0E8F005DFD86 /* ClassExtractorTests.m */; };
 		8B03760A1BCF0E8F005DFD86 /* ClassExtractorUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */; };
-		8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */; };
 		8B2A6E3D1BFC11C20090E8AA /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B2A6E3C1BFC11C20090E8AA /* Constants.m */; };
 		8B48F0DD1CA1303A000961AF /* CECloudViewScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B48F0DC1CA1303A000961AF /* CECloudViewScrollView.m */; };
 		8B7D28741C0272A50059FE84 /* CEConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B7D28731C0272A50059FE84 /* CEConnector.m */; };
@@ -59,8 +58,6 @@
 		8B0376051BCF0E8F005DFD86 /* ClassExtractorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClassExtractorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B0376091BCF0E8F005DFD86 /* ClassExtractorUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ClassExtractorUITests.m; sourceTree = "<group>"; };
 		8B03760B1BCF0E8F005DFD86 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CEWordCloudViewController.h; sourceTree = "<group>"; };
-		8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CEWordCloudViewController.m; sourceTree = "<group>"; };
 		8B2A6E3C1BFC11C20090E8AA /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		8B2A6E3E1BFC1A6D0090E8AA /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		8B48F0DB1CA1303A000961AF /* CECloudViewScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CECloudViewScrollView.h; sourceTree = "<group>"; };
@@ -172,8 +169,6 @@
 				8B48F0DC1CA1303A000961AF /* CECloudViewScrollView.m */,
 				8B0375ED1BCF0E8F005DFD86 /* CEWelcomeViewController.h */,
 				8B0375EE1BCF0E8F005DFD86 /* CEWelcomeViewController.m */,
-				8B1360101C0542AB0003C38A /* CEWordCloudViewController.h */,
-				8B1360111C0542AB0003C38A /* CEWordCloudViewController.m */,
 			);
 			name = GUI;
 			sourceTree = "<group>";
@@ -364,7 +359,6 @@
 				8B0375EC1BCF0E8F005DFD86 /* main.m in Sources */,
 				8B0375E91BCF0E8F005DFD86 /* AppDelegate.m in Sources */,
 				8B7E72061BEB10A200FD3EBD /* CEAudioHandler.m in Sources */,
-				8B1360121C0542AB0003C38A /* CEWordCloudViewController.m in Sources */,
 				8BB325AF1C066BAB0070F2FA /* CECloudView.m in Sources */,
 				8BA6FCDB1C02A4550045524B /* CEJSONManipulator.m in Sources */,
 				8B7F527C1C8640D1008A0303 /* CETimeline.m in Sources */,

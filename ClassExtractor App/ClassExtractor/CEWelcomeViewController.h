@@ -17,15 +17,16 @@
     // the audioPlayer, audioPlayer is released and the file never gets played
     AVAudioPlayer* audioPlayer;
 }
+
+@property (strong) IBOutlet CECloudViewScrollView* cloudView;
+@property (strong) IBOutlet NSSegmentedControl *interfaceChooser;
+@property (strong) IBOutlet NSTextField* loadingLabel;
 @property (strong) IBOutlet NSProgressIndicator* progressIndicator;
 @property (strong) IBOutlet NSButton* selectAudioButton;
 @property (strong) IBOutlet NSView* studyView;
-@property (strong) IBOutlet NSSegmentedControl *interfaceChooser;
-@property (strong) IBOutlet CECloudViewScrollView* cloudView;
 @property (strong) IBOutlet CETimelineBarView* timelineView;
-@property (strong) IBOutlet NSTextField *loadingLabel;
-- (IBAction)changeSegment:(id)sender;
 
+- (IBAction) changeSegment: (id)sender;
 - (IBAction) importAudioFile: (id)sender;
 
 @end

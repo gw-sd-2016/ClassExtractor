@@ -6,24 +6,23 @@
 //  Copyright © 2015 ECL. All rights reserved.
 //
 
-#import "CEWelcomeViewController.h"
-#import "CEWordCloudViewController.h"
 #import "CECalculator.h"
 #import "CEConnector.h"
 #import "CETimeline.h"
+#import "CEWelcomeViewController.h"
 #import "Constants.h"
 
 // ============================================================
 // ViewController
 // ============================================================
 @implementation CEWelcomeViewController
+@synthesize cloudView;
+@synthesize interfaceChooser;
+@synthesize loadingLabel;
 @synthesize progressIndicator;
 @synthesize selectAudioButton;
 @synthesize studyView;
-@synthesize interfaceChooser;
 @synthesize timelineView;
-@synthesize cloudView;
-@synthesize loadingLabel;
 
 
 // ------------------------------------------------------------
@@ -63,6 +62,8 @@
 
 // ------------------------------------------------------------
 // viewDidAppear
+//
+// Configure the window appearance.
 // ------------------------------------------------------------
 - (void) viewDidAppear
 {
@@ -180,6 +181,12 @@
 }
 
 
+// ------------------------------------------------------------
+// changeSegment:
+//
+// Handles swapping which interface is shown based on the
+// selected segment.
+// ------------------------------------------------------------
 - (IBAction) changeSegment: (id)sender
 {
     const NSInteger selectedSegment = [interfaceChooser selectedSegment];
@@ -187,6 +194,12 @@
 }
 
 
+// ------------------------------------------------------------
+// switchVisibleInterfaceWithNewSelectedSegment:
+//
+// Actually does the swapping for which interface is shown
+// based on the selected segment.
+// ------------------------------------------------------------
 - (void) switchVisibleInterfaceWithNewSelectedSegment: (NSInteger)selectedSegment
 {
     // 0 corresponds to Word Cloud, 1 to Timeline
@@ -195,7 +208,7 @@
         [cloudView setHidden: false];
         [timelineView setHidden: true];
     }
-    else if (selectedSegment == 1)
+    else
     {
         [cloudView setHidden: true];
         [timelineView setHidden: false];
