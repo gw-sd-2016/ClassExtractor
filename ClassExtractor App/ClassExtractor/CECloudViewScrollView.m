@@ -67,7 +67,7 @@
     }
     
     NSView* documentView = [[NSView alloc] init];
-    [documentView setFrame: CGRectMake(0, 0, 3000, 3000)];
+    [documentView setFrame: CGRectMake(0, 0, 2000, 2000)];
     [self setDocumentView: documentView];
     
     NSArray* sortedViews = [self orderViewsByImportance: views];
@@ -126,7 +126,7 @@
         if (i == 0)
         {
             const CGFloat centerDiameter = [view frame].size.width; // the view is a circle, so the width and height are equal
-            [view setFrame: CGRectMake(800, 800, centerDiameter, centerDiameter)];
+            [view setFrame: CGRectMake([[self documentView] frame].size.width / 2, [[self documentView] frame].size.height / 2, centerDiameter, centerDiameter)];
         }
         
         CERingTracker* viewRingTracker = [view ringTracker];
