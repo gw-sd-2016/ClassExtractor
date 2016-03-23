@@ -87,7 +87,7 @@
 //    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
 //    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
 //    
-    [self performSegueWithIdentifier: @"showTimeline" sender: self];
+//    [self performSegueWithIdentifier: @"showTimeline" sender: self];
 }
 
 
