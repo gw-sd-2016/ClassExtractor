@@ -23,3 +23,4 @@ const NSUInteger kNumMinsPerClip = 5lu;
 const int32_t kTimescale = 1;
 const NSUInteger kNumCloudsPerRing = 6;
 NSString* const kShowStudyInterface = @"kShowStudyInterface";
+NSString* const kDrawTimelineBars = @"drawTimelineBars";

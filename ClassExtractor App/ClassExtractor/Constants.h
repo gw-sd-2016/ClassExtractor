@@ -80,6 +80,7 @@ extern NSString* const kShowStudyInterface;
 
 #define DEMO 1
 
+extern NSString* const kDrawTimelineBars;
 
 
 #endif /* Constants_h */

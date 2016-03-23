@@ -7,6 +7,7 @@
 //
 
 #import "CEModel.h"
+#import "Constants.h"
 
 @implementation CEModel
 @synthesize topics;
@@ -24,6 +25,11 @@
     {
         model = [[CEModel alloc] init];
         [model setTopics: [[NSMutableArray<CETopic*> alloc] init]];
+        
+#if DEMO
+        const CMTime time = CMTimeMake(3000, 1);
+        [model setTotalTime: time];
+#endif
     }
     
     return model;
@@ -40,7 +46,11 @@
 {
     @synchronized(topics)
     {
+#if !DEMO
+        // [TODO] We need to get the length from the audio file, not calculating
+        // it this way.
         totalTime.value += [newTopic topicRange].duration.value;
+#endif
         
         const NSUInteger kNumTopics = [topics count];
         

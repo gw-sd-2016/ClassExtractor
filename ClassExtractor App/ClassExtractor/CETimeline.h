@@ -43,7 +43,4 @@
 @property NSArray<NSLayoutConstraint*>* topicTrailingConstraints;
 @property NSArray<NSBox*>* topicTimelines;
 
-- (void) drawTimeBarsWithTopics: (NSArray<CETopic*>*)topics
-                   andTotalTime: (CMTime)totalTime;
-
 @end

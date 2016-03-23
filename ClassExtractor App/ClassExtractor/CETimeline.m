@@ -8,6 +8,7 @@
 
 #import "CEModel.h"
 #import "CETimeline.h"
+#import "Constants.h"
 
 
 // ============================================================
@@ -43,56 +44,41 @@
 @synthesize topicTimelines;
 
 
+// ------------------------------------------------------------
+// awakeFromNib
+// ------------------------------------------------------------
 - (void) awakeFromNib
 {
     [super awakeFromNib];
     
-    // test code
-    CETopic* topic1 = [[CETopic alloc] init];
-    [topic1 setTopicName: @"Marginal Benefit"];
-    CMTimeRange timeRange1;
-    timeRange1.start = CMTimeMake(27, 1);
-    timeRange1.duration = CMTimeMake(100, 1);
-    [topic1 setTopicRange: timeRange1];
-    CETopic* topic2 = [[CETopic alloc] init];
-    [topic2 setTopicName: @"Price Gouging"];
-    CMTimeRange timeRange2;
-    timeRange2.start = CMTimeMake(78, 1);
-    timeRange2.duration = CMTimeMake(257, 1);
-    [topic2 setTopicRange: timeRange2];
-    CETopic* topic3 = [[CETopic alloc] init];
-    [topic3 setTopicName: @"Ricardo-Barro Effect"];
-    CMTimeRange timeRange3;
-    timeRange3.start = CMTimeMake(145, 1);
-    timeRange3.duration = CMTimeMake(200, 1);
-    [topic3 setTopicRange: timeRange3];
-    
-    CEModel* model = [CEModel sharedInstance];
-    [model addTopic: topic1];
-    [model addTopic: topic2];
-    [model addTopic: topic3];
-    
-    [self drawTimeBarsWithTopics: [model topics]
-                    andTotalTime: [model totalTime]];
+    [[NSNotificationCenter defaultCenter] addObserver: self
+                                             selector: @selector(drawTimeBars)
+                                                 name: kDrawTimelineBars
+                                               object: nil];
 }
 
 
 // ------------------------------------------------------------
-// drawTimeBarsWithTopics:andTotalTime:
+// drawTimeBars:
 // ------------------------------------------------------------
-- (void) drawTimeBarsWithTopics: (NSArray<CETopic*>*)topics
-                   andTotalTime: (CMTime)totalTime
+- (void) drawTimeBars
 {
+    CEModel* model = [CEModel sharedInstance];
+    NSArray* topics = [model topics];
+    const CMTime totalTime = [model totalTime];
+    
     [totalTimeTextField setStringValue: [self formatTime: totalTime]];
   
     [self organizeUIElements];
     
     NSUInteger counter = 0;
     
-    for (NSUInteger i = 0; i < [topics count]; ++i)
+    for (NSInteger i = [topics count] - 1; i >= 0 ; --i)
     {
-        if (i > 4)
+        if (i < [topics count] - 5)
             break;
+        
+        NSInteger reverseIndex = [topics count] - 1 - i;
         
         // calculate the start and end times of the new topic
         CETopic* topic = [topics objectAtIndex: i];
@@ -115,11 +101,11 @@
         const CGFloat kTrailingConstant = kWindowWidth - kEndPos;
         
         // set the constants
-        [[topicLeadingConstraints objectAtIndex: i] setConstant: kLeadingConstant];
-        [[topicTrailingConstraints objectAtIndex: i] setConstant: kTrailingConstant];
+        [[topicLeadingConstraints objectAtIndex: reverseIndex] setConstant: kLeadingConstant];
+        [[topicTrailingConstraints objectAtIndex: reverseIndex] setConstant: kTrailingConstant];
         
         // set the name
-        [[topicNameTextFields objectAtIndex: i] setStringValue: [topic topicName]];
+        [[topicNameTextFields objectAtIndex: reverseIndex] setStringValue: [topic topicName]];
         
         ++counter;
     }

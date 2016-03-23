@@ -8,6 +8,7 @@
 
 #import "CECalculator.h"
 #import "CEConnector.h"
+#import "CEModel.h"
 #import "CETimeline.h"
 #import "CEWelcomeViewController.h"
 #import "Constants.h"
@@ -121,7 +122,7 @@
 #endif
 }
 
-
+#if DEMO
 // ------------------------------------------------------------
 // createDelayedStudyInterface
 //
@@ -155,30 +156,77 @@
         valueToSetHeightTo = windowSize.height;
     
     [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
+
+    [self createDemoModel];
     
-    // this array is for testing only
-    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
-                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
-                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
-                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
-                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
-                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
-                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
-                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
-                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
-                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
-                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
-                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
-                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
-                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
-                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
-                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
-                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
-                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
-                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
+    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [[CEModel sharedInstance] topics]];
 }
+
+- (void) createDemoModel
+{
+    CEModel* model = [CEModel sharedInstance];
+    
+    CETopic* topic1 = [[CETopic alloc] init];
+    [topic1 setTopicName: @"Marginal Benefit"];
+    [topic1 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(327, 1), CMTimeMake(2000, 1))];
+    [topic1 setImportanceWeighting: 10];
+    [model addTopic: topic1];
+    
+    CETopic* topic2 = [[CETopic alloc] init];
+    [topic2 setTopicName: @"Comparative Advantage"];
+    [topic2 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(762, 1), CMTimeMake(2134, 1))];
+    [topic2 setImportanceWeighting: 7];
+    [model addTopic: topic2];
+    
+    CETopic* topic3 = [[CETopic alloc] init];
+    [topic3 setTopicName: @"Opportunity Cost"];
+    [topic3 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1800, 1), CMTimeMake(2982, 1))];
+    [topic3 setImportanceWeighting: 7];
+    [model addTopic: topic3];
+    
+    CETopic* topic4 = [[CETopic alloc] init];
+    [topic4 setTopicName: @"Absolute Advantage"];
+    [topic4 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1478, 1), CMTimeMake(2789, 1))];
+    [topic4 setImportanceWeighting: 7];
+    [model addTopic: topic4];
+    
+    CETopic* topic5 = [[CETopic alloc] init];
+    [topic5 setTopicName: @"Labor"];
+    [topic5 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(871, 1))];
+    [topic5 setImportanceWeighting: 5];
+    [model addTopic: topic5];
+    
+    CETopic* topic6 = [[CETopic alloc] init];
+    [topic6 setTopicName: @"Sticky Wages"];
+    [topic6 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic6 setImportanceWeighting: 5];
+    [model addTopic: topic6];
+    
+    CETopic* topic7 = [[CETopic alloc] init];
+    [topic7 setTopicName: @"Production Possibilities Frontier"];
+    [topic7 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic7 setImportanceWeighting: 5];
+    [model addTopic: topic7];
+    
+    CETopic* topic8 = [[CETopic alloc] init];
+    [topic8 setTopicName: @"Crowding Out"];
+    [topic8 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic8 setImportanceWeighting: 4];
+    [model addTopic: topic8];
+    
+    CETopic* topic9 = [[CETopic alloc] init];
+    [topic9 setTopicName: @"Ricardo-Barro Effect"];
+    [topic9 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic9 setImportanceWeighting: 3];
+    [model addTopic: topic9];
+    
+    CETopic* topic10 = [[CETopic alloc] init];
+    [topic10 setTopicName: @"Chili"];
+    [topic10 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic10 setImportanceWeighting: 3];
+    [model addTopic: topic10];
+}
+#endif
 
 
 // ------------------------------------------------------------
@@ -210,6 +258,14 @@
     }
     else
     {
+        static bool isFirstSwitch = true;
+        
+        if (isFirstSwitch)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName: kDrawTimelineBars object: nil];
+            isFirstSwitch = false;
+        }
+        
         [cloudView setHidden: true];
         [timelineView setHidden: false];
     }
