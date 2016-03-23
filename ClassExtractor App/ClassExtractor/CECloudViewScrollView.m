@@ -67,7 +67,8 @@
     }
     
     NSView* documentView = [[NSView alloc] init];
-    [documentView setFrame: CGRectMake(0, 0, 2000, 2000)];
+    // [TODO] Don't hard code these values; determine some way to calculate them.
+    [documentView setFrame: CGRectMake(0, 0, 1200, 1400)];
     [self setDocumentView: documentView];
     
     NSArray* sortedViews = [self orderViewsByImportance: views];

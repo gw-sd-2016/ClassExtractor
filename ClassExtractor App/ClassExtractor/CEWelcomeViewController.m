@@ -19,11 +19,11 @@
 @implementation CEWelcomeViewController
 @synthesize progressIndicator;
 @synthesize selectAudioButton;
-@synthesize selectAudioButtonVerticalCenterConstraint;
 @synthesize studyView;
 @synthesize interfaceChooser;
 @synthesize timelineView;
 @synthesize cloudView;
+@synthesize loadingLabel;
 
 
 // ------------------------------------------------------------
@@ -39,11 +39,13 @@
     
     [progressIndicator setAlphaValue: 0.0f];
     [interfaceChooser setAlphaValue: 0.0f];
+    [loadingLabel setAlphaValue: 0.0f];
     
     [studyView setWantsLayer: true];
     [studyView setAlphaValue: 0.0f];
-    [[studyView layer] setBackgroundColor: [[NSColor whiteColor] CGColor]];
-    [[studyView layer] setCornerRadius: 8.0f];
+    CALayer* studyLayer = [studyView layer];
+    [studyLayer setBackgroundColor: [[NSColor whiteColor] CGColor]];
+    [studyLayer setCornerRadius: 8.0f];
     
     // [TODO] Remove this observer, and instead have CEAudioHandler call
     // the method directly.
@@ -51,43 +53,11 @@
 //                                             selector: @selector(getJSONFromWatsonAsync:)
 //                                                 name: kGetJSON
 //                                               object: nil];
-   
-//    [[NSNotificationCenter defaultCenter] addObserver: self
-//                                             selector: @selector(showWordCloud:)
-//                                                 name: kShowWordCloud
-//                                               object: nil];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
                                              selector: @selector(showStudyInterface:)
                                                  name: kShowStudyInterface
                                                object: nil];
-    
-    
-    // test code
-//    NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
-//                       @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
-//                       @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
-//                       @{@"Absolute Advantage"                  : [NSNumber numberWithInteger: 7]},
-//                       @{@"Labor"                               : [NSNumber numberWithInteger: 5]},
-//                       @{@"Sticky Wages"                        : [NSNumber numberWithInteger: 5]},
-//                       @{@"Production Possibilities Frontier"   : [NSNumber numberWithInteger: 5]},
-//                       @{@"Crowding Out"                        : [NSNumber numberWithInteger: 4]},
-//                       @{@"Ricardo-Barro Effect"                : [NSNumber numberWithInteger: 3]},
-//                       @{@"Chili"                               : [NSNumber numberWithInteger: 3]},
-//                       @{@"Computers"                           : [NSNumber numberWithInteger: 3]},
-//                       @{@"Gross Domestic Product"              : [NSNumber numberWithInteger: 3]},
-//                       @{@"Inflation"                           : [NSNumber numberWithInteger: 2]},
-//                       @{@"Industry"                            : [NSNumber numberWithInteger: 2]},
-//                       @{@"Government"                          : [NSNumber numberWithInteger: 1]},
-//                       @{@"Central Bank"                        : [NSNumber numberWithInteger: 1]},
-//                       @{@"The Fed"                             : [NSNumber numberWithInteger: 1]},
-//                       @{@"World Economy"                       : [NSNumber numberWithInteger: 1]},
-//                       @{@"Trade"                               : [NSNumber numberWithInteger: 1]}];
-//    
-//    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
-//    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: array];
-//    
-//    [self performSegueWithIdentifier: @"showTimeline" sender: self];
 }
 
 
@@ -115,16 +85,6 @@
 
 
 // ------------------------------------------------------------
-// showWordCloud:
-// ------------------------------------------------------------
-- (void) showWordCloud: (NSNotification*)notification
-{
-    [self performSegueWithIdentifier: @"showWordCloud" sender: self];
-    [[NSNotificationCenter defaultCenter] postNotificationName: kCloudWindowOpened object: [notification object]];
-}
-
-
-// ------------------------------------------------------------
 // showStudyInterface:
 // ------------------------------------------------------------
 - (void) showStudyInterface: (NSNotification*)notification
@@ -136,6 +96,8 @@
     [[NSAnimationContext currentContext] setDuration: 1.0f];
     [[studyView animator] setAlphaValue: 1.0f];
     [[interfaceChooser animator] setAlphaValue: 1.0f];
+    [[progressIndicator animator] setAlphaValue: 0.0f];
+    [[loadingLabel animator] setAlphaValue: 0.0f];
     [NSAnimationContext endGrouping];
     
     const NSPoint windowOrigin = [[[self view] window] frame].origin;
@@ -174,6 +136,8 @@
     [[NSAnimationContext currentContext] setDuration: 0.8f];
     [[interfaceChooser animator] setAlphaValue: 1.0f];
     [[studyView animator] setAlphaValue: 1.0f];
+    [[progressIndicator animator] setAlphaValue: 0.0f];
+    [[loadingLabel animator] setAlphaValue: 0.0f];
     [NSAnimationContext endGrouping];
     
     const NSPoint windowOrigin = [[[self view] window] frame].origin;
@@ -191,7 +155,7 @@
     
     [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
     
-    //    // this array is for testing only
+    // this array is for testing only
     NSArray* array = @[@{@"Marginal Benefit"                    : [NSNumber numberWithInteger: 10]},
                        @{@"Comparative Advantage"               : [NSNumber numberWithInteger: 7]},
                        @{@"Opportunity Cost"                    : [NSNumber numberWithInteger: 7]},
@@ -264,8 +228,8 @@
             [NSAnimationContext beginGrouping];
             [[NSAnimationContext currentContext] setDuration: 2.0f];
             [[progressIndicator animator] setAlphaValue: 1.0f];
+            [[loadingLabel animator] setAlphaValue: 1.0f];
             [[selectAudioButton animator] setAlphaValue: 0.0f];
-            [[selectAudioButtonVerticalCenterConstraint animator] setConstant: 20];
             [NSAnimationContext endGrouping];
 
             // [TODO] Instead of just logging the error, report it to the user in some nice

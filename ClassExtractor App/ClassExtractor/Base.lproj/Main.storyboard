@@ -1009,9 +1009,22 @@
                                     <action selector="changeSegment:" target="XfG-lQ-9wD" id="oUl-j9-5qQ"/>
                                 </connections>
                             </segmentedControl>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="F4J-1P-UFV">
+                                <rect key="frame" x="141" y="152" width="64" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="0y2-hK-scD"/>
+                                    <constraint firstAttribute="width" constant="60" id="uNb-kg-ta1"/>
+                                </constraints>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Loading..." id="1b8-FU-5Dp">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="highlightColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="20" id="1Uv-Ot-wKf"/>
+                            <constraint firstItem="ETe-RY-ht7" firstAttribute="top" secondItem="F4J-1P-UFV" secondAttribute="bottom" constant="6" id="4dI-1r-KUa"/>
                             <constraint firstAttribute="trailing" secondItem="3Zk-0i-WV0" secondAttribute="trailing" constant="20" id="6SP-8I-14I"/>
                             <constraint firstItem="exx-KY-5X8" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="8ow-3H-7sF"/>
                             <constraint firstItem="BxW-Ow-Xyk" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="Dbf-Wa-lj4"/>
@@ -1022,6 +1035,8 @@
                             <constraint firstAttribute="bottom" secondItem="BxW-Ow-Xyk" secondAttribute="bottom" constant="20" id="dHJ-ju-gVv"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="65" id="fOv-rM-Ii6"/>
                             <constraint firstItem="3Zk-0i-WV0" firstAttribute="top" secondItem="8WY-by-wAB" secondAttribute="bottom" constant="21" id="rpT-6j-8cU"/>
+                            <constraint firstItem="F4J-1P-UFV" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="rqx-hN-6vm"/>
+                            <constraint firstItem="F4J-1P-UFV" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="42" id="so5-mm-0wL"/>
                             <constraint firstItem="BxW-Ow-Xyk" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="8" id="tfJ-5b-xCI"/>
                             <constraint firstItem="3Zk-0i-WV0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="yQw-wy-dwg"/>
                         </constraints>
@@ -1029,9 +1044,9 @@
                     <connections>
                         <outlet property="cloudView" destination="I0A-W2-0Ha" id="n4b-UA-Yr9"/>
                         <outlet property="interfaceChooser" destination="BxW-Ow-Xyk" id="2EF-pK-Ff6"/>
+                        <outlet property="loadingLabel" destination="F4J-1P-UFV" id="ldr-0G-2uH"/>
                         <outlet property="progressIndicator" destination="8WY-by-wAB" id="Y9v-3i-La2"/>
                         <outlet property="selectAudioButton" destination="ETe-RY-ht7" id="A2P-DT-kYc"/>
-                        <outlet property="selectAudioButtonVerticalCenterConstraint" destination="fOv-rM-Ii6" id="dc9-LS-A5h"/>
                         <outlet property="studyView" destination="3Zk-0i-WV0" id="nUf-XL-EQp"/>
                         <outlet property="timelineView" destination="GQY-qU-BZo" id="cQT-TC-wnN"/>
                         <segue destination="2Ha-4f-IV1" kind="show" identifier="showTimeline" id="lJL-ye-PXw"/>
