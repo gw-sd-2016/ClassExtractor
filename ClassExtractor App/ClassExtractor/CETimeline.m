@@ -103,6 +103,40 @@
 @synthesize topicTimelines;
 
 
+- (void) awakeFromNib
+{
+    [super awakeFromNib];
+    
+    // test code
+    CETopic* topic1 = [[CETopic alloc] init];
+    [topic1 setTopicName: @"Marginal Benefit"];
+    CMTimeRange timeRange1;
+    timeRange1.start = CMTimeMake(27, 1);
+    timeRange1.duration = CMTimeMake(100, 1);
+    [topic1 setTopicRange: timeRange1];
+    CETopic* topic2 = [[CETopic alloc] init];
+    [topic2 setTopicName: @"Price Gouging"];
+    CMTimeRange timeRange2;
+    timeRange2.start = CMTimeMake(78, 1);
+    timeRange2.duration = CMTimeMake(257, 1);
+    [topic2 setTopicRange: timeRange2];
+    CETopic* topic3 = [[CETopic alloc] init];
+    [topic3 setTopicName: @"Ricardo-Barro Effect"];
+    CMTimeRange timeRange3;
+    timeRange3.start = CMTimeMake(145, 1);
+    timeRange3.duration = CMTimeMake(200, 1);
+    [topic3 setTopicRange: timeRange3];
+    
+    CETimelineBarModel* timelineBarModel = [[CETimelineBarModel alloc] initWithTotalTime: CMTimeMake(427, 1)];
+    [timelineBarModel addTopic: topic1];
+    [timelineBarModel addTopic: topic2];
+    [timelineBarModel addTopic: topic3];
+    
+    [self drawTimeBarsWithTopics: [timelineBarModel topics]
+                    andTotalTime: [timelineBarModel totalTime]];
+}
+
+
 // ------------------------------------------------------------
 // drawTimeBarsWithTopics:andTotalTime:
 // ------------------------------------------------------------
