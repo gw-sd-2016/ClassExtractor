@@ -102,8 +102,10 @@
     [[loadingLabel animator] setAlphaValue: 0.0f];
     [NSAnimationContext endGrouping];
     
-    const NSPoint windowOrigin = [[[self view] window] frame].origin;
-    const CGSize windowSize = [[[self view] window] frame].size;
+    NSWindow* selfWindow = [[self view] window];
+    const CGRect windowFrame = [selfWindow frame];
+    const NSPoint windowOrigin = windowFrame.origin;
+    const CGSize windowSize = windowFrame.size;
     CGFloat valueToSetWidthTo, valueToSetHeightTo;
     if (windowSize.width < 600)
         valueToSetWidthTo = 600;
@@ -115,7 +117,9 @@
     else
         valueToSetHeightTo = windowSize.height;
     
-    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
+    [selfWindow setMinSize: CGSizeMake(600, 600)];
+    
+    [selfWindow setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
 
     
     // [TODO] Need some way of notifying cloud view to create its clouds.
@@ -142,8 +146,10 @@
     [[loadingLabel animator] setAlphaValue: 0.0f];
     [NSAnimationContext endGrouping];
     
-    const NSPoint windowOrigin = [[[self view] window] frame].origin;
-    const CGSize windowSize = [[[self view] window] frame].size;
+    NSWindow* selfWindow = [[self view] window];
+    const CGRect windowFrame = [selfWindow frame];
+    const NSPoint windowOrigin = windowFrame.origin;
+    const CGSize windowSize = windowFrame.size;
     CGFloat valueToSetWidthTo, valueToSetHeightTo;
     if (windowSize.width < 600)
         valueToSetWidthTo = 600;
@@ -155,7 +161,9 @@
     else
         valueToSetHeightTo = windowSize.height;
     
-    [[[self view] window] setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
+    [selfWindow setMinSize: CGSizeMake(600, 600)];
+    
+    [selfWindow setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
 
     [self createDemoModel];
     
