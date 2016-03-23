@@ -107,17 +107,17 @@
     const NSPoint windowOrigin = windowFrame.origin;
     const CGSize windowSize = windowFrame.size;
     CGFloat valueToSetWidthTo, valueToSetHeightTo;
-    if (windowSize.width < 600)
-        valueToSetWidthTo = 600;
+    if (windowSize.width < 800)
+        valueToSetWidthTo = 800;
     else
         valueToSetWidthTo = windowSize.width;
     
-    if (windowSize.height < 600)
-        valueToSetHeightTo = 600;
+    if (windowSize.height < 800)
+        valueToSetHeightTo = 800;
     else
         valueToSetHeightTo = windowSize.height;
     
-    [selfWindow setMinSize: CGSizeMake(600, 600)];
+    [selfWindow setMinSize: CGSizeMake(800, 800)];
     
     [selfWindow setFrame: CGRectMake(windowOrigin.x, windowOrigin.y, valueToSetWidthTo, valueToSetHeightTo) display: true animate: true];
 
@@ -200,37 +200,37 @@
     
     CETopic* topic5 = [[CETopic alloc] init];
     [topic5 setTopicName: @"Labor"];
-    [topic5 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(871, 1))];
+    [topic5 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(200, 1), CMTimeMake(989, 1))];
     [topic5 setImportanceWeighting: 5];
     [model addTopic: topic5];
     
     CETopic* topic6 = [[CETopic alloc] init];
     [topic6 setTopicName: @"Sticky Wages"];
-    [topic6 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic6 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(2378, 1), CMTimeMake(2961, 1))];
     [topic6 setImportanceWeighting: 5];
     [model addTopic: topic6];
     
     CETopic* topic7 = [[CETopic alloc] init];
     [topic7 setTopicName: @"Production Possibilities Frontier"];
-    [topic7 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic7 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(800, 1), CMTimeMake(1576, 1))];
     [topic7 setImportanceWeighting: 5];
     [model addTopic: topic7];
     
     CETopic* topic8 = [[CETopic alloc] init];
     [topic8 setTopicName: @"Crowding Out"];
-    [topic8 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic8 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1243, 1), CMTimeMake(2290, 1))];
     [topic8 setImportanceWeighting: 4];
     [model addTopic: topic8];
     
     CETopic* topic9 = [[CETopic alloc] init];
     [topic9 setTopicName: @"Ricardo-Barro Effect"];
-    [topic9 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic9 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1867, 1), CMTimeMake(2431, 1))];
     [topic9 setImportanceWeighting: 3];
     [model addTopic: topic9];
     
     CETopic* topic10 = [[CETopic alloc] init];
     [topic10 setTopicName: @"Chili"];
-    [topic10 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
+    [topic10 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1999, 1), CMTimeMake(2678, 1))];
     [topic10 setImportanceWeighting: 3];
     [model addTopic: topic10];
 }

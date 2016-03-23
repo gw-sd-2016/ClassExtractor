@@ -39,7 +39,7 @@
 // ------------------------------------------------------------
 // addTopic:
 //
-// Inserts the argument topic into the topics array in ascending
+// Inserts the argument topic into the topics array in descending
 // order (by importance), also increasing the total amount of time.
 // ------------------------------------------------------------
 - (void) addTopic: (CETopic*)newTopic
@@ -64,7 +64,7 @@
             // insert the newTopic into the array in ascending order
             for (NSUInteger i = 0; i < kNumTopics; ++i)
             {
-                if ([[topics objectAtIndex: i] importanceWeighting] >= kWeighting)
+                if ([[topics objectAtIndex: i] importanceWeighting] < kWeighting)
                 {
                     [topics insertObject: newTopic atIndex: i];
                     return;

@@ -51,17 +51,8 @@
     
     for (NSUInteger i = 0; i < [topics count]; ++i)
     {
-        NSDictionary* curTopic = [topics objectAtIndex: i];
-        NSString* curTopicString = [[curTopic allKeys] firstObject];
-        NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
-        
-        CETopic* topic = [[CETopic alloc] init];
-        [topic setTopicName: curTopicString];
-        //        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
-        
-        // [TODO] Add robust handling for if the importance weighting is 0.
-        [topic setImportanceWeighting: [curTopicFrequency integerValue]];
-        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
+        CETopic* curTopic = [topics objectAtIndex: i];
+        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: curTopic];
         [contentView addSubview: cloudView];
         [views addObject: cloudView];
     }

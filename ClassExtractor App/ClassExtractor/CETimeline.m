@@ -73,12 +73,10 @@
     
     NSUInteger counter = 0;
     
-    for (NSInteger i = [topics count] - 1; i >= 0 ; --i)
+    for (NSUInteger i = 0; i < [topics count]; ++i)
     {
-        if (i < [topics count] - 5)
+        if (i > 4)
             break;
-        
-        NSInteger reverseIndex = [topics count] - 1 - i;
         
         // calculate the start and end times of the new topic
         CETopic* topic = [topics objectAtIndex: i];
@@ -101,11 +99,11 @@
         const CGFloat kTrailingConstant = kWindowWidth - kEndPos;
         
         // set the constants
-        [[topicLeadingConstraints objectAtIndex: reverseIndex] setConstant: kLeadingConstant];
-        [[topicTrailingConstraints objectAtIndex: reverseIndex] setConstant: kTrailingConstant];
+        [[topicLeadingConstraints objectAtIndex: i] setConstant: kLeadingConstant];
+        [[topicTrailingConstraints objectAtIndex: i] setConstant: kTrailingConstant];
         
         // set the name
-        [[topicNameTextFields objectAtIndex: reverseIndex] setStringValue: [topic topicName]];
+        [[topicNameTextFields objectAtIndex: i] setStringValue: [topic topicName]];
         
         ++counter;
     }
