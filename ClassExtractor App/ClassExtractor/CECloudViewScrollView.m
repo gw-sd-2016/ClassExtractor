@@ -57,11 +57,6 @@
         [views addObject: cloudView];
     }
     
-    NSView* documentView = [[NSView alloc] init];
-    // [TODO] Don't hard code these values; determine some way to calculate them.
-    [documentView setFrame: CGRectMake(0, 0, 1200, 1400)];
-    [self setDocumentView: documentView];
-    
     NSArray* sortedViews = [self orderViewsByImportance: views];
     [self layoutCloudsWithArray: sortedViews];
 }
@@ -90,14 +85,20 @@
 }
 
 
+#if CLOUDING
 // ------------------------------------------------------------
-// layoutCloudsWithArray:
+// layoutCloudsInCloudingFormationWithArray:
 //
-// The array of clouds are guaranteed to be in ordered by
-// decreasing importance.
+// Lays out the cloud views in a word cloud, with the most
+// important cloud at the center, and decreasingly important
+// clouds spiraling clockwise outwards.
 // ------------------------------------------------------------
-- (void) layoutCloudsWithArray: (NSArray<CECloudView*>*)views
+- (void) layoutCloudsInCloudingFormationWithArray: (NSArray<CECloudView*>*)views
 {
+    NSView* documentView = [[NSView alloc] init];
+    [documentView setFrame: CGRectMake(0, 0, 1400, 2000)];
+    [self setDocumentView: documentView];
+    
     NSUInteger numViews = [views count];
     
     if (numViews > 1)
@@ -166,6 +167,52 @@
             }
         }
     }
+}
+
+
+#else
+// ------------------------------------------------------------
+// layoutCloudsInLineFormationWithArray:
+//
+// Lays out the cloud views in a straight line along the bottom
+// of the scroll view, ordered by descending importance.
+// ------------------------------------------------------------
+- (void) layoutCloudsInLineFormationWithArray: (NSArray<CECloudView*>*)views
+{
+    const CGFloat kBuffer = 20;
+    CGFloat totalWidthSoFar;
+    
+    for (NSUInteger i = 0; i < [views count]; ++i)
+    {
+        CECloudView* cloud = [views objectAtIndex: i];
+        const CGFloat cloudDiameter = [cloud frame].size.width;
+        [cloud setFrame: CGRectMake(totalWidthSoFar + kBuffer, kBuffer, cloudDiameter, cloudDiameter)];
+        totalWidthSoFar += cloudDiameter + kBuffer;
+    }
+    
+    // we have to use 2 * kBuffer here so that we can guarantee a buffer at the top
+    // and bottom of the tallest cloud
+    const CGFloat kTallestHeight = [[views firstObject] frame].size.height + 2 * kBuffer;
+    NSView* documentView = [[NSView alloc] init];
+    [documentView setFrame: CGRectMake(0, 0, totalWidthSoFar + kBuffer, kTallestHeight)];
+    [self setDocumentView: documentView];
+}
+#endif
+
+
+// ------------------------------------------------------------
+// layoutCloudsWithArray:
+//
+// The array of clouds are guaranteed to be in ordered by
+// decreasing importance.
+// ------------------------------------------------------------
+- (void) layoutCloudsWithArray: (NSArray<CECloudView*>*)views
+{
+#if CLOUDING
+    [self layoutCloudsInCloudingFormationWithArray: views];
+#else
+    [self layoutCloudsInLineFormationWithArray: views];
+#endif
 }
 
 

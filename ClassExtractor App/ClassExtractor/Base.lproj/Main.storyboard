@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
@@ -694,13 +694,13 @@
                                 </constraints>
                             </progressIndicator>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="3Zk-0i-WV0">
-                                <rect key="frame" x="20" y="49" width="307" height="56"/>
+                                <rect key="frame" x="20" y="49" width="307" height="154"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="I0A-W2-0Ha" customClass="CECloudViewScrollView">
-                                        <rect key="frame" x="0.0" y="0.0" width="307" height="56"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="307" height="154"/>
                                     </customView>
                                     <view hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GQY-qU-BZo" customClass="CETimelineBarView">
-                                        <rect key="frame" x="0.0" y="0.0" width="307" height="56"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="307" height="154"/>
                                         <subviews>
                                             <box misplaced="YES" borderType="line" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="JXG-m6-a3H">
                                                 <rect key="frame" x="-217" y="-107" width="740" height="39"/>
@@ -1003,7 +1003,7 @@
                             <constraint firstItem="8WY-by-wAB" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="67" id="Wmd-cc-gQD"/>
                             <constraint firstAttribute="bottom" secondItem="BxW-Ow-Xyk" secondAttribute="bottom" constant="20" id="dHJ-ju-gVv"/>
                             <constraint firstItem="ETe-RY-ht7" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="65" id="fOv-rM-Ii6"/>
-                            <constraint firstItem="3Zk-0i-WV0" firstAttribute="top" secondItem="8WY-by-wAB" secondAttribute="bottom" constant="21" id="rpT-6j-8cU"/>
+                            <constraint firstItem="3Zk-0i-WV0" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="8" id="i6G-iR-PGX"/>
                             <constraint firstItem="F4J-1P-UFV" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="rqx-hN-6vm"/>
                             <constraint firstItem="F4J-1P-UFV" firstAttribute="top" secondItem="exx-KY-5X8" secondAttribute="bottom" constant="42" id="so5-mm-0wL"/>
                             <constraint firstItem="BxW-Ow-Xyk" firstAttribute="top" secondItem="3Zk-0i-WV0" secondAttribute="bottom" constant="8" id="tfJ-5b-xCI"/>
