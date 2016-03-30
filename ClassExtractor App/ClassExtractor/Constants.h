@@ -9,6 +9,7 @@
 #ifndef Constants_h
 #define Constants_h
 
+#pragma mark - Constants
 
 // NSNotification name for when the small audio clips have been
 // converted to wavs and are ready to be uploaded to Watson
@@ -74,6 +75,25 @@ extern const int32_t kTimescale;
 
 // the number of clouds per ring in the Word Cloud interface
 extern const NSUInteger kNumCloudsPerRing;
+
+
+extern NSString* const kShowStudyInterface;
+
+
+extern NSString* const kDrawTimelineBars;
+
+
+#pragma mark - Build Conditionals
+
+
+// if 1, skips uploading data to Watson and uses sample
+// data instead
+#define DEMO 1
+
+
+// if 1, words will arrange like a word cloud, else words
+// will arrange in a line
+#define CLOUDING 0
 
 
 #endif /* Constants_h */

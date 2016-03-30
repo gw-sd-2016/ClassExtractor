@@ -150,33 +150,24 @@
 // ------------------------------------------------------------
 - (CGSize) calculateSizeFromImportance
 {
+#if CLOUDING
+    // [TODO] Some formula needs to be derived that can create meaningfully
+    // sized clouds, and a similar formula needs to be created that can space
+    // the clouds apart.
+    return CGSizeMake(200, 200);
+#else
     const NSUInteger multiplier = 50;
     const NSUInteger weighting = [[self representedTopic] importanceWeighting];
     
-    // [TODO] The weightings need a better formula, as right now they're just from
-    // frequencies of each topic, which might be only 2 or 3.
-    NSUInteger inflatedWeighting;
-    if (weighting == 0)
-        inflatedWeighting = 100;
-    else if (weighting == 1)
-        inflatedWeighting = 130;
-    else if (weighting == 2)
-        inflatedWeighting = 150;
-    else if (weighting <= 5)
-        inflatedWeighting = weighting * 50;
-    else
-        inflatedWeighting = weighting * 20;
+    NSUInteger inflatedWeighting = weighting * 30;
     
     const NSUInteger baseCalculation = inflatedWeighting * 2;
     const double reciprocal = 1 / (double)inflatedWeighting;
     const double offsetDiameter = multiplier * reciprocal;
     const double diameter = baseCalculation + offsetDiameter;
-    
-    // [TODO] This is test code to make the views easily manageable,
-    // change this back so that we can actually calculate the diameter
-    // based on the importance of the topic.
-//    return CGSizeMake(diameter, diameter);
-    return CGSizeMake(200, 200);
+
+    return CGSizeMake(diameter, diameter);
+#endif
 }
 
 

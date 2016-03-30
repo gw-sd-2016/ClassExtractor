@@ -80,6 +80,21 @@
         NSLog(@"Task data is nil or task data is not empty: %s", __PRETTY_FUNCTION__);
 }
 
+#if DEMO
+// ------------------------------------------------------------
+// shortCircuit
+//
+// This function is meant only for demoing without using Watson
+// directly. This function skips over splicing up the selected
+// audio file, sending it to Watson, and parsing the response.
+// ------------------------------------------------------------
++ (void) shortCircuit
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName: kShowStudyInterface
+                                                        object: nil];
+}
+#endif
+
 
 // ------------------------------------------------------------
 // chopUpLargeAudioFile:
@@ -90,6 +105,11 @@
 // ------------------------------------------------------------
 + (NSString*) chopUpLargeAudioFile: (AVURLAsset*)selectedAudioAsset
 {
+#if DEMO
+    [CEAudioHandler shortCircuit];
+    return kChoppingSuccess;
+#endif
+    
     const CMTime kDuration = [selectedAudioAsset duration];
     if (0 == kDuration.value)
         return kZeroDurationError;

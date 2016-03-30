@@ -1,115 +1,61 @@
 //
-//  CEWordCloudViewController.m
+//  CECloudViewScrollView.m
 //  ClassExtractor
 //
-//  Created by Elliot on 11/24/15.
-//  Copyright © 2015 ECL. All rights reserved.
+//  Created by Elliot on 3/22/16.
+//  Copyright © 2016 ECL. All rights reserved.
 //
 
-#import "CEWordCloudViewController.h"
 #import "CECloudView.h"
+#import "CECloudViewScrollView.h"
+#import "CETopic.h"
 #import "Constants.h"
 
-// ============================================================
-// CEWordCloudViewController
-// ============================================================
-@implementation CEWordCloudViewController
+@implementation CECloudViewScrollView
 @synthesize centerClouds;
 
 
-#pragma mark - ViewController
-
-
 // ------------------------------------------------------------
-// viewDidLoad
+// awakeFromNib
 // ------------------------------------------------------------
-- (void) viewDidLoad
+- (void) awakeFromNib
 {
-    [super viewDidLoad];
-
+    [super awakeFromNib];
+    
     centerClouds = [[NSMutableArray alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver: self
-                                             selector: @selector(cloudWindowAppeared:)
+                                             selector: @selector(createClouds:)
                                                  name: kCloudWindowOpened
                                                object: nil];
 }
 
 
 // ------------------------------------------------------------
-// viewDidAppear
+// createClouds:
 // ------------------------------------------------------------
-- (void) viewDidAppear
+- (void) createClouds: (NSNotification*)notification
 {
-    [super viewDidAppear];
-    
-    [[[self view] window] setTitle: @"Word Cloud"];
-}
-
-
-#pragma mark - High Level Cloud Creation
-
-
-// ------------------------------------------------------------
-// cloudWindowAppeared
-// ------------------------------------------------------------
-- (void) cloudWindowAppeared: (NSNotification*)notification
-{
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
-    
     NSArray* topics = [notification object];
     
-    const CGFloat cornerRadius = 8.0f;
+    [self setWantsLayer: true];
+    [self setHasVerticalScroller: true];
+    [self setHasHorizontalScroller: true];
+    
     NSMutableArray* views = [[NSMutableArray alloc] init];
-    NSView* view = [self view];
-    [view setWantsLayer: true];
-    [[view layer] setCornerRadius: cornerRadius];
     
-    NSScrollView* scrollView = [[NSScrollView alloc] init];
-    [scrollView setWantsLayer: true];
-    [[scrollView layer] setCornerRadius: cornerRadius];
-    [view addSubview: scrollView];
-    [scrollView setHasVerticalScroller: true];
-    [scrollView setHasHorizontalScroller: true];
+    [self setTranslatesAutoresizingMaskIntoConstraints: false];
     
-    [scrollView setTranslatesAutoresizingMaskIntoConstraints: false];
-    NSDictionary* layoutViews = @{@"scrollView" : scrollView};
-    NSString* horizFormatString = @"H:|-[scrollView]-|";
-    NSString* vertFormatString = @"V:|-[scrollView]-|";
-    NSArray* horizConstraints = [NSLayoutConstraint constraintsWithVisualFormat: horizFormatString
-                                                                        options: NSLayoutFormatAlignAllBaseline
-                                                                        metrics: nil
-                                                                          views: layoutViews];
-    NSArray* vertConstraints = [NSLayoutConstraint constraintsWithVisualFormat: vertFormatString
-                                                                       options: NSLayoutFormatAlignAllBaseline
-                                                                       metrics: nil
-                                                                         views: layoutViews];
-    
-    [NSLayoutConstraint activateConstraints: horizConstraints];
-    [NSLayoutConstraint activateConstraints: vertConstraints ];
-    
-    
-    NSView* documentView = [[NSView alloc] init];
-    [scrollView setDocumentView: documentView];
+    NSClipView* contentView = [[NSClipView alloc] init];
+    [self setContentView: contentView];
     
     for (NSUInteger i = 0; i < [topics count]; ++i)
     {
-        NSDictionary* curTopic = [topics objectAtIndex: i];
-        NSString* curTopicString = [[curTopic allKeys] firstObject];
-        NSNumber* curTopicFrequency = [[curTopic allValues] firstObject];
-        
-        CETopic* topic = [[CETopic alloc] init];
-        [topic setTopicName: curTopicString];
-//        [topic setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(100, 1), CMTimeMake(417, 1))];
-        
-        // [TODO] Add robust handling for if the importance weighting is 0.
-        [topic setImportanceWeighting: [curTopicFrequency integerValue]];
-        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: topic];
-        [documentView addSubview: cloudView];
+        CETopic* curTopic = [topics objectAtIndex: i];
+        CECloudView* cloudView = [[CECloudView alloc] initWithTopic: curTopic];
+        [contentView addSubview: cloudView];
         [views addObject: cloudView];
     }
-    
-    [documentView setFrame: CGRectMake(0, 0, 3000, 3000)];
     
     NSArray* sortedViews = [self orderViewsByImportance: views];
     [self layoutCloudsWithArray: sortedViews];
@@ -139,14 +85,20 @@
 }
 
 
+#if CLOUDING
 // ------------------------------------------------------------
-// layoutCloudsWithArray:
+// layoutCloudsInCloudingFormationWithArray:
 //
-// The array of clouds are guaranteed to be in ordered by
-// decreasing importance.
+// Lays out the cloud views in a word cloud, with the most
+// important cloud at the center, and decreasingly important
+// clouds spiraling clockwise outwards.
 // ------------------------------------------------------------
-- (void) layoutCloudsWithArray: (NSArray<CECloudView*>*)views
+- (void) layoutCloudsInCloudingFormationWithArray: (NSArray<CECloudView*>*)views
 {
+    NSView* documentView = [[NSView alloc] init];
+    [documentView setFrame: CGRectMake(0, 0, 1400, 2000)];
+    [self setDocumentView: documentView];
+    
     NSUInteger numViews = [views count];
     
     if (numViews > 1)
@@ -167,7 +119,7 @@
         if (i == 0)
         {
             const CGFloat centerDiameter = [view frame].size.width; // the view is a circle, so the width and height are equal
-            [view setFrame: CGRectMake(800, 800, centerDiameter, centerDiameter)];
+            [view setFrame: CGRectMake([[self documentView] frame].size.width / 2, [[self documentView] frame].size.height / 2, centerDiameter, centerDiameter)];
         }
         
         CERingTracker* viewRingTracker = [view ringTracker];
@@ -218,6 +170,52 @@
 }
 
 
+#else
+// ------------------------------------------------------------
+// layoutCloudsInLineFormationWithArray:
+//
+// Lays out the cloud views in a straight line along the bottom
+// of the scroll view, ordered by descending importance.
+// ------------------------------------------------------------
+- (void) layoutCloudsInLineFormationWithArray: (NSArray<CECloudView*>*)views
+{
+    const CGFloat kBuffer = 20;
+    CGFloat totalWidthSoFar;
+    
+    for (NSUInteger i = 0; i < [views count]; ++i)
+    {
+        CECloudView* cloud = [views objectAtIndex: i];
+        const CGFloat cloudDiameter = [cloud frame].size.width;
+        [cloud setFrame: CGRectMake(totalWidthSoFar + kBuffer, kBuffer, cloudDiameter, cloudDiameter)];
+        totalWidthSoFar += cloudDiameter + kBuffer;
+    }
+    
+    // we have to use 2 * kBuffer here so that we can guarantee a buffer at the top
+    // and bottom of the tallest cloud
+    const CGFloat kTallestHeight = [[views firstObject] frame].size.height + 2 * kBuffer;
+    NSView* documentView = [[NSView alloc] init];
+    [documentView setFrame: CGRectMake(0, 0, totalWidthSoFar + kBuffer, kTallestHeight)];
+    [self setDocumentView: documentView];
+}
+#endif
+
+
+// ------------------------------------------------------------
+// layoutCloudsWithArray:
+//
+// The array of clouds are guaranteed to be in ordered by
+// decreasing importance.
+// ------------------------------------------------------------
+- (void) layoutCloudsWithArray: (NSArray<CECloudView*>*)views
+{
+#if CLOUDING
+    [self layoutCloudsInCloudingFormationWithArray: views];
+#else
+    [self layoutCloudsInLineFormationWithArray: views];
+#endif
+}
+
+
 #pragma mark - Cloud Model Creation
 
 
@@ -235,22 +233,22 @@
                 withViews: (NSArray<CECloudView*>*)views
 {
     static NSUInteger curCenterIndex = 0;
-
+    
     // ringIndex is only applicable to the current center cloud (i.e. it is meaningless
     // when talking about other clouds)
     // we need to subtract curCenterIndex to keep the index positions the same
     // (otherwise they would rotate around each successive center cloud)
     const NSUInteger ringIndex = (index - curCenterIndex) % kNumCloudsPerRing;
-
+    
     CECloudView* indexCloudView = [views objectAtIndex: index];
     CECloudView* curCenterCloudView = [views objectAtIndex: curCenterIndex];
     CERingTracker* indexRingTracker = [indexCloudView ringTracker];
     CERingTracker* curCenterRingTracker = [curCenterCloudView ringTracker];
-
+    
     // keep track of what the index cloud's center cloud is so we can lay out
     // the views later
     [indexRingTracker setCenterCloud: curCenterCloudView];
-
+    
     // make curCenterIndex aware of index
     [curCenterRingTracker fillInIndex: ringIndex
                              withView: indexCloudView];
@@ -269,7 +267,7 @@
         
         [indexRingTracker fillInIndex: newIndex
                              withView: [views objectAtIndex: index - 1]];
-    
+        
         [[[views objectAtIndex: index - 1] ringTracker] fillInIndex: [self reverseRingIndexForRingIndex: newIndex]
                                                            withView: indexCloudView];
     }
@@ -287,7 +285,7 @@
         CECloudView* nextRingCloud = [curCenterRingTracker cloudViewAtRingIndex: nextRingIndex];
         
         [[nextRingCloud ringTracker] fillInIndex: [self reverseRingIndexForRingIndex: ringIndexRelativeToNewCloud]
-                                                                            withView: indexCloudView];
+                                        withView: indexCloudView];
     }
     
     if ([curCenterRingTracker ringFull])

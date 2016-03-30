@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 #import "CEAudioHandler.h"
+#import "CECloudViewScrollView.h"
+#import "CETimeline.h"
 
 @interface CEWelcomeViewController : NSViewController
 {
@@ -16,6 +18,20 @@
     AVAudioPlayer* audioPlayer;
 }
 
+@property (strong) IBOutlet CECloudViewScrollView* cloudView;
+@property (strong) IBOutlet NSSegmentedControl *interfaceChooser;
+@property (strong) IBOutlet NSTextField* loadingLabel;
+@property (strong) IBOutlet NSProgressIndicator* progressIndicator;
+@property (strong) IBOutlet NSButton* selectAudioButton;
+@property (strong) IBOutlet NSView* studyView;
+@property (strong) IBOutlet CETimelineBarView* timelineView;
+
+- (IBAction) changeSegment: (id)sender;
 - (IBAction) importAudioFile: (id)sender;
+
+@end
+
+
+@interface CEWelcomeView : NSView
 
 @end

@@ -18,7 +18,11 @@
 // ------------------------------------------------------------
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"(CETopic: name = %@, weighting = %lu)", [self topicName], (unsigned long)[self importanceWeighting]];
+    return [NSString stringWithFormat: @"(CETopic: name = %@, weighting = %lu, (start, duration) = (%lli, %lli))",
+            [self topicName],
+            (unsigned long)[self importanceWeighting],
+            topicRange.start.value,
+            topicRange.duration.value];
 }
 
 @end
