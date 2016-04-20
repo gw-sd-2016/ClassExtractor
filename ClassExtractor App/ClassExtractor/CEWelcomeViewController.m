@@ -211,7 +211,7 @@
     [model addTopic: topic6];
     
     CETopic* topic7 = [[CETopic alloc] init];
-    [topic7 setTopicName: @"Production Possibilities Frontier"];
+    [topic7 setTopicName: @"Agriculture"];
     [topic7 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(800, 1), CMTimeMake(1576, 1))];
     [topic7 setImportanceWeighting: 5];
     [model addTopic: topic7];
@@ -223,16 +223,10 @@
     [model addTopic: topic8];
     
     CETopic* topic9 = [[CETopic alloc] init];
-    [topic9 setTopicName: @"Ricardo-Barro Effect"];
-    [topic9 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1867, 1), CMTimeMake(2431, 1))];
+    [topic9 setTopicName: @"Moral Hazard"];
+    [topic9 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(241, 1), CMTimeMake(567, 1))];
     [topic9 setImportanceWeighting: 3];
     [model addTopic: topic9];
-    
-    CETopic* topic10 = [[CETopic alloc] init];
-    [topic10 setTopicName: @"Chili"];
-    [topic10 setTopicRange: CMTimeRangeFromTimeToTime(CMTimeMake(1999, 1), CMTimeMake(2678, 1))];
-    [topic10 setImportanceWeighting: 3];
-    [model addTopic: topic10];
 }
 #endif
 

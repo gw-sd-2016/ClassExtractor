@@ -40,10 +40,7 @@
         
         // setup the view's layer
         [self setWantsLayer: true];
-        CALayer* layer = [self layer];
-        [layer setCornerRadius: imporSize.width / 2];
-        NSColor* color = [self setColorFromRGBWithRed: 219 andGreen: 2 andBlue: 2];
-        [layer setBackgroundColor: [color CGColor]];
+        [self setColorWithWidth: imporSize.width];
 
         CETextField* nameField = [[CETextField alloc] initWithCloudView: self];
         [nameField setStringValue: [[[self representedTopic] topicName] capitalizedString]];
@@ -180,6 +177,21 @@
 - (NSString*) description
 {
     return [NSString stringWithFormat: @"CECloudView: %@\r     %@", [self representedTopic], [self ringTracker]];
+}
+
+
+// ------------------------------------------------------------
+// setColorWithWidth:
+// ------------------------------------------------------------
+- (void) setColorWithWidth: (CGFloat)width
+{
+    CALayer* layer = [self layer];
+    [layer setCornerRadius: width / 2];
+    const NSUInteger importanceWeighting = [[self representedTopic] importanceWeighting];
+    const NSUInteger redValue = 155 + 10 * importanceWeighting;
+    const NSUInteger blueValue = 50 + 10 * (10 - importanceWeighting);
+    NSColor* color = [self setColorFromRGBWithRed: redValue andGreen: 2 andBlue: blueValue];
+    [layer setBackgroundColor: [color CGColor]];
 }
 
 @end
