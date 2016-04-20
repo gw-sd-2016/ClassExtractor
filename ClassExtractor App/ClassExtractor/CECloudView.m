@@ -211,6 +211,8 @@
         [self setBordered: false];
         [self setTranslatesAutoresizingMaskIntoConstraints: false];
         [self setBackgroundColor: [NSColor colorWithCGColor: [[cloudView layer] backgroundColor]]];
+        NSFont* font = [NSFont systemFontOfSize: 30];
+        [self setFont: font];
         [cloudView addSubview: self];
 
         NSLayoutConstraint* xConstraint = [NSLayoutConstraint constraintWithItem: self
@@ -223,9 +225,9 @@
         [NSLayoutConstraint activateConstraints: @[xConstraint]];
         
         NSDictionary* viewsForConstraints = @{@"self" : self};
-        // [TODO] When the font size is decided upon later, this height
-        // will have to change.
-        const NSUInteger height = 20;
+        // the height needs to be a little bit bigger than the font size to account
+        // for low hanging letters ("g", "j", etc)
+        const NSUInteger height = [font pointSize] + 5;
         NSString* heightFormat = [NSString stringWithFormat: @"V:[self(%lu)]", (unsigned long)height];
         NSArray* heightConstraint = [NSLayoutConstraint constraintsWithVisualFormat: heightFormat
                                                                             options: NSLayoutFormatAlignAllTop
