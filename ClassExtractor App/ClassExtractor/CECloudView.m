@@ -223,7 +223,12 @@
         [self setBordered: false];
         [self setTranslatesAutoresizingMaskIntoConstraints: false];
         [self setBackgroundColor: [NSColor colorWithCGColor: [[cloudView layer] backgroundColor]]];
-        NSFont* font = [NSFont systemFontOfSize: 30];
+        NSFont* font;
+#if !CLOUDING
+        font = [NSFont systemFontOfSize: 30];
+#else
+        font = [NSFont systemFontOfSize: 18];
+#endif
         [self setFont: font];
         [cloudView addSubview: self];
 

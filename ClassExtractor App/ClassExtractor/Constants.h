@@ -93,7 +93,7 @@ extern NSString* const kDrawTimelineBars;
 
 // if 1, words will arrange like a word cloud, else words
 // will arrange in a line
-#define CLOUDING 0
+#define CLOUDING 1
 
 
 #endif /* Constants_h */
